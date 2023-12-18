@@ -16,6 +16,7 @@ SRs = [1, 5, 10]
 treatments = ['NUSER', 'LOAD_0', 'LOAD_1', 'LOAD_2', 'SR']
 all_metrics = ['RES_TIME', 'CPU', 'MEM']
 path_wm = "../mubench/configs/workmodel.json"
+model_limit = 30
 
 
 # remove or invert in-edge for threatment nodes
@@ -24,11 +25,12 @@ def adjust_dag(dag):
     for n in dag.nodes:
         if dag.has_edge(n, n):
             dag.remove_edge(n, n)
-    # invert node to treatments edges
-    for n, t in [(i, j) for i in dag.nodes if i not in treatments for j in treatments]:
-        if dag.has_edge(n, t):
+
+    for t in treatments:
+        for n in [i for i in dag.predecessors(t)]:
             dag.remove_edge(n, t)
-            dag.add_edge(t, n)
+            if n not in treatments:
+                dag.add_edge(t, n)
     return dag
 
 
@@ -67,16 +69,20 @@ def gen_configs_per_metric(df_discovery, loads_mapping, path_cgraph, path_config
         metrics = all_metrics
 
     cg = nx.DiGraph(nx.nx_pydot.read_dot(path_cgraph))
+    if cg.has_node("\\n"):  # TODO: BUG
+        cg.remove_node("\\n")
+
     causal_model = gcm.StructuralCausalModel(cg)
     gcm.auto.assign_causal_mechanisms(causal_model, df_discovery, quality=gcm.auto.AssignmentQuality.GOOD)
     gcm.fit(causal_model, df_discovery)
 
     for ser in services:
         for met in metrics:
-            conf_gen.generate_config(causal_model, df_discovery, ser, "{}_{}_{}.json".format(path_configs, met, ser),
+            conf_gen.generate_config(causal_model, df_discovery, ser,
+                                     "{}_{}_{}.json".format(path_configs, met, ser),
                                      loads_mapping,
                                      metrics=[met],
-                                     stability=0, nuser_limit=30)
+                                     stability=0, nuser_limit=model_limit)
 
 
 def check_anomalies(df, ser, metrics=None):
@@ -127,5 +133,15 @@ def calc_metrics(df, path_configs, metrics=None):
             if check_anomalies(df, ser, metrics=metrics):  # False - Negative
                 false_negative += 1
 
-    return {'precision': true_positive / (true_positive + false_positive),
-            'recall': true_positive / (true_positive + false_negative)}
+    precision = 0
+    recall = 0
+
+    if true_positive > 0:
+        precision = true_positive / (true_positive + false_positive)
+
+        if false_negative > 0:
+            recall = true_positive / (true_positive + false_negative)
+        else:
+            recall = 1
+
+    return {'precision': precision, 'recall': recall}

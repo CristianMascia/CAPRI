@@ -24,8 +24,10 @@ def get_config_from_sample(samples, loads_mapping):
     return nuser, name_l, sr
 
 
-def generate_config(causal_model, df, service, path_config, loads_mapping, metrics=['RES_TIME', 'CPU', 'MEM'],
+def generate_config(causal_model, df, service, path_config, loads_mapping, metrics=None,
                     stability=0, nuser_limit=-1):
+    if metrics is None:
+        metrics = ['RES_TIME', 'CPU', 'MEM']
     ths = utils.calc_thresholds(df, service)
 
     n = 2
