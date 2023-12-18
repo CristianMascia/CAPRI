@@ -1,0 +1,49 @@
+{
+   "WorkModelParameters":{
+      "f0":{
+         "type": "function",
+         "value": {
+            "name": "compute_pi",
+            "recipient": "service",
+            "probability":0.7,
+            "parameters": {
+               "mean_bandwidth":10,
+               "range_complexity":[50, 100]
+            },
+            "workers":4,
+            "threads":16,
+            "cpu-requests": "500m",
+            "cpu-limits": "500m"
+         }
+      },
+      "f1": {
+         "type":"function",
+         "value":{
+            "name": "colosseum",
+            "recipient": "service",
+            "probability": 0.3,
+            "parameters":{},
+            "workers":4,
+            "threads":16,
+            "cpu-requests": "500m",
+            "cpu-limits": "500m"
+         }
+      },
+      "request_method":{
+         "type": "metadata",
+         "value":"rest"
+      },
+      "databases_prefix": {
+      	"type": "metadata",
+      	"value": "sdb"
+      },
+      "ServiceMeshFilePath": {
+         "type": "metadata", 
+         "value":"ARCHITETTURA_NEW/SimulationWorkspace/servicemesh.json"
+      },
+      "OutputPath": {
+         "type":"metadata",
+         "value":"ARCHITETTURA_NEW/SimulationWorkspace"
+      }
+   }
+}

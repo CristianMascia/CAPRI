@@ -1,0 +1,15 @@
+{
+	"ServiceMeshParameters": {
+		"vertices": 10,
+		"external_service_groups": 3,
+		"power": 0.05,
+		"zero_appeal": 3.25,
+		"seq_len": 100,
+		"service_probability": {"model": "random"},
+		"dbs": {}
+		},
+	"OutputPath": "ARCHITETTURA_NEW/SimulationWorkspace",
+	"OutputFile": "servicemesh.json"
+}
+		
+		

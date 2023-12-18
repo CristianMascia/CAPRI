@@ -1,0 +1,31 @@
+########SockShop#########
+
+setto mongo:3.4 come versione
+[ho modificato il complete, qudinfi deploy con esso]
+
+aspetto tanto tempo, circa 5 minuti(vedere come automatizzare) 
+
+git clone https://github.com/microservices-demo/microservices-demo
+cd microservices-demo
+make
+
+minikube start --memory 8192 --cpus 4
+
+#DEPLOY
+minikube kubectl -- create -f deploy/kubernetes/manifests/00-sock-shop-ns.yaml -f deploy/kubernetes/manifests
+minikube kubectl -- create -f deploy/kubernetes/complete-demo.yaml
+
+minikube kubectl -- get pods --namespace="sock-shop"
+
+#IP : 192.168.49.2:30001
+
+#RUN TEST
+minikube ip
+docker run --rm weaveworksdemos/load-test -d 5 -h 192.168.49.2:30001 -c 2 -r 100
+
+locust -f locustfile_pptam.py --skip-log-setup --headless --users 10 --spawn-rate 1 -H http://192.168.49.2:30001 --run-time 180s --csv="test.csv"
+
+#UNDEPLOY
+minikube kubectl -- delete -f deploy/kubernetes/manifests/00-sock-shop-ns.yaml -f deploy/kubernetes/manifests
+
+minikube kubectl -- delete -f deploy/kubernetes/complete-demo.yaml
