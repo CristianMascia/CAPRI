@@ -1,3 +1,0 @@
-Method,Name,Error,Occurrences
-GET,s0,HTTPError('500 Server Error: INTERNAL SERVER ERROR for url: s0'),1
-GET,s2,HTTPError('500 Server Error: INTERNAL SERVER ERROR for url: s2'),1
