@@ -191,8 +191,6 @@ def calc_metrics(df, path_configs, metrics=None):
             else:
                 recall = 1
 
-        return {'precision': precision, 'recall': recall, 'mean_hamming_distance': np.mean(dists)}
-
-
-m = calc_metrics(pd.read_csv(path_df), "question1/configs/dlingam_prior_RES_TIME", metrics=['RES_TIME'])
-print(m)
+        return {'precision': precision, 'recall': recall, 'mean_hamming_distance': np.mean(dists),
+                'min_hamming_distance': int(np.min(dists)),
+                'max_hamming_distance': int(np.max(dists))}
