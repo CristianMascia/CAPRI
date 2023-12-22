@@ -136,7 +136,7 @@ def get_generic_priorknorledge_mat(columns, services, path_workmodel, num_load=3
             for es in vser['external_services']:
                 for s in es['services']:
                     if 'RES_TIME_' + ser in columns and 'RES_TIME_' + s in columns:
-                        mat[inv_maps['RES_TIME_' + ser]][inv_maps['RES_TIME_' + s]] = 1
+                        mat[inv_maps['RES_TIME_' + s]][inv_maps['RES_TIME_' + ser]] = 1
                     if 'CPU_' + ser in columns and 'CPU_' + s in columns:
                         mat[inv_maps['CPU_' + s]][inv_maps['CPU_' + ser]] = 1
                     if 'MEM_' + ser in columns and 'MEM_' + s in columns:
@@ -148,7 +148,8 @@ def calc_threshold_met(df, service, met):
     d = df[df['NUSER'] == 1][met + "_" + service]
     return d.mean() + 3 * d.std()
 
-#calcola solo le metriche che hanno colonna all'interno del dataset
+
+# calcola solo le metriche che hanno colonna all'interno del dataset
 def calc_thresholds(df, service):
     return {met: calc_threshold_met(df, service, met) for met in ['RES_TIME', 'CPU', 'MEM'] if
             "{}_{}".format(met, service) in df.columns}
