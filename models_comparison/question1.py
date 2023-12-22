@@ -61,6 +61,3 @@ def __main__():
     discovery(df_dicovery)
     configuration_generation(df_dicovery, loads_map)
     show_metrics(df)
-
-
-__main__()

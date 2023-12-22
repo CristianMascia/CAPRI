@@ -55,6 +55,12 @@ def dlingam_discovery(X, th=0, prior_knowledge=None):
     return utils.threshold_matrix(np.transpose(model.adjacency_matrix_), th=th)
 
 
+def lim_discovery(X, dis_con, th=0):
+    model = lingam.LiM()
+    model.fit(X, dis_con)
+    return utils.threshold_matrix(np.transpose(model.adjacency_matrix_), th=th)
+
+
 def dagma_lin_discovery(X, th=0):
     torch.set_default_dtype(torch.float64)
     model_dagma = DagmaLinear(loss_type='l2')

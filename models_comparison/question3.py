@@ -60,8 +60,11 @@ def show_metrics(df_all):
         for met in qu.all_metrics:
             mets_models[str(th)][met] = qu.calc_metrics(df_all, path_configs=config_dir + "TH_" + str(th),
                                                         metrics=[met])
-            print("{} -> PREC: {:.2f} RECALL: {:.2f}".format(met, mets_models[str(th)][met]['precision'],
-                                                             mets_models[str(th)][met]['recall']))
+            print("{} -> PREC: {:.2f} RECALL: {:.2f} MEAN DIST: {:.2f} MIN DIST: {} MAX DIST: {}"
+                  .format(met, mets_models[str(th)][met]['precision'], mets_models[str(th)][met]['recall'],
+                          mets_models[str(th)][met]['mean_hamming_distance'],
+                          mets_models[str(th)][met]['min_hamming_distance'],
+                          mets_models[str(th)][met]['max_hamming_distance']))
 
     with open(path_mets, 'w') as f:
         json.dump(mets_models, f)
@@ -72,6 +75,3 @@ def __main__():
     discovery(df_dicovery)
     configuration_generation(df_dicovery, loads_map)
     show_metrics(df)
-
-
-__main__()
