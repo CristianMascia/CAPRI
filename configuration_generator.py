@@ -6,19 +6,21 @@ import utils
 
 def generate_config(causal_model, df, service, path_config, loads_mapping, nuser_limit, nuser_start=2, n_step=1,
                     metrics=None, stability=0, loads=None, spawn_rates=None):
+    def identity_lambda(number):
+        return lambda x: number
+
     def search_config():
         random.shuffle(combinations)
         for load_level, sr_level in combinations:
             anomalous_metrics = metrics.copy()
             for stab in range(stability + 1):
                 # print("CHECK: N{}".format(stab))
-                samples = gcm.interventional_samples(causal_model,
-                                                     {'NUSER': lambda y: n + stab,
-                                                      'LOAD_0': lambda y: loads_mapping[load_level][0],
-                                                      'LOAD_1': lambda y: loads_mapping[load_level][1],
-                                                      'LOAD_2': lambda y: loads_mapping[load_level][2],
-                                                      'SR': lambda y: sr_level},
-                                                     num_samples_to_draw=1000)
+
+                dict_int = {'NUSER': lambda y: n + stab, 'SR': lambda y: sr_level}
+                for li in range(len(loads_mapping.keys())):
+                    dict_int['LOAD_'.format(li)] = identity_lambda(loads_mapping[load_level][li])
+
+                samples = gcm.interventional_samples(causal_model, dict_int, num_samples_to_draw=1000)
 
                 for amet in anomalous_metrics.copy():
                     if samples[amet + "_" + service].mean() <= ths[amet]:
