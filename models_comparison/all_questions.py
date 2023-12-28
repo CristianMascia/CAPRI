@@ -1,20 +1,19 @@
 import os.path
-
-import causal_model_generator
-import question0
-import question1
-import question2
-import question3
-import questions_utils
+import CONFIG
+import data_preparation
+import sys
+import importlib
 
 
 def __main__():
-    if not os.path.exists("../mubench/data/mubench_df.csv"):
-        causal_model_generator.read_experiments("../mubench/data/", {s: s for s in questions_utils.services})
-    question0.__main__()
-    question1.__main__()
-    question2.__main__()
-    question3.__main__()
+    path_df = "../mubench/data/mubench_df.csv"
+    if not os.path.exists(path_df):
+        data_preparation.read_experiments("../mubench/data/", {s: s for s in CONFIG.services}).to_csv(path_df,
+                                                                                                      index=False)
+    for i in range(4):
+        q = "question{}".format(i)
+        importlib.import_module(q)
+        getattr(sys.modules[q], "__main__")(path_df, q)
 
 
 __main__()
