@@ -4,10 +4,11 @@ import numpy as np
 import pandas as pd
 import questions_utils as qu
 import utils
+import CONFIG
 
 ######## Which is the best-performing CD algorithm in predicting anomalies?
 
-algorithms = ['dlingam', 'dagma_lin', 'dagma_mlp']  # ['dlingam', 'dagma_lin', 'dagma_mlp', 'dag_gnn']
+algorithms = ['dlingam', 'dagma_lin', 'dagma_mlp', 'dag_gnn']
 
 
 def data_preparation(path_df):

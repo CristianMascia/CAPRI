@@ -63,6 +63,10 @@ def convert_adjcsv2dot(path_adj):
     df.drop(df.columns[0], axis=1, inplace=True)
     mat = df.to_numpy()
     g = nx.from_numpy_matrix(mat, create_using=nx.DiGraph)
+
+    for _, _, d in g.edges(data=True):  # rimuovo weight
+        d.clear()
+
     return nx.relabel_nodes(g, {n: df.columns[n] for n in range(len(mat))})
 
 
@@ -77,9 +81,8 @@ def dag_gnn_discovery(df_discovery, path_dag, th=0):
 
     os.mkdir(path_results)
     df_discovery.to_csv(path_data_disc, index=False)
-    # shutil.copy(path_df, path_data_cp)
 
-    generate_config_dag_from_gnn("mubench.csv", epochs=1, th=th)
+    generate_config_dag_from_gnn("mubench.csv", epochs=CONFIG.dag_gnn_epochs, th=th)
 
     subprocess.run(["cd " + CONFIG.path_dag_gnn + "; python3 -m DAG_from_GNN"], shell=True)
 
@@ -94,7 +97,6 @@ def dag_gnn_discovery(df_discovery, path_dag, th=0):
     os.rename(path_config + ".bak", path_config)
     os.remove(path_data_disc)
     shutil.rmtree(path_results)
-    # TODO: prendere il risultato e trasfomarlo in un dag
     return 0
 
 

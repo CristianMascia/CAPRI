@@ -12,3 +12,4 @@ path_minimal_configs_anomaly = os.path.join(mubench_path, "minimal_configs_anoma
 model_limit = 30
 
 path_dag_gnn = "../DAG_from_GNN"
+dag_gnn_epochs = 300
