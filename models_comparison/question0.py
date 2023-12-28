@@ -1,31 +1,23 @@
 import json
 import os
-
 import numpy as np
 import pandas as pd
-
 import questions_utils as qu
 import utils
 
 ######## Which is the best-performing CD algorithm in predicting anomalies?
 
-dags_dir = "question0/dags/"
-config_dir = "question0/configs/"
-path_mets = "question0/metrics.json"
-algorithms = ['dlingam', 'dagma_lin', 'dagma_mlp']
-
-os.makedirs(dags_dir, exist_ok=True)
-os.makedirs(config_dir, exist_ok=True)
+algorithms = ['dlingam', 'dagma_lin', 'dagma_mlp']  # ['dlingam', 'dagma_lin', 'dagma_mlp', 'dag_gnn']
 
 
-def data_preparation():
+def data_preparation(path_df):
     print("----------DATA PREPARATION----------")
-    df = pd.read_csv("../mubench/data/mubench_df.csv")
+    df = pd.read_csv(path_df)
     df_d, maps = utils.get_discovery_dataset(df)
     return df, df_d, maps
 
 
-def discovery(df_discovery):
+def discovery(df_discovery, dags_dir):
     print("----------CAUSAL DISCOVERY----------")
 
     maps = {i: df_discovery.columns[i] for i in range(0, len(df_discovery.columns))}
@@ -33,26 +25,32 @@ def discovery(df_discovery):
 
     for cmod in algorithms:
         print("  -----" + cmod.upper() + "-----")
-        qu.save_adjusted_dag(dags_dir + cmod, getattr(qu, cmod + "_discovery")(X, th=0), maps)
+        path_mod = os.path.join(dags_dir, cmod)
+        if cmod == 'dag_gnn':
+            qu.dag_gnn_discovery(df_discovery, path_mod)
+        else:
+            qu.save_adjusted_dag(path_mod, getattr(qu, cmod + "_discovery")(X, th=0), maps)
 
 
-def configuration_generation(df_discovery, loads_mapping):
+def configuration_generation(df_discovery, loads_mapping, dags_dir, config_dir):
     print("----------CONFIGURATION GENERATION----------")
 
     for cmodel in algorithms:
         print("  -----" + cmodel.upper() + "-----")
-        qu.gen_configs_per_metric(df_discovery, loads_mapping, dags_dir + cmodel + ".dot",
-                                  config_dir + cmodel)
+        qu.gen_configs_per_metric(df_discovery, loads_mapping, os.path.join(dags_dir, cmodel + ".dot"),
+                                  os.path.join(config_dir, cmodel))
 
 
-def show_metrics(df_all):
+def show_metrics(df_all, config_dir, path_mets):
     print("----------METRICS----------")
     mets_models = {}
     for cmodel in algorithms:
         print("  -----" + cmodel.upper() + "-----")
         mets_models[cmodel] = {}
-        for met in qu.all_metrics:
-            mets_models[cmodel][met] = qu.calc_metrics(df_all, path_configs=config_dir + cmodel + "_" + met,
+        for met in CONFIG.all_metrics:
+            mets_models[cmodel][met] = qu.calc_metrics(df_all,
+                                                       path_configs=os.path.join(config_dir,
+                                                                                 "{}_{}".format(cmodel, met)),
                                                        metrics=[met])
             print("{} -> PREC: {:.2f} RECALL: {:.2f} MEAN DIST: {:.2f} MIN DIST: {} MAX DIST: {}"
                   .format(met, mets_models[cmodel][met]['precision'], mets_models[cmodel][met]['recall'],
@@ -64,9 +62,16 @@ def show_metrics(df_all):
         json.dump(mets_models, f)
 
 
-def __main__():
-    df, df_dicovery, loads_map = data_preparation()
-    discovery(df_dicovery)
-    configuration_generation(df_dicovery, loads_map)
-    show_metrics(df)
+def __main__(path_df, path_main_dir):
+    path_dir_dags = os.path.join(path_main_dir, "dags")
+    path_dir_configs = os.path.join(path_main_dir, "configs")
+    path_metric_file = os.path.join(path_main_dir, "metrics.json")
 
+    os.makedirs(path_dir_dags, exist_ok=True)
+    os.makedirs(path_dir_configs, exist_ok=True)
+
+    df, df_discovery, loads_map = data_preparation(path_df)
+
+    discovery(df_discovery, path_dir_dags)
+    configuration_generation(df_discovery, loads_map, path_dir_dags, path_dir_configs)
+    show_metrics(df, path_dir_configs, path_metric_file)

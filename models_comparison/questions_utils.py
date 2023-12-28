@@ -1,3 +1,4 @@
+import fileinput
 import json
 import os
 import lingam
@@ -10,17 +11,9 @@ from dagma.nonlinear import DagmaMLP, DagmaNonlinear
 from dowhy import gcm
 import configuration_generator as conf_gen
 import utils
-
-services = ['s' + str(i) for i in range(10)]
-loads = ['uniform', 'randomly_balanced', 'unbalanced_one']
-SRs = [1, 5, 10]
-treatments = ['NUSER', 'LOAD_0', 'LOAD_1', 'LOAD_2', 'SR']
-all_metrics = ['RES_TIME', 'CPU', 'MEM']
-mubench_path = "../mubench"
-path_df = mubench_path + "/data/mubench_df.csv"
-path_wm = mubench_path + "/configs/workmodel.json"
-path_minimal_configs_anomaly = mubench_path + "/minimal_configs_anomaly.json"
-model_limit = 30
+import shutil
+import subprocess
+import CONFIG
 
 
 # remove or invert in-edge for threatment nodes
@@ -30,10 +23,10 @@ def adjust_dag(dag):
         if dag.has_edge(n, n):
             dag.remove_edge(n, n)
 
-    for t in treatments:
+    for t in CONFIG.treatments:
         for n in [i for i in dag.predecessors(t)]:
             dag.remove_edge(n, t)
-            if n not in treatments:
+            if n not in CONFIG.treatments:
                 dag.add_edge(t, n)
     return dag
 
@@ -47,6 +40,62 @@ def save_adjusted_dag(path, adj, maps):
     dag = adjust_dag(utils.adjmat2dot_map(adj, maps))
     np.save(path, nx.adjacency_matrix(dag, [maps[key] for key in sorted(maps.keys())], dtype=int))
     utils.save_dot(dag, path)
+
+
+def generate_config_dag_from_gnn(data_filename, epochs=None, th=None, backup=".bak"):
+    config_path = os.path.join(CONFIG.path_dag_gnn, "DAG_from_GNN/config.py")
+
+    for line in fileinput.FileInput(config_path, inplace=True, backup=backup):
+        if "data_filename" in line:  # select which lines you care about
+            print(line[:line.find("=") + 1] + " \"" + data_filename + "\"")
+        elif epochs is not None and "epochs" in line:
+            print(line[:line.find("=") + 1] + " " + str(epochs))
+        elif th is not None and "graph_threshold" in line:
+            print(line[:line.find("=") + 1] + " " + str(th))
+        else:
+            print(line, end='')
+
+    return 0
+
+
+def convert_adjcsv2dot(path_adj):
+    df = pd.read_csv(path_adj)
+    df.drop(df.columns[0], axis=1, inplace=True)
+    mat = df.to_numpy()
+    g = nx.from_numpy_matrix(mat, create_using=nx.DiGraph)
+    return nx.relabel_nodes(g, {n: df.columns[n] for n in range(len(mat))})
+
+
+def dag_gnn_discovery(df_discovery, path_dag, th=0):
+    path_data_disc = os.path.join(CONFIG.path_dag_gnn, "datasets", "mubench.csv")
+    path_config = os.path.join(CONFIG.path_dag_gnn, "DAG_from_GNN", "config.py")
+    path_results = os.path.join(CONFIG.path_dag_gnn, "results")
+    path_adj_result = os.path.join(path_results, "final_adjacency_matrix.csv")
+
+    if os.path.exists(path_results):
+        shutil.rmtree(path_results)
+
+    os.mkdir(path_results)
+    df_discovery.to_csv(path_data_disc, index=False)
+    # shutil.copy(path_df, path_data_cp)
+
+    generate_config_dag_from_gnn("mubench.csv", epochs=1, th=th)
+
+    subprocess.run(["cd " + CONFIG.path_dag_gnn + "; python3 -m DAG_from_GNN"], shell=True)
+
+    dag = convert_adjcsv2dot(path_adj_result)
+
+    dag_adjusted = adjust_dag(dag)
+
+    # TODO: remove weight
+    utils.save_dot(dag_adjusted, path_dag)
+
+    os.remove(path_config)
+    os.rename(path_config + ".bak", path_config)
+    os.remove(path_data_disc)
+    shutil.rmtree(path_results)
+    # TODO: prendere il risultato e trasfomarlo in un dag
+    return 0
 
 
 def dlingam_discovery(X, th=0, prior_knowledge=None):
@@ -76,7 +125,7 @@ def dagma_mlp_discovery(X, th=0):
 
 def gen_configs_per_metric(df_discovery, loads_mapping, path_cgraph, path_configs, metrics=None):
     if metrics is None:
-        metrics = all_metrics
+        metrics = CONFIG.all_metrics
 
     cg = nx.DiGraph(nx.nx_pydot.read_dot(path_cgraph))
     if cg.has_node("\\n"):  # TODO: BUG
@@ -86,30 +135,30 @@ def gen_configs_per_metric(df_discovery, loads_mapping, path_cgraph, path_config
     gcm.auto.assign_causal_mechanisms(causal_model, df_discovery, quality=gcm.auto.AssignmentQuality.GOOD)
     gcm.fit(causal_model, df_discovery)
 
-    for ser in services:
+    for ser in CONFIG.services:
         for met in metrics:
             conf_gen.generate_config(causal_model, df_discovery, ser,
                                      "{}_{}_{}.json".format(path_configs, met, ser),
                                      loads_mapping,
                                      metrics=[met],
-                                     stability=0, nuser_limit=model_limit)
+                                     stability=0, nuser_limit=CONFIG.model_limit)
 
 
 def create_min_anomalies_file(df, path, metrics=None):
     if metrics is None:
-        metrics = all_metrics
+        metrics = CONFIG.all_metrics
 
     ns = list(set(df['NUSER']))
 
     out_j = {}
-    for ser in services:
+    for ser in CONFIG.services:
         out_j[ser] = {}
         ths = utils.calc_thresholds(df, ser)
         for met in metrics:
             for n in ns:
                 icomb = []
-                for l in loads:
-                    for sr in SRs:
+                for l in CONFIG.loads:
+                    for sr in CONFIG.SRs:
                         if df[(df['NUSER'] == n) & (df['LOAD'] == l) & (df['SR'] == sr)][met + '_' + ser].mean() > ths[
                             met]:
                             icomb.append({'NUSER': n, 'LOAD': l, 'SR': sr})
@@ -125,7 +174,7 @@ def create_min_anomalies_file(df, path, metrics=None):
 
 def calc_metrics(df, path_configs, metrics=None):
     if metrics is None:
-        metrics = all_metrics
+        metrics = CONFIG.all_metrics
 
     def calc_hamming_distance(conf_real, conf_pred):
         # a = abs(conf_real['NUSER'] - conf_pred['nusers'][0])
@@ -138,10 +187,10 @@ def calc_metrics(df, path_configs, metrics=None):
             0 if conf_real['LOAD'] == conf_pred['loads'][0] else 1) + (
             0 if conf_real['SR'] == conf_pred['spawn_rates'][0] else 1)
 
-    if not os.path.exists(path_minimal_configs_anomaly):
-        create_min_anomalies_file(pd.read_csv(path_df), path_minimal_configs_anomaly)
+    if not os.path.exists(CONFIG.path_minimal_configs_anomaly):
+        create_min_anomalies_file(pd.read_csv(CONFIG.path_df), CONFIG.path_minimal_configs_anomaly)
 
-    with open(path_minimal_configs_anomaly, 'r') as f_minimal_conf:
+    with open(CONFIG.path_minimal_configs_anomaly, 'r') as f_minimal_conf:
         minimal_confs = json.load(f_minimal_conf)
 
         true_positive = 0
@@ -149,7 +198,7 @@ def calc_metrics(df, path_configs, metrics=None):
         false_positive = 0
         dists = []
 
-        for ser in services:
+        for ser in CONFIG.services:
 
             path_config = path_configs + "_" + ser + ".json"
             ths = utils.calc_thresholds(df, ser)
@@ -163,18 +212,12 @@ def calc_metrics(df, path_configs, metrics=None):
                                    (df['SR'] == config['spawn_rates'][0])]
 
                     # X - Positive
-                    for met in config['anomalous_metrics']:
+                    for met in [m for m in config['anomalous_metrics'] if m in metrics]:
                         if df_config[met + "_" + ser].mean() > ths[met]:  # True - Positive
                             true_positive += 1
                             dists_c = np.zeros(len(minimal_confs[ser][met]), dtype=int)
                             for i, mc in enumerate(minimal_confs[ser][met]):
                                 dists_c[i] = calc_hamming_distance(mc, config)
-                                # print("R: ({},{},{}) P: ({},{},{}) -> {}".format(mc['NUSER'], mc['LOAD'], mc['SR'],
-                                #                                                 config['nusers'][0],
-                                #                                                 config['loads'][0],
-                                #                                                 config['spawn_rates'][0],
-                                #                                                 calc_hamming_distance(mc, config)))
-
                             dists.append(min(dists_c))
                         else:  # False - Positive
                             false_positive += 1
@@ -182,8 +225,7 @@ def calc_metrics(df, path_configs, metrics=None):
             else:  # X - Negative
                 false_negative = 0
                 # check there is anomalies for service ser
-                # if check_anomalies(df, ser, metrics=metrics):  # False - Negative
-                if len(minimal_confs[ser]) > 0:  # False - Negative
+                if all(met in minimal_confs[ser] for met in metrics):  # False - Negative   #TODO: controllare
                     false_negative += 1
 
         precision = 0
@@ -196,7 +238,8 @@ def calc_metrics(df, path_configs, metrics=None):
                 recall = true_positive / (true_positive + false_negative)
             else:
                 recall = 1
-
+        if len(dists) == 0:
+            dists.append(-1)
         return {'precision': precision, 'recall': recall, 'mean_hamming_distance': np.mean(dists),
                 'min_hamming_distance': int(np.min(dists)),
                 'max_hamming_distance': int(np.max(dists))}
