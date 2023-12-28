@@ -87,17 +87,13 @@ def dag_gnn_discovery(df_discovery, path_dag, th=0):
     subprocess.run(["cd " + CONFIG.path_dag_gnn + "; python3 -m DAG_from_GNN"], shell=True)
 
     dag = convert_adjcsv2dot(path_adj_result)
-
     dag_adjusted = adjust_dag(dag)
-
-    # TODO: remove weight
     utils.save_dot(dag_adjusted, path_dag)
 
     os.remove(path_config)
     os.rename(path_config + ".bak", path_config)
     os.remove(path_data_disc)
     shutil.rmtree(path_results)
-    return 0
 
 
 def dlingam_discovery(X, th=0, prior_knowledge=None):

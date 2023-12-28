@@ -26,12 +26,13 @@ def generate_config(causal_model, df, service, path_config, loads_mapping, nuser
                     if samples[amet + "_" + service].mean() <= ths[amet]:
                         anomalous_metrics.remove(amet)
                 if len(anomalous_metrics) == 0:
-                    return False
-            # len(anomalous_metrics) > 0
-            with open(path_config, 'w') as f_out:
-                json.dump({"nusers": [n], "loads": [load_level], "spawn_rates": [sr_level],
-                           "anomalous_metrics": anomalous_metrics}, f_out)
-                return True
+                    break
+            if len(anomalous_metrics) > 0:
+                with open(path_config, 'w') as f_out:
+                    json.dump({"nusers": [n], "loads": [load_level], "spawn_rates": [sr_level],
+                               "anomalous_metrics": anomalous_metrics}, f_out)
+                    return True
+        return False
 
     if metrics is None:
         metrics = ['RES_TIME', 'CPU', 'MEM']
