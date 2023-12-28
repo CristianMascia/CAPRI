@@ -5,7 +5,7 @@ import utils
 
 
 def generate_config(causal_model, df, service, path_config, loads_mapping, nuser_limit, nuser_start=2, n_step=1,
-                    metrics=None, stability=0):
+                    metrics=None, stability=0, loads=None, spawn_rates=None):
     def search_config():
         random.shuffle(combinations)
         for load_level, sr_level in combinations:
@@ -33,10 +33,15 @@ def generate_config(causal_model, df, service, path_config, loads_mapping, nuser
 
     if metrics is None:
         metrics = ['RES_TIME', 'CPU', 'MEM']
+
+    if loads is None:
+        load_levels = loads_mapping.keys()
+
+    if spawn_rates is None:
+        sr_levels = list(set(df['SR']))
+
     ths = utils.calc_thresholds(df, service)
 
-    load_levels = loads_mapping.keys()
-    sr_levels = list(set(df['SR']))
     combinations = [(load, sr) for load in load_levels for sr in sr_levels]
     n = nuser_start
     while not search_config() and n < nuser_limit:
