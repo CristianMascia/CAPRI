@@ -18,7 +18,7 @@ def generate_config(causal_model, df, service, path_config, loads_mapping, nuser
 
                 dict_int = {'NUSER': lambda y: n + stab, 'SR': lambda y: sr_level}
                 for li in range(len(loads_mapping.keys())):
-                    dict_int['LOAD_'.format(li)] = identity_lambda(loads_mapping[load_level][li])
+                    dict_int['LOAD_{}'.format(li)] = identity_lambda(loads_mapping[load_level][li])
 
                 samples = gcm.interventional_samples(causal_model, dict_int, num_samples_to_draw=1000)
 
