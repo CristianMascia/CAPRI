@@ -1,6 +1,8 @@
 import fileinput
 import json
 import os
+import random
+
 import lingam
 import networkx as nx
 import numpy as np
@@ -28,6 +30,15 @@ def adjust_dag(dag):
             dag.remove_edge(n, t)
             if n not in CONFIG.treatments:
                 dag.add_edge(t, n)
+
+    # remove cycles
+    while True:
+        try:
+            c = nx.find_cycle(dag, orientation='original') # TODO: veriricare
+            e = random.choice(c)
+            dag.remove_edge(e[0], e[1])
+        except nx.NetworkXNoCycle:
+            break
     return dag
 
 
