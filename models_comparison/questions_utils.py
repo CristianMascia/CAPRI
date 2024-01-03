@@ -34,7 +34,7 @@ def adjust_dag(dag):
     # remove cycles
     while True:
         try:
-            c = nx.find_cycle(dag, orientation='original') # TODO: veriricare
+            c = nx.find_cycle(dag, orientation='original')  # TODO: veriricare
             e = random.choice(c)
             dag.remove_edge(e[0], e[1])
         except nx.NetworkXNoCycle:
@@ -252,3 +252,51 @@ def calc_metrics(df, path_configs, metrics=None):
         return {'precision': precision, 'recall': recall, 'mean_hamming_distance': np.mean(dists),
                 'min_hamming_distance': int(np.min(dists)),
                 'max_hamming_distance': int(np.max(dists))}
+
+
+def merge_met_dict(met_dicts):
+    out_dict = {}
+    count_dict = {}
+
+    for met in CONFIG.all_metrics:
+        out_dict[met] = {
+            "mean_precision": 0,
+            "mean_recall": 0,
+            "mean_mean_hamming_distance": 0,
+            "mean_min_hamming_distance": 0,
+            "mean_max_hamming_distance": 0
+        }
+        count_dict[met] = {
+            "count_mean_hamming_distance": 0,
+            "count_min_hamming_distance": 0,
+            "count_max_hamming_distance": 0
+        }
+        for met_dict in met_dicts:
+            out_dict[met]['mean_precision'] += met_dict[met]['precision'] / len(met_dicts)
+            out_dict[met]['mean_recall'] += met_dict[met]['recall'] / len(met_dicts)
+
+            if met_dict[met]['mean_hamming_distance'] >= 0:
+                out_dict[met]['mean_mean_hamming_distance'] += met_dict[met]['mean_hamming_distance']
+                count_dict[met]['count_mean_hamming_distance'] += 1
+            if met_dict[met]['min_hamming_distance'] >= 0:
+                out_dict[met]['mean_min_hamming_distance'] += met_dict[met]['min_hamming_distance']
+                count_dict[met]['count_min_hamming_distance'] += 1
+            if met_dict[met]['max_hamming_distance']:
+                out_dict[met]['mean_max_hamming_distance'] += met_dict[met]['max_hamming_distance']
+                count_dict[met]['count_max_hamming_distance'] += 1
+
+        if count_dict[met]['count_mean_hamming_distance'] > 0:
+            out_dict[met]['mean_mean_hamming_distance'] /= count_dict[met]['count_mean_hamming_distance']
+        else:
+            out_dict[met]['mean_mean_hamming_distance'] = -1
+
+        if count_dict[met]['count_min_hamming_distance'] > 0:
+            out_dict[met]['mean_min_hamming_distance'] /= count_dict[met]['count_min_hamming_distance']
+        else:
+            out_dict[met]['mean_min_hamming_distance'] = -1
+
+        if count_dict[met]['count_max_hamming_distance'] > 0:
+            out_dict[met]['mean_max_hamming_distance'] /= count_dict[met]['count_max_hamming_distance']
+        else:
+            out_dict[met]['mean_max_hamming_distance'] = -1
+    return out_dict
