@@ -1,0 +1,1 @@
+{"RES_TIME": {"precision": 1.0, "recall": 1, "mean_hamming_distance": 3.9, "min_hamming_distance": 1, "max_hamming_distance": 17}, "CPU": {"precision": 1.0, "recall": 1, "mean_hamming_distance": 0.3, "min_hamming_distance": 0, "max_hamming_distance": 2}, "MEM": {"precision": 1.0, "recall": 1, "mean_hamming_distance": 1.0, "min_hamming_distance": 1, "max_hamming_distance": 1}}
