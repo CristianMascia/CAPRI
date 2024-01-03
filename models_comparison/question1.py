@@ -6,6 +6,7 @@ import questions_utils as qu
 import utils
 import CONFIG
 
+
 ######## Does prior knowledge improve performance?
 
 def data_preparation(path_df):
@@ -22,7 +23,8 @@ def discovery(df_discovery, dags_dir):
     X = df_discovery.to_numpy(dtype=np.float64)
 
     print("  -----DLINGAM WITH PRIOR-----")
-    prior = utils.get_generic_priorknorledge_mat(df_discovery.columns, CONFIG.services, CONFIG.path_wm, num_load=len(CONFIG.loads))
+    prior = utils.get_generic_priorknorledge_mat(df_discovery.columns, CONFIG.services, CONFIG.path_wm,
+                                                 num_load=len(CONFIG.loads))
     qu.save_adjusted_dag(os.path.join(dags_dir, "dlingam_prior"), qu.dlingam_discovery(X, prior_knowledge=prior), maps)
 
 
