@@ -6,6 +6,7 @@ import questions_utils as qu
 import utils
 import CONFIG
 
+
 ######## How does performance vary if we consider one model per performance metric or one model for all metrics?
 
 
@@ -64,17 +65,20 @@ def show_metrics(df_dict, config_dir, path_mets):
     print("----------METRICS----------")
     mets_models = {}
     for met in CONFIG.all_metrics:
-        mod = "dlingam_prior_" + met
         print("  -----DLINGAM WITH PRIOR FOR {}-----".format(met))
-        mets_models[mod] = qu.calc_metrics(df_dict[met]['DF_ALL'],
+        mets_models[met] = qu.calc_metrics(df_dict[met]['DF_ALL'],
                                            path_configs=os.path.join(config_dir, "dlingam_prior_" + met),
                                            metrics=[met])
         print("{} -> PREC: {:.2f} RECALL: {:.2f} MEAN DIST: {:.2f} MIN DIST: {} MAX DIST: {}"
-              .format(met, mets_models[mod]['precision'], mets_models[mod]['recall'],
-                      mets_models[mod]['mean_hamming_distance'], mets_models[mod]['min_hamming_distance'],
-                      mets_models[mod]['max_hamming_distance']))
+              .format(met, mets_models[met]['precision'], mets_models[met]['recall'],
+                      mets_models[met]['mean_hamming_distance'], mets_models[met]['min_hamming_distance'],
+                      mets_models[met]['max_hamming_distance']))
     with open(path_mets, 'w') as f:
         json.dump(mets_models, f)
+
+
+def merge_mets(met_dicts):
+    return qu.merge_met_dict(met_dicts)
 
 
 def __main__(path_df, path_main_dir):
@@ -89,3 +93,4 @@ def __main__(path_df, path_main_dir):
     discovery(df_dict, path_dir_dags)
     configuration_generation(df_dict, path_dir_dags, path_dir_configs)
     show_metrics(df_dict, path_dir_configs, path_metric_file)
+

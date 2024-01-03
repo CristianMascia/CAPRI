@@ -51,6 +51,10 @@ def show_metrics(df_all, config_dir, path_mets):
         json.dump(mets_model, f)
 
 
+def merge_mets(met_dicts):
+    return qu.merge_met_dict(met_dicts)
+
+
 def __main__(path_df, path_main_dir):
     path_dir_dags = os.path.join(path_main_dir, "dags")
     path_dir_configs = os.path.join(path_main_dir, "configs")
