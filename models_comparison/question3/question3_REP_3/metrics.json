@@ -1,1 +1,48 @@
-{"0.1": {"RES_TIME": {"precision": 0, "recall": 0, "mean_hamming_distance": -1.0, "min_hamming_distance": -1, "max_hamming_distance": -1}, "CPU": {"precision": 0, "recall": 0, "mean_hamming_distance": -1.0, "min_hamming_distance": -1, "max_hamming_distance": -1}, "MEM": {"precision": 0, "recall": 0, "mean_hamming_distance": -1.0, "min_hamming_distance": -1, "max_hamming_distance": -1}}, "0.3": {"RES_TIME": {"precision": 0, "recall": 0, "mean_hamming_distance": -1.0, "min_hamming_distance": -1, "max_hamming_distance": -1}, "CPU": {"precision": 0, "recall": 0, "mean_hamming_distance": -1.0, "min_hamming_distance": -1, "max_hamming_distance": -1}, "MEM": {"precision": 0, "recall": 0, "mean_hamming_distance": -1.0, "min_hamming_distance": -1, "max_hamming_distance": -1}}}
+{
+  "0.1": {
+    "RES_TIME": {
+      "precision": 0,
+      "recall": 0,
+      "mean_hamming_distance": -1.0,
+      "min_hamming_distance": -1,
+      "max_hamming_distance": -1
+    },
+    "CPU": {
+      "precision": 0,
+      "recall": 0,
+      "mean_hamming_distance": -1.0,
+      "min_hamming_distance": -1,
+      "max_hamming_distance": -1
+    },
+    "MEM": {
+      "precision": 0,
+      "recall": 0,
+      "mean_hamming_distance": -1.0,
+      "min_hamming_distance": -1,
+      "max_hamming_distance": -1
+    }
+  },
+  "0.3": {
+    "RES_TIME": {
+      "precision": 0,
+      "recall": 0,
+      "mean_hamming_distance": -1.0,
+      "min_hamming_distance": -1,
+      "max_hamming_distance": -1
+    },
+    "CPU": {
+      "precision": 0,
+      "recall": 0,
+      "mean_hamming_distance": -1.0,
+      "min_hamming_distance": -1,
+      "max_hamming_distance": -1
+    },
+    "MEM": {
+      "precision": 0,
+      "recall": 0,
+      "mean_hamming_distance": -1.0,
+      "min_hamming_distance": -1,
+      "max_hamming_distance": -1
+    }
+  }
+}
