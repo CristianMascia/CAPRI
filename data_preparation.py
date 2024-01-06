@@ -4,51 +4,68 @@ import numpy as np
 import pandas as pd
 
 
-def dockerstats_extractor(path, services):
-    df = pd.read_csv(path, delim_whitespace=True)
+def dockerstats_extractor(path, pods, pod_renaming_func):
+    df = pd.read_csv(path, delim_whitespace=True, on_bad_lines="warn")
+
     df = df[df["NAME"] != "NAME"].reset_index(drop=True)
 
     df['CPU(cores)'] = pd.to_numeric(df['CPU(cores)'].astype(str).str[:-1], errors='coerce')
     df['MEMORY(bytes)'] = pd.to_numeric(df['MEMORY(bytes)'].astype(str).str[:-2], errors='coerce')
     df = df.astype({'NAME': 'string'})
 
-    # TODO: scrivere meglio, il replace non funziona
-    for i in df.index:
-        for ser in services:
-            if ser in df.loc[i, 'NAME']:
-                df.loc[i, 'NAME'] = ser
-    df = df.drop(df[df['NAME'].isin((set(df['NAME']) - set(services)))].index)
-
     cpu = df.groupby(['NAME'], sort=False)['CPU(cores)'].mean()
     mem = df.groupby(['NAME'], sort=False)['MEMORY(bytes)'].mean()
 
-    data = {'NAME': services, 'CPU AVG': np.zeros(len(services)), 'MEM AVG': np.zeros(len(services))}
-    for i in range(len(services)):
-        data['CPU AVG'][i] = cpu[data['NAME'][i]]
-        data['MEM AVG'][i] = mem[data['NAME'][i]]
+    if pod_renaming_func is not None:
+        cpu = cpu.set_axis([pod_renaming_func(i) for i in cpu.index], copy=False)
+        mem = mem.set_axis([pod_renaming_func(i) for i in mem.index], copy=False)
+
+    data = {'NAME': pods, 'CPU AVG': np.zeros(len(pods)), 'MEM AVG': np.zeros(len(pods))}
+
+    for i in range(len(pods)):
+        data['CPU AVG'][i] = cpu[data['NAME'][i]].mean() #BUG
+        data['MEM AVG'][i] = mem[data['NAME'][i]].mean()
 
     return pd.DataFrame(data)
 
 
+# TODO: testare la generazione del df su mubench
 def locuststats_extractor(path):
     df = pd.read_csv(path).iloc[:-1, :]
     return df[['Name', 'Requests/s', 'Average Response Time']]
 
 
-# mapping -> {pod : servizio, pod : servizio}
-def merge_stats_df(doc_df, loc_df, mapping=None):
+# mapping -> {servizio : pod}
+def merge_stats_df(doc_df, loc_df, mapping, pods_):
     data = {}
-    for k, v in mapping.items():
-        data['REQ/s_' + v] = loc_df[loc_df['Name'] == v]['Requests/s'].values[0]
-        data['RES_TIME_' + v] = loc_df[loc_df['Name'] == k]['Average Response Time'].values[0]
-        data['CPU_' + v] = doc_df[doc_df['NAME'] == k]['CPU AVG'].values[0]
-        data['MEM_' + v] = doc_df[doc_df['NAME'] == k]['MEM AVG'].values[0]
+    services = list(set(mapping.keys()))
+    pods = pods_.copy()
+
+    for ser in services:
+        if len(loc_df[loc_df['Name'] == ser]) > 0:
+            data['REQ/s_' + ser] = loc_df[loc_df['Name'] == ser]['Requests/s'].values[0]
+            data['RES_TIME_' + ser] = loc_df[loc_df['Name'] == ser]['Average Response Time'].values[0]
+        else:  # MISSING VALUE -> richiesta mai eseguita in quell'esperimento
+            data['REQ/s_' + ser] = 0
+            data['RES_TIME_' + ser] = 0
+
+        data['CPU_' + ser] = doc_df[doc_df['NAME'] == mapping[ser]]['CPU AVG'].values[0]
+        data['MEM_' + ser] = doc_df[doc_df['NAME'] == mapping[ser]]['MEM AVG'].values[0]
+
+        if mapping[ser] in pods:
+            pods.remove(mapping[ser])
+
+    for pod in pods:
+        data['CPU_' + pod] = doc_df[doc_df['NAME'] == pod]['CPU AVG'].values[0]
+        data['MEM_' + pod] = doc_df[doc_df['NAME'] == pod]['MEM AVG'].values[0]
     return data
 
 
-def read_experiments(experiments_dir, mapping):
-    services = list(mapping.values())
+def read_experiments(experiments_dir, mapping, pods, pod_renaming_func=None):
+    services = list(mapping.keys())
     cols = ['NUSER', 'LOAD', 'SR'] + [m + "_" + ser for ser in services for m in ['REQ/s', 'RES_TIME', 'CPU', 'MEM']]
+    cols += [(m + "_" + pod) for pod in pods for m in ['CPU', 'MEM'] if pod not in mapping.values()]
+
     df_out = pd.DataFrame(columns=cols)
 
     edirs = os.listdir(experiments_dir)
@@ -66,15 +83,14 @@ def read_experiments(experiments_dir, mapping):
 
                 for dstat in dockerstats:
                     nrep = int(dstat[dstat.rindex('_') + 1:dstat.rindex('.')])
+                    df_dockerstats = dockerstats_extractor(os.path.join(path_dir, "mem_cpu_{}.txt".format(nrep)), pods,
+                                                           pod_renaming_func)
 
-                    df_dockerstats = dockerstats_extractor(os.path.join(path_dir, "mem_cpu_{}.txt".format(nrep)),
-                                                           services)
                     df_locuststats = locuststats_extractor(os.path.join(path_dir, "esec_{}.csv_stats.csv".format(nrep)))
-                    merged_row = merge_stats_df(df_dockerstats, df_locuststats, mapping)
+                    merged_row = merge_stats_df(df_dockerstats, df_locuststats, mapping, pods)
                     merged_row['NUSER'] = nuser
                     merged_row['LOAD'] = ldir
                     merged_row['SR'] = sr
-
                     df_out = pd.concat([pd.DataFrame(merged_row, index=[0]), df_out.loc[:]]).reset_index(drop=True)
 
     df_out = df_out.sort_values(['NUSER', 'LOAD', 'SR'], inplace=False)[cols]

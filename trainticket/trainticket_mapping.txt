@@ -1,0 +1,113 @@
+-----NACOS-----
+nacos-0,nacos-1,nacos-2,nacosdb-mysql-0,nacosdb-mysql-1,nacosdb-mysql-2
+
+-----SERVIZI CHE NON CHIAMO-----
+tsdb-mysql-0                                    8m           386Mi           
+tsdb-mysql-1                                    7m           266Mi           
+tsdb-mysql-2                                    7m           266Mi   
+ts-wait-order-service-6f7f78bb5d-zkvsx          2m           443Mi       
+rabbitmq-78677c9c5f-spcsd                       6m           110Mi           
+ts-admin-basic-info-service-d8d4b4ff9-948q6     2m           374Mi           
+ts-admin-order-service-787856598f-5hc9g         2m           373Mi           
+ts-admin-route-service-5d486755c-tcr5h          2m           391Mi           
+ts-admin-travel-service-7d4d447494-kwcv8        2m           382Mi           
+ ts-avatar-service-ff8977c96-xdkb5               1m           129Mi           
+ts-basic-service-c57455994-zrw8n                3m           426Mi           
+ts-config-service-55f74d8b79-4dwh6              2m           485Mi           
+ts-consign-price-service-764c676495-5zhgb       3m           457Mi           
+ts-delivery-service-857d89f589-rb2f8            2m           423Mi           
+ts-food-delivery-service-85c449576c-frg29       2m           427Mi           
+ts-gateway-service-8585c745cd-wvj87             28m          717Mi           
+ts-news-service-7665fdf4c-rwbtj                 1m           2Mi             
+ts-notification-service-66777dd945-7xgp9        3m           467Mi           
+ts-order-other-service-6666b4d4d-xlxxj          4m           438Mi           
+ts-payment-service-7fc4c49d89-f7kjw             3m           471Mi           
+ts-preserve-other-service-5b9bbf9cf-rvhsf       3m           371Mi           
+ts-price-service-55c8646c4c-z9sm8               3m           476Mi           
+ts-rebook-service-79586f4dbc-h5722              3m           389Mi           
+ts-route-plan-service-6594877d59-lchr7          3m           348Mi           
+ts-route-service-6f5855dc47-rfg87               3m           470Mi           
+ts-seat-service-54f7bb8465-j55tr                3m           427Mi           
+ts-security-service-7fd5f9ff9c-rwf6v            3m           434Mi           
+ts-station-food-service-bbffbd779-7pxrt         3m           458Mi           
+ts-station-service-798774f5d-fb52z              3m           502Mi           
+ts-ticket-office-service-9979b76f9-g67v9        1m           45Mi            
+ts-train-food-service-f544897f-5llzb            3m           453Mi           
+ts-train-service-c7fc88877-fx6ll                2m           469Mi           
+ts-travel-plan-service-57865655f6-bl9jc         2m           385Mi           
+ts-ui-dashboard-7b5d44c888-lvrk9                0m           4Mi             
+ts-user-service-77988d68d8-k7hw5                2m           416Mi           
+ts-verification-code-service-58d4c7b777-vh8m9   2m           353Mi 
+
+-----SERVIZI CHE CHIAMO-----
+
+ts-travel-service-699599cdf5-7b9dd              2m           513Mi           
+ts-travel2-service-5db558f8d9-2qsrm             2m           464Mi  
+ts-assurance-service-569ffd759f-dr5pr           2m           462Mi  
+ts-food-service-85b5445f7-bgs8x                 2m           444Mi        
+ts-contacts-service-69864b9cd7-jhb4k            3m           413Mi   
+ts-preserve-service-56dfc8d6d-jlkrw             3m           380Mi   
+ts-order-service-69885cc6c8-g8lgk               3m           467Mi   
+ts-inside-payment-service-7f87878d9f-9lvx4      3m           429Mi 
+ts-cancel-service-55b6778574-wq86m              3m           369Mi 
+ts-consign-service-69fdbff744-n98q5             3m           446Mi   
+ts-execute-service-667756b4bf-m2sfk             2m           392Mi   
+ts-voucher-service-7545b4fb7c-8n4v6             1m           21Mi  
+ts-auth-service-5cd94cf4c9-ngm98                2m           422Mi 
+ts-admin-user-service-c544d7b74-c5s4d           2m           390Mi  
+
+
+
+          
+          
+    
+
+
+name(URI)                                                                           ->  service
+
+get_trip_information(/api/v1/travelservice/trips/left)                              ->  ts-travel-service
+get_assurance_types(/api/v1/assuranceservice/assurances/types)                      ->  ts-assurance-service
+get_food_types(/api/v1/foodservice/foods/{departure_date}/shanghai/suzhou/D1345)    ->  ts-food-service
+query_contacts(/api/v1/contactservice/contacts/account/{user_id)                    ->  ts-contacts-service
+preserve_ticket(/api/v1/preserveservice/preserve)                                   ->  ts-preserve-service
+get_order_information(/api/v1/orderservice/order/refresh)                           ->  ts-order-service
+pay_order(/api/v1/inside_pay_service/inside_payment)                                ->  ts-inside-payment-service
+cancel_order(/api/v1/cancelservice/cancel/{order_id}/{user_id})                     ->  ts-cancel-service
+create_consign(/api/v1/consignservice/consigns)                                     ->  ts-consign-service
+collect_ticket(/api/v1/executeservice/execute/collected/{order_id})                 ->  ts-execute-service
+enter_station(/api/v1/executeservice/execute/execute/{order_id})                    ->  ts-execute-service
+get_voucher(/getVoucher)                                                            ->  ts-voucher-service
+admin_login(/api/v1/users/login)                                                    ->  ts-auth-service
+admin_create_user(/api/v1/adminuserservice/users)                                   ->  ts-admin-user-service
+login(/api/v1/users/login)                                                          ->  ts-auth-service
+admin_create_contact(/api/v1/contactservice/contacts)                               ->  ts-contacts-service
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

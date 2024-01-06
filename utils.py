@@ -96,7 +96,8 @@ def hot_encode_col_mapping(df, col):
     return df_one_hot, mapping
 
 
-def get_generic_priorknorledge_mat(columns, services, path_workmodel, num_load=3, metrics=['RES_TIME', 'CPU', 'MEM']):
+def get_generic_priorknorledge_mat(columns, services, path_workmodel=None, num_load=3,
+                                   metrics=['RES_TIME', 'CPU', 'MEM']):
     maps = {i: columns[i] for i in range(0, len(columns))}
     inv_maps = {v: k for k, v in maps.items()}
 
@@ -130,17 +131,18 @@ def get_generic_priorknorledge_mat(columns, services, path_workmodel, num_load=3
                 if met + "_" + ser in columns:
                     mat[inv_maps[met + "_" + ser]][inv_maps["REQ/s_" + ser]] = 1
 
-    with open(path_workmodel, 'r') as f_wm:
-        wl = json.load(f_wm)
-        for ser, vser in wl.items():
-            for es in vser['external_services']:
-                for s in es['services']:
-                    if 'RES_TIME_' + ser in columns and 'RES_TIME_' + s in columns:
-                        mat[inv_maps['RES_TIME_' + s]][inv_maps['RES_TIME_' + ser]] = 1
-                    if 'CPU_' + ser in columns and 'CPU_' + s in columns:
-                        mat[inv_maps['CPU_' + s]][inv_maps['CPU_' + ser]] = 1
-                    if 'MEM_' + ser in columns and 'MEM_' + s in columns:
-                        mat[inv_maps['MEM_' + s]][inv_maps['MEM_' + ser]] = 1
+    if path_workmodel is not None:
+        with open(path_workmodel, 'r') as f_wm:
+            wl = json.load(f_wm)
+            for ser, vser in wl.items():
+                for es in vser['external_services']:
+                    for s in es['services']:
+                        if 'RES_TIME_' + ser in columns and 'RES_TIME_' + s in columns:
+                            mat[inv_maps['RES_TIME_' + s]][inv_maps['RES_TIME_' + ser]] = 1
+                        if 'CPU_' + ser in columns and 'CPU_' + s in columns:
+                            mat[inv_maps['CPU_' + s]][inv_maps['CPU_' + ser]] = 1
+                        if 'MEM_' + ser in columns and 'MEM_' + s in columns:
+                            mat[inv_maps['MEM_' + s]][inv_maps['MEM_' + ser]] = 1
     return mat
 
 
