@@ -86,7 +86,6 @@ def trainticket_example():
             print("------GENERATING PRIOR KNOWLEDGE------")
             pk = utils.get_generic_priorknorledge_mat(df_discovery.columns, services)
             print("------CAUSAL DISCOVERY------")
-            print(df_discovery.columns)
             causal_model = build_model(df_discovery, "trainticket_example", pk)
 
             print("------GENERATING CONFIGRATIONS-")
