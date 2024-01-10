@@ -7,13 +7,15 @@ if [ "$(docker container inspect -f '{{.State.Status}}' minikube)" == 'running' 
   minikube stop
 fi
 
-minikube addons enable metrics-server 
+
 
 #start minikube
 echo "starting Minikube"
 nmcli radio wifi off
-minikube start --extra-config=kubelet.housekeeping-interval=10s
+minikube start --memory 8192 --cpus 4 --extra-config=kubelet.housekeeping-interval=10s
 nmcli radio wifi on
+
+minikube addons enable metrics-server 
 
 #undeploy
 kubectl delete -f configs/complete-demo.yaml

@@ -4,6 +4,14 @@ import numpy as np
 import pandas as pd
 
 
+def rename_startwith(p, pods):
+    pods = sorted(pods, key=len, reverse=True)
+    for pod in pods:
+        if p.startswith(pod):
+            return pod
+    return p
+
+
 def dockerstats_extractor(path, pods, pod_renaming_func):
     df = pd.read_csv(path, delim_whitespace=True, on_bad_lines="warn")
 
@@ -17,13 +25,13 @@ def dockerstats_extractor(path, pods, pod_renaming_func):
     mem = df.groupby(['NAME'], sort=False)['MEMORY(bytes)'].mean()
 
     if pod_renaming_func is not None:
-        cpu = cpu.set_axis([pod_renaming_func(i) for i in cpu.index], copy=False)
-        mem = mem.set_axis([pod_renaming_func(i) for i in mem.index], copy=False)
+        cpu = cpu.set_axis([pod_renaming_func(i, pods) for i in cpu.index], copy=False)
+        mem = mem.set_axis([pod_renaming_func(i, pods) for i in mem.index], copy=False)
 
     data = {'NAME': pods, 'CPU AVG': np.zeros(len(pods)), 'MEM AVG': np.zeros(len(pods))}
 
     for i in range(len(pods)):
-        data['CPU AVG'][i] = cpu[data['NAME'][i]].mean() #BUG
+        data['CPU AVG'][i] = cpu[data['NAME'][i]].mean()  # BUG
         data['MEM AVG'][i] = mem[data['NAME'][i]].mean()
 
     return pd.DataFrame(data)
@@ -68,7 +76,7 @@ def read_experiments(experiments_dir, mapping, pods, pod_renaming_func=None):
 
     df_out = pd.DataFrame(columns=cols)
 
-    edirs = os.listdir(experiments_dir)
+    edirs = [d for d in os.listdir(experiments_dir) if os.path.isdir(os.path.join(experiments_dir, d))]
 
     for edir in edirs:
         sr = int(edir[edir.rindex('_') + 1:])

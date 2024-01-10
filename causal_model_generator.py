@@ -3,7 +3,6 @@ import os.path
 
 import lingam
 import numpy as np
-import pandas as pd
 from dowhy import gcm
 import utils
 import data_preparation
@@ -53,25 +52,64 @@ def muBench_example():
     quit()
 
 
+def sockshop_example():
+    with open("sockshop/pods.txt", 'r') as f_pods:
+        pods = [p.replace("\n", "") for p in f_pods.readlines()]
+
+        with open("sockshop/mapping_service_request.json", "r") as f_map:
+            mapping = json.load(f_map)
+            services = list(mapping.keys())
+
+            path_df = "sockshop/data/sockshop_df.csv"
+            path_configs = "sockshop/configs"
+
+            print("------READING EXPERIMENTS------")
+            df = data_preparation.read_experiments("sockshop/data", mapping, pods, data_preparation.rename_startwith)
+            df.to_csv(path_df, index=False)
+
+            df_discovery, loads_mapping = utils.hot_encode_col_mapping(df, 'LOAD')
+
+            soglie = {}
+            with open("sockshop/soglie.json", 'w') as f_soglie:
+                for ser in services:
+                    soglie[ser] = utils.calc_thresholds(df, ser)
+                json.dump(soglie, f_soglie)
+
+            print("------GENERATING PRIOR KNOWLEDGE------")
+            pk = utils.get_generic_priorknorledge_mat(df_discovery.columns, services)
+            print("------CAUSAL DISCOVERY------")
+            causal_model = build_model(df_discovery, "sockshop_example", pk)
+
+            print("------GENERATING CONFIGRATIONS-")
+            for ser in services:
+                print(ser)
+                for met in ['RES_TIME', 'CPU', 'MEM']:
+                    print(met)
+                    generate_config(causal_model, df_discovery, ser,
+                                    os.path.join(path_configs, "{}_{}_{}.json".format("configs", met, ser)),
+                                    loads_mapping,
+                                    metrics=[met],
+                                    stability=0, nuser_limit=50)
+                generate_config(causal_model, df_discovery, ser,
+                                os.path.join(path_configs, "{}_{}_{}.json".format("configs", "all", ser)),
+                                loads_mapping,
+                                metrics=None,
+                                stability=0, nuser_limit=50)
+
+
 def trainticket_example():
     with open("trainticket/pods.txt", 'r') as f_pods:
         pods = [p.replace("\n", "") for p in f_pods.readlines()]
 
-        def rename_trainticket(p):
-            for pod in pods:
-                if p.startswith(pod):
-                    return pod
-            return p
-
-        with open("trainticket/mapping_service_request.json", "r") as f_in:
-            mapping = json.load(f_in)
+        with open("trainticket/mapping_service_request.json", "r") as f_map:
+            mapping = json.load(f_map)
             services = list(mapping.keys())
 
             path_df = "trainticket/data/trainticket_df.csv"
             path_configs = "trainticket/configs"
 
             print("------READING EXPERIMENTS------")
-            df = data_preparation.read_experiments("trainticket/data", mapping, pods, rename_trainticket)
+            df = data_preparation.read_experiments("trainticket/data", mapping, pods, data_preparation.rename_startwith)
             df.to_csv(path_df, index=False)
 
             df_discovery, loads_mapping = utils.hot_encode_col_mapping(df, 'LOAD')
@@ -102,8 +140,6 @@ def trainticket_example():
                                 loads_mapping,
                                 metrics=None,
                                 stability=0, nuser_limit=50)
-
-    quit()
 
 # muBench_example()
 
