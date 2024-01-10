@@ -1,0 +1,15 @@
+{
+  "login": "user",
+  "get_catalogue1": "catalogue",
+  "get_catalogue2": "catalogue",
+  "get_catalogue3": "catalogue",
+  "get_item": "catalogue",
+  "get_related": "catalogue",
+  "get_tags": "catalogue",
+  "get_cart": "carts",
+  "add_item_to_cart": "carts",
+  "get_orders": "orders",
+  "get_customer": "user",
+  "get_card": "user",
+  "get_address": "user"
+}
