@@ -23,8 +23,8 @@ def discovery(df_discovery, dags_dir):
     X = df_discovery.to_numpy(dtype=np.float64)
 
     print("  -----DLINGAM WITH PRIOR-----")
-    prior = utils.get_generic_priorknorledge_mat(df_discovery.columns, CONFIG.services, CONFIG.path_wm,
-                                                 num_load=len(CONFIG.loads))
+
+    prior = qu.get_prior_mubench(df_discovery.columns)
     qu.save_adjusted_dag(os.path.join(dags_dir, "dlingam_prior"), qu.dlingam_discovery(X, prior_knowledge=prior), maps)
 
 

@@ -300,3 +300,21 @@ def merge_met_dict(met_dicts):
         else:
             out_dict[met]['mean_max_hamming_distance'] = -1
     return out_dict
+
+
+def get_prior_mubench(columns, mets=None):
+    def get_arch_from_wm(path_wm):  # TODO: codice replicato
+        arch = {}
+        with open(path_wm) as f_wm:
+            wm = json.load(f_wm)
+            for k, v in wm.items():
+                if len(v['external_services']) > 0:
+                    arch[k] = []
+                    for eser in v['external_services']:
+                        for ser in eser['services']:
+                            arch[k].append(ser)
+        return arch
+
+    return utils.get_generic_priorknorledge_mat(columns, CONFIG.services, {s: s for s in CONFIG.services},
+                                                get_arch_from_wm(CONFIG.path_wm), num_load=len(CONFIG.loads),
+                                                metrics=mets)

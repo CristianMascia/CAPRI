@@ -26,9 +26,7 @@ def discovery(df_discovery, dags_dir):
     maps = {i: df_discovery.columns[i] for i in range(0, len(df_discovery.columns))}
     X = df_discovery.to_numpy(dtype=np.float64)
 
-    model = lingam.DirectLiNGAM(
-        prior_knowledge=utils.get_generic_priorknorledge_mat(df_discovery.columns, CONFIG.services, CONFIG.path_wm,
-                                                             num_load=len(CONFIG.loads)))
+    model = lingam.DirectLiNGAM(prior_knowledge=qu.get_prior_mubench(df_discovery.columns))
     model.fit(X)
     adj_mat = np.transpose(model.adjacency_matrix_)
 

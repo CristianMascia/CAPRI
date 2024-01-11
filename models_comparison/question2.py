@@ -44,8 +44,7 @@ def discovery(df_dict, dags_dir):
         maps = {i: df_discovery_met.columns[i] for i in range(0, len(df_discovery_met.columns))}
         X = df_discovery_met.to_numpy(dtype=np.float64)
 
-        prior = utils.get_generic_priorknorledge_mat(df_discovery_met.columns, CONFIG.services, CONFIG.path_wm,
-                                                     num_load=len(CONFIG.loads), metrics=[met])
+        prior = qu.get_prior_mubench(df_discovery_met.columns, [met])
         qu.save_adjusted_dag(os.path.join(dags_dir, "dlingam_prior_" + met),
                              qu.dlingam_discovery(X, prior_knowledge=prior), maps)
 
@@ -93,4 +92,3 @@ def __main__(path_df, path_main_dir):
     discovery(df_dict, path_dir_dags)
     configuration_generation(df_dict, path_dir_dags, path_dir_configs)
     show_metrics(df_dict, path_dir_configs, path_metric_file)
-
