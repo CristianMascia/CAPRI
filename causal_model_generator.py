@@ -6,9 +6,10 @@ import lingam
 import numpy as np
 import pandas as pd
 from dowhy import gcm
+
+from configuration_generator import generate_config
 import utils
 import data_preparation
-from configuration_generator import generate_config
 
 
 def build_model(df, path_dag, prior_knowledge=None):
@@ -26,7 +27,7 @@ def build_model(df, path_dag, prior_knowledge=None):
     return causal_model
 
 
-def system_example(path_exp, path, architecture, pods, mapping):
+def system_example(path_exp, path, architecture, pods, mapping, generation_conf_FAST=False):
     path_df = os.path.join(path, "df.csv")
     path_thresholds = os.path.join(path, "thresholds.json")
     path_prior = os.path.join(path, "prior_knowledge")
@@ -64,19 +65,15 @@ def system_example(path_exp, path, architecture, pods, mapping):
         for met in ['RES_TIME', 'CPU', 'MEM']:
             print("Searching configuration for service: {} for metric: {}".format(ser, met))
             generate_config(causal_model, df_discovery, ser,
-                            os.path.join(path_configs, "{}_{}_{}.json".format("configs", met, ser)),
-                            loads_mapping,
-                            metrics=[met],
-                            stability=0, nuser_limit=50, show_comment=True)
+                            os.path.join(path_configs, "{}_{}_{}.json".format("configs", met, ser)), loads_mapping,
+                            metrics=[met], stability=0, nuser_limit=50, show_comment=True, FAST=generation_conf_FAST)
         print("Searching configuration for service: {} for all metrics".format(ser))
         generate_config(causal_model, df_discovery, ser,
-                        os.path.join(path_configs, "{}_{}_{}.json".format("configs", "all", ser)),
-                        loads_mapping,
-                        metrics=None,
-                        stability=0, nuser_limit=50, show_comment=True)
+                        os.path.join(path_configs, "{}_{}_{}.json".format("configs", "all", ser)), loads_mapping,
+                        metrics=None, stability=0, nuser_limit=50, show_comment=True, FAST=generation_conf_FAST)
 
 
-def muBench_example():
+def muBench_example(generation_conf_FAST=False):
     def get_arch_from_wm(path_wm):
         arch = {}
         with open(path_wm) as f_wm:
@@ -91,20 +88,25 @@ def muBench_example():
 
     services = ['s' + str(i) for i in range(10)]
     system_example("mubench/data", "mubench/work", get_arch_from_wm("mubench/configs/workmodel.json"), services,
-                   {s: s for s in services})
+                   {s: s for s in services}, generation_conf_FAST)
 
 
-def sockshop_example():
+def sockshop_example(generation_conf_FAST=False):
     with open("sockshop/architecture.json", 'r') as f_arch:
         with open("sockshop/pods.txt", 'r') as f_pods:
             with open("sockshop/mapping_service_request.json", "r") as f_map:
                 system_example("sockshop/data", "sockshop/work", json.load(f_arch),
-                               [p.replace("\n", "") for p in f_pods.readlines()], json.load(f_map))
+                               [p.replace("\n", "") for p in f_pods.readlines()], json.load(f_map),
+                               generation_conf_FAST)
 
 
-def trainticket_example():
+def trainticket_example(generation_conf_FAST=False):
     with open("trainticket/architecture.json", 'r') as f_arch:
         with open("trainticket/pods.txt", 'r') as f_pods:
             with open("trainticket/mapping_service_request.json", "r") as f_map:
                 system_example("trainticket/data", "trainticket/work", json.load(f_arch),
-                               [p.replace("\n", "") for p in f_pods.readlines()], json.load(f_map))
+                               [p.replace("\n", "") for p in f_pods.readlines()], json.load(f_map),
+                               generation_conf_FAST)
+
+
+muBench_example(True)
