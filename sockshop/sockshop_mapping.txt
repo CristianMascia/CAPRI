@@ -1,0 +1,170 @@
+"/index.html", name="get_index")
+ìurl="/login", name="login")
+"/catalogue?size=5", name="get_catalogue1")
+d"/catalogue/size", name="get_catalogue2")
+"/catalogue?page=1&size=6", name="get_catalogue3")
+url="/category.html", name="get_category")
+"/catalogue/3395a43e-2d88-40de-b95f-e00e1502085b", name="get_item")
+"/catalogue?sort=id&size=3&tags=brown", name="get_related")
+url="/detail.html?id=3395a43e-2d88-40de-b95f-e00e1502085b", name="get_detail")
+"/tags", name="get_tags")
+"/cart", name="get_cart")
+url="/cart", name="add_item_to_cart")
+url="/basket.html", name="get_basket")
+"/orders", name="get_orders")
+"/customer-orders.html", name="get_customer_orders")
+"/customers/fz5cpW831_cB4MMSsuphqSgPw7XHYHa0", name="get_customer")
+"/card", name="get_card")
+"/address", name="get_address")
+
+
+
+
+
+
+carts-5bb979cb6d-8z9gb          3m           370Mi           
+carts-db-548f9f77d9-tm6m7       4m           31Mi            
+catalogue-7c89c4b8b7-l66pj      1m           3Mi             
+catalogue-db-6d76c95d76-pptlp   2m           399Mi           
+front-end-5d7b595bcd-g65w5      1m           59Mi            
+orders-d5f745cc6-r7rhg          2m           356Mi           
+orders-db-864d9bd55-cmk9k       4m           34Mi            
+payment-66d9c6c5c8-lxxj7        1m           3Mi             
+queue-master-78b6f85bb7-bh46h   2m           326Mi           
+rabbitmq-55c946cb56-kdxwr       21m          119Mi           
+session-db-9dc55b5b-lvrpx       2m           2Mi             
+shipping-78db6c6958-c8n7f       2m           349Mi           
+user-5c8d59bcd4-pdn5v           1m           3Mi             
+user-db-758477f574-kzjmv
+
+
+
+
+
+url -> name
+
+-----RISORSE-----
+
+/index.html                                          -> get_index
+/basket.html                                         -> get_basket
+/detail.html?id=3395a43e-2d88-40de-b95f-e00e1502085b -> get_detail
+/category.html                                       -> get_category
+/customer-orders.html                                -> get_customer_orders
+
+-----SERVIZI-----
+
+/login                                               -> login
+/catalogue?size=5                                    -> get_catalogue1
+/catalogue/size"                                     -> get_catalogue2
+/catalogue?page=1&size=6                             -> get_catalogue3
+/catalogue/3395a43e-2d88-40de-b95f-e00e1502085b      -> get_item
+/catalogue?sort=id&size=3&tags=brown                 -> get_related
+/tags                                                -> get_tags
+/cart                                                -> get_cart
+/cart                                                -> add_item_to_cart
+/orders                                              -> get_orders
+/customers/fz5cpW831_cB4MMSsuphqSgPw7XHYHa0          -> get_customer
+/card                                                -> get_card
+/address                                             -> get_address
+
+-----SERVIZI COMPATTI-----
+
+login, 
+(get_catalogue1,get_catalogue2,get_catalogue3,get_item,get_related), 
+get_tags, 
+(get_cart,add_item_to_cart), 
+get_orders, 
+get_customer, 
+get_card, 
+get_address
+
+-----NODI EDGE-----
+
+carts       
+catalogue          
+front-end         
+orders        
+payment       
+queue-master           
+rabbitmq        
+shipping        
+user
+
+-----MAPPING----- 
+
+login                                                               -> user                                  
+(get_catalogue1,get_catalogue2,get_catalogue3,get_item,get_related) -> catalogue
+get_tags                                                            ->  front-end????
+(get_cart,add_item_to_cart)                                         -> carts
+get_orders                                                          -> orders
+get_customer                                                        -> user?
+get_card                                                            -> user?
+get_address                                                         -> user?
+
+
+      
+        
+front-end         
+payment       
+
+questi credo gestiscano le spedizioni del sito, quindi non sono di edge
+dall'archietettura si capisce che ci sono 5 servizi di "edge" oltre al front end
+il problema resta il payment perche non trovo una richiesto ad esso
+queue-master           
+rabbitmq        
+shipping        
+
+
+
+
+
+
+
+
+/login                                               -> user
+/catalogue?size=5                                    -> catalogue
+/catalogue/size"                                     -> catalogue
+/catalogue?page=1&size=6                             -> catalogue
+/catalogue/3395a43e-2d88-40de-b95f-e00e1502085b      -> catalogue
+/catalogue?sort=id&size=3&tags=brown                 -> catalogue
+/tags                                                -> catalogue
+/cart(s?)                                            -> carts                                              ->
+/orders                                              -> orders
+/customers/fz5cpW831_cB4MMSsuphqSgPw7XHYHa0          -> user
+/card                                                -> user
+/address                                             -> user
+
+
+Front-end
+
+NODI di EDGE
+User
+Cart
+Order
+Catalogue
+Payment
+
+
+NODI INterni
+Shipping
+Queue Master
+
+
+
+
+
+
+PATH                                                NAME(Service)       POD
+/login                                           -> login            -> user
+/catalogue?size=5                                -> get_catalogue1   -> catalogue
+/catalogue/size"                                 -> get_catalogue2   -> catalogue
+/catalogue?page=1&size=6                         -> get_catalogue3   -> catalogue
+/catalogue/3395a43e-2d88-40de-b95f-e00e1502085b  -> get_item         -> catalogue
+/catalogue?sort=id&size=3&tags=brown             -> get_related      -> catalogue
+/tags                                            -> get_tags         -> catalogue
+/cart(s?)                                        -> get_cart         -> carts
+/cart                                            -> add_item_to_cart -> carts
+/orders                                          -> get_orders       -> orders
+/customers/fz5cpW831_cB4MMSsuphqSgPw7XHYHa0      -> get_customer     -> user
+/card                                            -> get_card         -> user
+/address                                         -> get_address      -> user
