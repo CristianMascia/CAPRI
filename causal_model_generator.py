@@ -1,15 +1,11 @@
 import json
 import os.path
-import shutil
-
 import lingam
 import numpy as np
-import pandas as pd
 from dowhy import gcm
-
-from configuration_generator import generate_config
-import utils
 import data_preparation
+import utils
+from configuration_generator import generate_config
 
 
 def build_model(df, path_dag, prior_knowledge=None):
@@ -74,9 +70,9 @@ def system_example(path_exp, path, architecture, pods, mapping, generation_conf_
 
 
 def muBench_example(generation_conf_FAST=False):
-    def get_arch_from_wm(path_wm):
+    def get_arch_from_wm(path):
         arch = {}
-        with open(path_wm) as f_wm:
+        with open(path) as f_wm:
             wm = json.load(f_wm)
             for k, v in wm.items():
                 if len(v['external_services']) > 0:
@@ -86,27 +82,41 @@ def muBench_example(generation_conf_FAST=False):
                             arch[k].append(ser)
         return arch
 
+    path_system = "mubench"
+    path_exp = os.path.join(path_system, "data")
+    path_work = os.path.join(path_system, "work")
+    path_wm = os.path.join(path_system, "configs", "workmodel.json")
     services = ['s' + str(i) for i in range(10)]
-    system_example("mubench/data", "mubench/work", get_arch_from_wm("mubench/configs/workmodel.json"), services,
-                   {s: s for s in services}, generation_conf_FAST)
+    system_example(path_exp, path_work, get_arch_from_wm(path_wm), services, {s: s for s in services},
+                   generation_conf_FAST)
 
 
 def sockshop_example(generation_conf_FAST=False):
-    with open("sockshop/architecture.json", 'r') as f_arch:
-        with open("sockshop/pods.txt", 'r') as f_pods:
-            with open("sockshop/mapping_service_request.json", "r") as f_map:
-                system_example("sockshop/data", "sockshop/work", json.load(f_arch),
+    path_system = "sockshop"
+    path_exp = os.path.join(path_system, "data")
+    path_work = os.path.join(path_system, "work")
+    path_arch = os.path.join(path_system, "architecture.json")
+    path_pods = os.path.join(path_system, "pods.txt")
+    path_mapping = os.path.join(path_system, "mapping_service_request.json")
+
+    with open(path_arch, 'r') as f_arch:
+        with open(path_pods, 'r') as f_pods:
+            with open(path_mapping, "r") as f_map:
+                system_example(path_exp, path_work, json.load(f_arch),
                                [p.replace("\n", "") for p in f_pods.readlines()], json.load(f_map),
                                generation_conf_FAST)
 
 
 def trainticket_example(generation_conf_FAST=False):
-    with open("trainticket/architecture.json", 'r') as f_arch:
-        with open("trainticket/pods.txt", 'r') as f_pods:
-            with open("trainticket/mapping_service_request.json", "r") as f_map:
-                system_example("trainticket/data", "trainticket/work", json.load(f_arch),
+    path_system = "trainticket"
+    path_exp = os.path.join(path_system, "data")
+    path_work = os.path.join(path_system, "work")
+    path_arch = os.path.join(path_system, "architecture.json")
+    path_pods = os.path.join(path_system, "pods.txt")
+    path_mapping = os.path.join(path_system, "mapping_service_request.json")
+    with open(path_arch, 'r') as f_arch:
+        with open(path_pods, 'r') as f_pods:
+            with open(path_mapping, "r") as f_map:
+                system_example(path_exp, path_work, json.load(f_arch),
                                [p.replace("\n", "") for p in f_pods.readlines()], json.load(f_map),
                                generation_conf_FAST)
-
-
-muBench_example(True)
