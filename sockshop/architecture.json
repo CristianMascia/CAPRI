@@ -1,0 +1,28 @@
+{
+  "front-end": [
+    "orders",
+    "payment",
+    "user",
+    "catalogue",
+    "carts"
+  ],
+  "orders": [
+    "shipping",
+    "orders-db"
+  ],
+  "user": [
+    "user-db"
+  ],
+  "catalogue": [
+    "catalogue-db"
+  ],
+  "carts": [
+    "carts-db"
+  ],
+  "shipping": [
+    "rabbitmq"
+  ],
+  "rabbitmq": [
+    "queue-master"
+  ]
+}
