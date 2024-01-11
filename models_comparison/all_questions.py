@@ -10,10 +10,13 @@ def __main__():
     n_reps = 5
     n_questions = 4
 
-    path_df = "../mubench/data/mubench_df.csv"
+    path_system = os.path.join("..", "mubench")
+    path_exps = os.path.join(path_system, "data")
+    path_df = os.path.join(path_exps, "mubench_df.csv")
+
     if not os.path.exists(path_df):
-        data_preparation.read_experiments("../mubench/data/", {s: s for s in CONFIG.services}).to_csv(path_df,
-                                                                                                      index=False)
+        data_preparation.read_experiments(path_exps, {s: s for s in CONFIG.services}, CONFIG.services,
+                                          data_preparation.rename_startwith).to_csv(path_df, index=False)
     for i in range(n_questions):
         print("QUESTION {}".format(i))
         q = "question{}".format(i)
