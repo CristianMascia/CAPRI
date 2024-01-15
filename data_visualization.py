@@ -52,7 +52,8 @@ def ___main__(path_df, path_png, services):
             for l, load in enumerate(loads):
                 for s, sr in enumerate(SRs):
                     y = [df.loc[(n, load, sr), met + "_" + service] for n in nusers]
-                    axs[l, s].plot(nusers, y)
+                    axs[l, s].plot(nusers, y, marker='o')
+                    plt.setp(axs[l, s], xticks=nusers)
                     if y_min == -1.:
                         y_min = min(y)
                     else:
@@ -62,8 +63,9 @@ def ___main__(path_df, path_png, services):
                 continue
 
             for ax in axs.flat:
-                ax.set_ylim(y_min, y_max)
-                ax.label_outer()
+                offset = (y_max - y_min) * 0.1
+                ax.set_ylim(y_min - offset, y_max + offset)
+                # ax.label_outer()
 
             for s, sr in enumerate(SRs):
                 axs[0, s].set_title("SR=" + str(sr), fontsize=text_fontsize)
@@ -84,7 +86,7 @@ def trainticket():
 
 
 def sockshop():
-    ___main__("sockshop/data/sockshop_df.csv", "sockshop/png", list(set(json.load(f_map).keys())))
+    with open("sockshop/mapping_service_request.json", 'r') as f_map:
+        ___main__("sockshop/work/df.csv", "sockshop/work/png", list(set(json.load(f_map).keys())))
 
 
-trainticket()

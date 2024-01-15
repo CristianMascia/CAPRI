@@ -3,7 +3,8 @@
 
 
 #esempio comando
-# ./run_experiments.sh -c config.json -d prova -e out -s muBench -r 180 -w 120 -n 3
+# ./workload_generator.sh -c config.json -e out -s mubench -r 180 -w 120 -n 3
+# ./workload_generator.sh -d configs_test -e nuovi_esperimenti -s sockshop -r 10 -w 0 -n 5
 
 #c: configurazione singola   (TODO: controllare mutua esclusione tra c e d)
 #d: cartella di configurazioni
@@ -69,6 +70,7 @@ for cf in $configs; do
 				l_dir=$u_dir/$l
 				mkdir -p $l_dir
 
+                sleep $wait_time
 				echo "Run Experiment("$cur_exp"/"$n_exp"):"$u"_"$l"_"$sr
 
 				for ((r = 1; r <= "$num_rep"; r++)); do

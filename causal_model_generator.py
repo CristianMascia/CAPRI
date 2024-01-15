@@ -41,7 +41,6 @@ def system_example(path_exp, path, architecture, pods, mapping, generation_conf_
     df = data_preparation.read_experiments(path_exp, mapping, pods, data_preparation.rename_startwith)
     df.to_csv(path_df, index=False)
     df_discovery, loads_mapping = utils.hot_encode_col_mapping(df, 'LOAD')
-
     thresholds = {}
     with open(path_thresholds, 'w') as f_ths:
         for ser in services:
@@ -58,15 +57,11 @@ def system_example(path_exp, path, architecture, pods, mapping, generation_conf_
     print("------GENERATING CONFIGRATIONS-")
 
     for ser in services:
-        for met in ['RES_TIME', 'CPU', 'MEM']:
+        for met in ['RES_TIME']:#['RES_TIME', 'CPU', 'MEM']:
             print("Searching configuration for service: {} for metric: {}".format(ser, met))
             generate_config(causal_model, df_discovery, ser,
                             os.path.join(path_configs, "{}_{}_{}.json".format("configs", met, ser)), loads_mapping,
                             metrics=[met], stability=0, nuser_limit=50, show_comment=True, FAST=generation_conf_FAST)
-        print("Searching configuration for service: {} for all metrics".format(ser))
-        generate_config(causal_model, df_discovery, ser,
-                        os.path.join(path_configs, "{}_{}_{}.json".format("configs", "all", ser)), loads_mapping,
-                        metrics=None, stability=0, nuser_limit=50, show_comment=True, FAST=generation_conf_FAST)
 
 
 def muBench_example(generation_conf_FAST=False):
