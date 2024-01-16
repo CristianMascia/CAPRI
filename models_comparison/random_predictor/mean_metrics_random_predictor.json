@@ -1,0 +1,23 @@
+{
+  "RES_TIME": {
+    "mean_precision": 0.3,
+    "mean_recall": 1.0,
+    "mean_mean_hamming_distance": 11.45,
+    "mean_min_hamming_distance": 7.6,
+    "mean_max_hamming_distance": 16.4
+  },
+  "CPU": {
+    "mean_precision": 0.94,
+    "mean_recall": 1.0,
+    "mean_mean_hamming_distance": 12.437777777777777,
+    "mean_min_hamming_distance": 1.6,
+    "mean_max_hamming_distance": 26.8
+  },
+  "MEM": {
+    "mean_precision": 0.0,
+    "mean_recall": 0.0,
+    "mean_mean_hamming_distance": -1,
+    "mean_min_hamming_distance": -1,
+    "mean_max_hamming_distance": -1.0
+  }
+}
