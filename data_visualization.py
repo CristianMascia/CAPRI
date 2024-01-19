@@ -23,7 +23,7 @@ def vertical_align_text(fig, ax, x, text, fontsize, y_min, y_max):
     ax.text(x, 0.5 - offset, text, fontsize=fontsize, transform=ax.transAxes)
 
 
-def ___main__(df, path_png, services):
+def ___main__(df, path_png, services, ths_filtered=False):
     nusers = list(set(df['NUSER']))
     nusers.sort()
     loads = list(set(df['LOAD']))
@@ -43,7 +43,7 @@ def ___main__(df, path_png, services):
     os.mkdir(path_nuser_vs_met)
 
     for service in services:
-        ths = utils.calc_thresholds(df, service)
+        ths = utils.calc_thresholds(df, service, ths_filtered)
         for met in ['RES_TIME', 'CPU', 'MEM']:
             fig, axs = plt.subplots(len(loads), len(SRs), figsize=(23, 10))
             fig.suptitle("{} for {}".format(met, service), fontsize=text_fontsize * 1.5)
@@ -136,4 +136,4 @@ def sockshop():
                 data_preparation.read_experiments(path_data, mapping, pods,
                                                   data_preparation.rename_startwith).to_csv(path_df, index=False)
         df = pd.read_csv(path_df)
-        ___main__(df, path_png, list(set(mapping.keys())))
+        ___main__(df, path_png, list(set(mapping.keys())), True)
