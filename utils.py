@@ -158,14 +158,16 @@ def get_generic_priorknorledge_mat(columns, services, mapping, architecture=None
     return mat
 
 
-def calc_threshold_met(df, service, met):
+def calc_threshold_met(df, service, met, filtered=False):
     d = df[df['NUSER'] == 1][met + "_" + service]
+    if filtered:
+        d = d[df["{}_{}".format(met, service)] > 0]
     return d.mean() + 3 * d.std()
 
 
 # calcola solo le metriche che hanno colonna all'interno del dataset
-def calc_thresholds(df, service):
-    return {met: calc_threshold_met(df, service, met) for met in ['RES_TIME', 'CPU', 'MEM'] if
+def calc_thresholds(df, service, filtered=False):
+    return {met: calc_threshold_met(df, service, met, filtered) for met in ['RES_TIME', 'CPU', 'MEM'] if
             "{}_{}".format(met, service) in df.columns}
 
 

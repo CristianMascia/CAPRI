@@ -5,7 +5,8 @@ import utils
 
 
 def generate_config(causal_model, df, service, path_config, loads_mapping, nuser_limit, nuser_start=2, n_step=1,
-                    metrics=None, stability=0, loads=None, spawn_rates=None, show_comment=False, FAST=False):
+                    metrics=None, stability=0, loads=None, spawn_rates=None, show_comment=False, FAST=False,
+                    ths_filtered=False):
     if metrics is None:
         metrics = ['RES_TIME', 'CPU', 'MEM']
 
@@ -63,7 +64,7 @@ def generate_config(causal_model, df, service, path_config, loads_mapping, nuser
                     return True
         return False
 
-    ths = utils.calc_thresholds(df, service)
+    ths = utils.calc_thresholds(df, service, ths_filtered)
 
     combinations = [(load, sr) for load in loads for sr in spawn_rates]
     n = nuser_start
