@@ -57,7 +57,7 @@ def system_example(path_exp, path, architecture, pods, mapping, generation_conf_
     print("------GENERATING CONFIGRATIONS-")
 
     for ser in services:
-        for met in ['RES_TIME']:#['RES_TIME', 'CPU', 'MEM']:
+        for met in ['RES_TIME', 'CPU', 'MEM']:
             print("Searching configuration for service: {} for metric: {}".format(ser, met))
             generate_config(causal_model, df_discovery, ser,
                             os.path.join(path_configs, "{}_{}_{}.json".format("configs", met, ser)), loads_mapping,
@@ -115,3 +115,4 @@ def trainticket_example(generation_conf_FAST=False):
                 system_example(path_exp, path_work, json.load(f_arch),
                                [p.replace("\n", "") for p in f_pods.readlines()], json.load(f_map),
                                generation_conf_FAST)
+
