@@ -132,7 +132,7 @@ def dagma_mlp_discovery(X, th=0):
     return utils.threshold_matrix(model.fit(X, lambda1=0.02, lambda2=0.005), th=th)
 
 
-def gen_configs_per_metric(df_discovery, loads_mapping, path_cgraph, path_configs, metrics=None):
+def gen_configs_per_metric(df_discovery, loads_mapping, path_cgraph, path_configs, FAST=False, metrics=None):
     if metrics is None:
         metrics = CONFIG.all_metrics
 
@@ -150,7 +150,7 @@ def gen_configs_per_metric(df_discovery, loads_mapping, path_cgraph, path_config
                                      "{}_{}_{}.json".format(path_configs, met, ser),
                                      loads_mapping,
                                      metrics=[met],
-                                     stability=0, nuser_limit=CONFIG.model_limit)
+                                     stability=0, nuser_limit=CONFIG.model_limit, FAST=FAST)
 
 
 def create_min_anomalies_file(df, path, metrics=None):

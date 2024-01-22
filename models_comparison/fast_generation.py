@@ -1,0 +1,78 @@
+import json
+import os
+import random
+
+import numpy as np
+import pandas as pd
+import questions_utils as qu
+import utils
+import CONFIG
+
+
+######## Random Predictor
+
+def data_preparation(path_df):
+    print("----------DATA PREPARATION----------")
+    df = pd.read_csv(path_df)
+    df_d, maps = utils.get_discovery_dataset(df)
+    return df, df_d, maps
+
+
+def discovery(df_discovery, dags_dir):
+    print("----------CAUSAL DISCOVERY----------")
+
+    maps = {i: df_discovery.columns[i] for i in range(0, len(df_discovery.columns))}
+    X = df_discovery.to_numpy(dtype=np.float64)
+
+    print("  -----dLiNGAM-----")
+    path_mod = os.path.join(dags_dir, "dlingam")
+    qu.save_adjusted_dag(path_mod, getattr(qu, "dlingam_discovery")(X, th=0), maps)
+
+
+def configuration_generation(df_discovery, loads_mapping, dags_dir, config_dir):
+    print("----------CONFIGURATION GENERATION----------")
+
+    print("  -----dLiNGAM-----")
+    qu.gen_configs_per_metric(df_discovery, loads_mapping, os.path.join(dags_dir, "dlingam.dot"),
+                              os.path.join(config_dir, "dlingam"), FAST=True)
+
+
+def show_metrics(df_all, config_dir, path_mets):
+    print("----------METRICS----------")
+
+    print("  -----dLiNGAM with Fast generation-----")
+    mets = {}
+    for met in CONFIG.all_metrics:
+        mets[met] = qu.calc_metrics(df_all, path_configs=os.path.join(config_dir, "dlingam_fast_" + met),
+                                    metrics=[met])
+        print("{} -> PREC: {:.2f} RECALL: {:.2f} MEAN DIST: {:.2f} MIN DIST: {} MAX DIST: {}"
+              .format(met, mets[met]['precision'], mets[met]['recall'],
+                      mets[met]['mean_hamming_distance'],
+                      mets[met]['min_hamming_distance'],
+                      mets[met]['max_hamming_distance']))
+
+    with open(path_mets, 'w') as f:
+        json.dump(mets, f)
+    return mets
+
+
+def __main__(path_df, path_main_dir):
+    mets = [{}] * 5
+    for rep in range(5):
+        path_dir_dags = os.path.join(path_main_dir, "dlingam_fast_REP_{}".format(rep), "dags")
+        path_dir_configs = os.path.join(path_main_dir, "dlingam_fast_REP_{}".format(rep), "configs")
+        path_metric_file = os.path.join(path_main_dir, "dlingam_fast_REP_{}".format(rep), "metrics.json")
+
+        os.makedirs(path_dir_dags, exist_ok=True)
+        os.makedirs(path_dir_configs, exist_ok=True)
+
+        df, df_discovery, loads_map = data_preparation(path_df)
+        discovery(df_discovery, path_dir_dags)
+        configuration_generation(df_discovery, loads_map, path_dir_dags, path_dir_configs)
+        mets[rep] = show_metrics(df, path_dir_configs, path_metric_file)
+
+    with open(os.path.join(path_main_dir, "mean_metrics_dlingam_fast.json"), 'w') as f_mean_mets:
+        json.dump(qu.merge_met_dict(mets), f_mean_mets)
+
+
+#__main__(CONFIG.path_df, "dlingam_fast")
