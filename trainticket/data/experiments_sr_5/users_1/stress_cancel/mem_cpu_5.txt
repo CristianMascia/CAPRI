@@ -7885,7 +7885,7 @@ ts-cancel-service-55b6778574-5nvm7              2m           375Mi
 ts-config-service-55f74d8b79-4z2z4              5m           502Mi           
 ts-consign-price-service-764c676495-9jzfp       2m           453Mi           
 ts-consign-service-69fdbff744-wpzg2             2m           461Mi           
-ts-contacts-service-69864b9cd7-dnqlf            6m           503Mi          $
+ts-contacts-service-69864b9cd7-dnqlf            6m           503Mi
 ts-delivery-service-857d89f589-vskht            5m           449Mi           
 ts-execute-service-667756b4bf-qzvmh             2m           445Mi           
 ts-food-delivery-service-85c449576c-wpf4c       2m           426Mi           
