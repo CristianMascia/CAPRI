@@ -18,7 +18,7 @@ import subprocess
 import CONFIG
 
 
-# remove or invert in-edge for threatment nodes
+# remove or invert in-edge for treatment nodes
 def adjust_dag(dag):
     # remove self-loop edges
     for n in dag.nodes:
@@ -34,7 +34,7 @@ def adjust_dag(dag):
     # remove cycles
     while True:
         try:
-            c = nx.find_cycle(dag, orientation='original')  # TODO: veriricare
+            c = nx.find_cycle(dag, orientation='original')
             e = random.choice(c)
             dag.remove_edge(e[0], e[1])
         except nx.NetworkXNoCycle:
@@ -73,9 +73,9 @@ def convert_adjcsv2dot(path_adj):
     df = pd.read_csv(path_adj)
     df.drop(df.columns[0], axis=1, inplace=True)
     mat = df.to_numpy()
-    g = nx.from_numpy_matrix(mat, create_using=nx.DiGraph)
+    g = nx.from_numpy_array(mat, create_using=nx.DiGraph)
 
-    for _, _, d in g.edges(data=True):  # rimuovo weight
+    for _, _, d in g.edges(data=True):  # remove weight
         d.clear()
 
     return nx.relabel_nodes(g, {n: df.columns[n] for n in range(len(mat))})
@@ -110,12 +110,6 @@ def dag_gnn_discovery(df_discovery, path_dag, th=0):
 def dlingam_discovery(X, th=0, prior_knowledge=None):
     model = lingam.DirectLiNGAM(prior_knowledge=prior_knowledge)
     model.fit(X)
-    return utils.threshold_matrix(np.transpose(model.adjacency_matrix_), th=th)
-
-
-def lim_discovery(X, dis_con, th=0):
-    model = lingam.LiM()
-    model.fit(X, dis_con)
     return utils.threshold_matrix(np.transpose(model.adjacency_matrix_), th=th)
 
 
@@ -166,13 +160,12 @@ def create_min_anomalies_file(df, path, metrics=None):
         for met in metrics:
             for n in ns:
                 icomb = []
-                for l in CONFIG.loads:
+                for load in CONFIG.loads:
                     for sr in CONFIG.SRs:
-                        if df[(df['NUSER'] == n) & (df['LOAD'] == l) & (df['SR'] == sr)][met + '_' + ser].mean() > ths[
-                            met]:
-                            icomb.append({'NUSER': n, 'LOAD': l, 'SR': sr})
+                        value = df[(df['NUSER'] == n) & (df['LOAD'] == load) & (df['SR'] == sr)][met + '_' + ser].mean()
+                        if value > ths[met]:
+                            icomb.append({'NUSER': n, 'LOAD': load, 'SR': sr})
 
-                # out_j[ser][met] = {"NUSER": n, 'LOAD': l, 'SR': sr}
                 if len(icomb) > 0:
                     out_j[ser][met] = icomb
                     break
@@ -186,11 +179,6 @@ def calc_metrics(df, path_configs, metrics=None):
         metrics = CONFIG.all_metrics
 
     def calc_hamming_distance(conf_real, conf_pred):
-        # a = abs(conf_real['NUSER'] - conf_pred['nusers'][0])
-        # b = 0 if conf_real['LOAD'] == conf_pred['loads'][0] else 1
-        # c = 0 if conf_real['SR'] == conf_pred['spawn_rates'][0] else 1
-        # d = (conf_pred['spawn_rates'][0])
-        # print("a:{} b:{} c:{} d:{}".format(a, b, c, d))
 
         return abs(conf_real['NUSER'] - conf_pred['nusers'][0]) + (
             0 if conf_real['LOAD'] == conf_pred['loads'][0] else 1) + (
