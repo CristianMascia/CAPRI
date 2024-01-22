@@ -12,8 +12,8 @@ def rename_startwith(p, pods):
     return p
 
 
-def dockerstats_extractor(path, pods, pod_renaming_func):
-    df = pd.read_csv(path, delim_whitespace=True, on_bad_lines="warn")
+def dockerstats_extractor(path, pods, pod_renaming_func=rename_startwith):
+    df = pd.read_csv(path, sep='\\s+')
 
     df = df[df["NAME"] != "NAME"].reset_index(drop=True)
 
@@ -37,7 +37,6 @@ def dockerstats_extractor(path, pods, pod_renaming_func):
     return pd.DataFrame(data)
 
 
-# TODO: testare la generazione del df su mubench
 def locuststats_extractor(path):
     df = pd.read_csv(path).iloc[:-1, :]
     return df[['Name', 'Requests/s', 'Average Response Time']]
@@ -69,7 +68,7 @@ def merge_stats_df(doc_df, loc_df, mapping, pods_):
     return data
 
 
-def read_experiments(experiments_dir, mapping, pods, pod_renaming_func=None):
+def read_experiments(experiments_dir, mapping, pods, pod_renaming_func=rename_startwith):
     services = list(mapping.keys())
     cols = ['NUSER', 'LOAD', 'SR'] + [m + "_" + ser for ser in services for m in ['REQ/s', 'RES_TIME', 'CPU', 'MEM']]
     cols += [(m + "_" + pod) for pod in pods for m in ['CPU', 'MEM'] if pod not in mapping.values()]
