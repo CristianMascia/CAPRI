@@ -15,5 +15,4 @@ def build_model(df, path_dag, prior_knowledge=None):
     causal_model = gcm.StructuralCausalModel(causal_graph)
     gcm.auto.assign_causal_mechanisms(causal_model, df, quality=gcm.auto.AssignmentQuality.GOOD)
     gcm.fit(causal_model, df)
-    # TODO: salvare causal model
     return causal_model

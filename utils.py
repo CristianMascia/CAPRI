@@ -175,3 +175,16 @@ def get_discovery_dataset(df):
     nusers = list(set(df['NUSER']))
     nusers_discovery = [nusers[i] for i in [0] + [i for i in range(2, len(nusers) - 1, 2)] + [len(nusers) - 1]]
     return hot_encode_col_mapping(df[df['NUSER'].isin(nusers_discovery)].reset_index(drop=True), 'LOAD')
+
+
+def get_architecture_from_wm(path_wm):
+    arch = {}
+    with open(path_wm) as f_wm:
+        wm = json.load(f_wm)
+        for k, v in wm.items():
+            if len(v['external_services']) > 0:
+                arch[k] = []
+                for eser in v['external_services']:
+                    for ser in eser['services']:
+                        arch[k].append(ser)
+    return arch

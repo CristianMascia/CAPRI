@@ -222,7 +222,7 @@ def calc_metrics(df, path_configs, metrics=None):
             else:  # X - Negative
                 false_negative = 0
                 # check there is anomalies for service ser
-                if all(met in minimal_confs[ser] for met in metrics):  # False - Negative   #TODO: controllare
+                if all(met in minimal_confs[ser] for met in metrics):  # False - Negative
                     false_negative += 1
 
         precision = 0
@@ -291,18 +291,6 @@ def merge_met_dict(met_dicts):
 
 
 def get_prior_mubench(columns, mets=None):
-    def get_arch_from_wm(path_wm):  # TODO: codice replicato
-        arch = {}
-        with open(path_wm) as f_wm:
-            wm = json.load(f_wm)
-            for k, v in wm.items():
-                if len(v['external_services']) > 0:
-                    arch[k] = []
-                    for eser in v['external_services']:
-                        for ser in eser['services']:
-                            arch[k].append(ser)
-        return arch
-
     return utils.get_generic_priorknorledge_mat(columns, CONFIG.services, {s: s for s in CONFIG.services},
-                                                get_arch_from_wm(CONFIG.path_wm), num_load=len(CONFIG.loads),
-                                                metrics=mets)
+                                                utils.get_architecture_from_wm(CONFIG.path_wm),
+                                                num_load=len(CONFIG.loads), metrics=mets)

@@ -49,24 +49,12 @@ def system_example(path_exp, path, architecture, pods, mapping, ths_filtered=Fal
 
 
 def muBench_example(ths_filtered=False, generation_conf_FAST=False):
-    def get_arch_from_wm(path):
-        arch = {}
-        with open(path) as f_wm:
-            wm = json.load(f_wm)
-            for k, v in wm.items():
-                if len(v['external_services']) > 0:
-                    arch[k] = []
-                    for eser in v['external_services']:
-                        for ser in eser['services']:
-                            arch[k].append(ser)
-        return arch
-
     path_system = "mubench"
     path_exp = os.path.join(path_system, "data")
     path_work = os.path.join(path_system, "work")
     path_wm = os.path.join(path_system, "configs", "workmodel.json")
     services = ['s' + str(i) for i in range(10)]
-    system_example(path_exp, path_work, get_arch_from_wm(path_wm), services, {s: s for s in services},
+    system_example(path_exp, path_work, utils.get_architecture_from_wm(path_wm), services, {s: s for s in services},
                    ths_filtered=ths_filtered, generation_conf_FAST=generation_conf_FAST)
 
 
