@@ -1,9 +1,6 @@
-import json
 import os
 import shutil
 import matplotlib.pyplot as plt
-import pandas as pd
-import data_preparation
 import utils
 import matplotlib.transforms as transforms
 
@@ -87,53 +84,3 @@ def ___main__(df, path_png, services, ths_filtered=False):
             fig.subplots_adjust(left=0.03, right=0.85)
             fig.savefig(os.path.join(path_nuser_vs_met, "{}_{}.png".format(service, met)))
             plt.close(fig)
-
-
-def mubench():
-    path_system = "mubench"
-    path_df = os.path.join(path_system, "data", "mubench_df.csv")
-    path_png = os.path.join(path_system, "png")
-
-    df = pd.read_csv(path_df)
-    df_disc = df[df['NUSER'].isin([i for i in range(1, 30, 2)] + [30])]
-    ___main__(df_disc, path_png, ['s' + str(i) for i in range(10)])
-
-
-def trainticket():
-    path_system = "trainticket"
-    path_mapping = os.path.join(path_system, "mapping_service_request.json")
-    path_data = os.path.join(path_system, "data")
-    path_df = os.path.join(path_data, "trainticket_df.csv")
-    path_png = os.path.join(path_system, "png")
-    path_pods = os.path.join(path_system, "pods.txt")
-
-    with open(path_mapping, 'r') as f_map:
-        mapping = json.load(f_map)
-
-        if not os.path.exists(path_df):
-            with open(path_pods, 'r') as f_pods:
-                pods = [p.replace("\n", "") for p in f_pods.readlines()]
-                data_preparation.read_experiments(path_data, mapping, pods,
-                                                  data_preparation.rename_startwith).to_csv(path_df, index=False)
-        df = pd.read_csv(path_df)
-        ___main__(df, path_png, list(set(mapping.keys())))
-
-
-def sockshop():
-    path_system = "sockshop"
-    path_mapping = os.path.join(path_system, "mapping_service_request.json")
-    path_data = os.path.join(path_system, "data")
-    path_df = os.path.join(path_data, "sockshop_df.csv")
-    path_png = os.path.join(path_system, "png")
-    path_pods = os.path.join(path_system, "pods.txt")
-
-    with open(path_mapping, 'r') as f_map:
-        mapping = json.load(f_map)
-
-        if not os.path.exists(path_df):
-            with open(path_pods, 'r') as f_pods:
-                pods = [p.replace("\n", "") for p in f_pods.readlines()]
-                data_preparation.read_experiments(path_data, mapping, pods,
-                                                  data_preparation.rename_startwith).to_csv(path_df, index=False)
-        df = pd.read_csv(path_df)
-        ___main__(df, path_png, list(set(mapping.keys())), True)

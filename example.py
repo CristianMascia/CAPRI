@@ -1,12 +1,16 @@
 import json
 import os.path
+
+import pandas as pd
+
 import data_preparation
+import data_visualization
 import utils
 from causal_model_generator import build_model
 from configuration_generator import generate_config
 
 
-def system_example(path_exp, path, architecture, pods, mapping, ths_filtered=False, generation_conf_FAST=False):
+def system_workflow(path_exp, path, architecture, pods, mapping, ths_filtered=False, generation_conf_FAST=False):
     path_df = os.path.join(path, "df.csv")
     path_thresholds = os.path.join(path, "thresholds.json")
     path_prior = os.path.join(path, "prior_knowledge")
@@ -48,17 +52,17 @@ def system_example(path_exp, path, architecture, pods, mapping, ths_filtered=Fal
                             ths_filtered=ths_filtered)
 
 
-def muBench_example(ths_filtered=False, generation_conf_FAST=False):
+def muBench_workflow(ths_filtered=False, generation_conf_FAST=False):
     path_system = "mubench"
     path_exp = os.path.join(path_system, "data")
     path_work = os.path.join(path_system, "work")
     path_wm = os.path.join(path_system, "configs", "workmodel.json")
     services = ['s' + str(i) for i in range(10)]
-    system_example(path_exp, path_work, utils.get_architecture_from_wm(path_wm), services, {s: s for s in services},
-                   ths_filtered=ths_filtered, generation_conf_FAST=generation_conf_FAST)
+    system_workflow(path_exp, path_work, utils.get_architecture_from_wm(path_wm), services, {s: s for s in services},
+                    ths_filtered=ths_filtered, generation_conf_FAST=generation_conf_FAST)
 
 
-def sockshop_example(ths_filtered=False, generation_conf_FAST=False):
+def sockshop_workflow(ths_filtered=False, generation_conf_FAST=False):
     path_system = "sockshop"
     path_exp = os.path.join(path_system, "data")
     path_work = os.path.join(path_system, "work")
@@ -70,11 +74,11 @@ def sockshop_example(ths_filtered=False, generation_conf_FAST=False):
         with open(path_pods, 'r') as f_pods:
             pods = [p.replace("\n", "") for p in f_pods.readlines()]
             with open(path_mapping, "r") as f_map:
-                system_example(path_exp, path_work, json.load(f_arch), pods, json.load(f_map),
-                               ths_filtered=ths_filtered, generation_conf_FAST=generation_conf_FAST)
+                system_workflow(path_exp, path_work, json.load(f_arch), pods, json.load(f_map),
+                                ths_filtered=ths_filtered, generation_conf_FAST=generation_conf_FAST)
 
 
-def trainticket_example(ths_filtered=False, generation_conf_FAST=False):
+def trainticket_workflow(ths_filtered=False, generation_conf_FAST=False):
     path_system = "trainticket"
     path_exp = os.path.join(path_system, "data")
     path_work = os.path.join(path_system, "work")
@@ -85,5 +89,42 @@ def trainticket_example(ths_filtered=False, generation_conf_FAST=False):
         with open(path_pods, 'r') as f_pods:
             pods = [p.replace("\n", "") for p in f_pods.readlines()]
             with open(path_mapping, "r") as f_map:
-                system_example(path_exp, path_work, json.load(f_arch), pods, json.load(f_map),
-                               ths_filtered=ths_filtered, generation_conf_FAST=generation_conf_FAST)
+                system_workflow(path_exp, path_work, json.load(f_arch), pods, json.load(f_map),
+                                ths_filtered=ths_filtered, generation_conf_FAST=generation_conf_FAST)
+
+
+def mubench_visualization():
+    path_system = "mubench"
+    path_df = os.path.join(path_system, "data", "mubench_df.csv")
+    path_png = os.path.join(path_system, "png")
+
+    df = pd.read_csv(path_df)
+    df_disc = df[df['NUSER'].isin([i for i in range(1, 30, 2)] + [30])]
+    data_visualization.___main__(df_disc, path_png, ['s' + str(i) for i in range(10)])
+
+
+def sockshop_visualization():
+    path_system = "sockshop"
+    path_mapping = os.path.join(path_system, "mapping_service_request.json")
+    path_data = os.path.join(path_system, "data")
+    path_df = os.path.join(path_data, "sockshop_df.csv")
+    path_png = os.path.join(path_system, "png")
+
+    with open(path_mapping, 'r') as f_map:
+        data_visualization.___main__(pd.read_csv(path_df), path_png, list(set(json.load(f_map).keys())), True)
+
+
+def trainticket_visualization():
+    path_system = "trainticket"
+    path_mapping = os.path.join(path_system, "mapping_service_request.json")
+    path_data = os.path.join(path_system, "data")
+    path_df = os.path.join(path_data, "trainticket_df.csv")
+    path_png = os.path.join(path_system, "png")
+
+    with open(path_mapping, 'r') as f_map:
+        data_visualization.___main__(pd.read_csv(path_df), path_png, list(set(json.load(f_map).keys())))
+
+
+mubench_visualization()
+sockshop_visualization()
+trainticket_visualization()
