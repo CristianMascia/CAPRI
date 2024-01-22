@@ -1,21 +1,29 @@
 #!/bin/bash
 
-
-
-#esempio comando
+#Example
 # ./workload_generator.sh -c config.json -e out -s mubench -r 180 -w 120 -n 3
-# ./workload_generator.sh -d configs_test -e nuovi_esperimenti -s sockshop -r 10 -w 0 -n 5
+# ./workload_generator.sh -d configs_test -e new_exp -s sockshop -r 180 -w 120 -n 5
 
-#c: configurazione singola
-#d: cartella di configurazioni
-#e: cartella per l'esperimento, viene creata se non esiste
-#s: system tra trainticket, mubench, sockshop (TODO: permettere di specificare un proprio init.sh)
 
-#TODO: sceivere un help
-#TODO: aggiungere alternative con long option
-#TODO: controllare tutto il testo se è corretto in inglese
+################################################################################
+# Help                                                                         #
+################################################################################
+Help()
+{
+   # Display Help
+    echo "Workload Generator for muBench, SockShop and TrainTicket"
+    echo "Mandatory arguments to short options are mandatory."
+    echo "    -c configuration file"
+	echo "    -d directory which containts configurations"
+	echo "    -e directory to save the experiments"
+	echo "    -s the system to test. The supported system are: mubench, sockshop, trainticket"
+	echo "    -r the duration (in seconds) of every experiment"
+	echo "    -w the duration (in seconds) of the pause between experiment"
+	echo "    -n the number of repetition for every experiment"
+	echo "    -h show this help"
+}
 
-while getopts c:d:e:s:r:n:w: flag; do #ricorda che ':' significano che quella opzione richiede un argomento
+while getopts c:d:e:s:r:n:w:h flag; do #ricorda che ':' significano che quella opzione richiede un argomento
 	case "${flag}" in
 	c) config_file=${OPTARG} ;;
 	d) config_dir=${OPTARG} ;;
@@ -24,6 +32,7 @@ while getopts c:d:e:s:r:n:w: flag; do #ricorda che ':' significano che quella op
 	r) run_time=${OPTARG} ;;
 	w) wait_time=${OPTARG} ;;
 	n) num_rep=${OPTARG} ;;
+	h) Help ;;
 	*) echo 'Error in command line parsing' >&2; exit 1
 	esac
 done
@@ -151,3 +160,9 @@ done
 cd $system
 . ./stop_sys.sh
 cd ..
+
+
+
+
+
+
