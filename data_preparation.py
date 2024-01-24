@@ -101,4 +101,4 @@ def read_experiments(experiments_dir, mapping, pods, pod_renaming_func=rename_st
                     df_out = pd.concat([pd.DataFrame(merged_row, index=[0]), df_out.loc[:]]).reset_index(drop=True)
 
     df_out = df_out.sort_values(['NUSER', 'LOAD', 'SR'], inplace=False)[cols]
-    return df_out
+    return df_out.reset_index(drop=True)

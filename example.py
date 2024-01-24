@@ -12,6 +12,7 @@ from configuration_generator import generate_config
 
 def system_workflow(path_exp, path, architecture, pods, mapping, ths_filtered=False, generation_conf_FAST=False):
     path_df = os.path.join(path, "df.csv")
+    path_df_disc = os.path.join(path, "df_discovery.csv")
     path_thresholds = os.path.join(path, "thresholds.json")
     path_prior = os.path.join(path, "prior_knowledge")
     path_dag = os.path.join(path, "dag")
@@ -28,10 +29,12 @@ def system_workflow(path_exp, path, architecture, pods, mapping, ths_filtered=Fa
     df = data_preparation.read_experiments(path_exp, mapping, pods, data_preparation.rename_startwith)
     df.to_csv(path_df, index=False)
     df_discovery, loads_mapping = utils.hot_encode_col_mapping(df, 'LOAD')
+    df_discovery.to_csv(path_df_disc, index=False)
+
     thresholds = {}
     with open(path_thresholds, 'w') as f_ths:
         for ser in services:
-            thresholds[ser] = utils.calc_thresholds(df, ser)
+            thresholds[ser] = utils.calc_thresholds(df, ser, filtered=ths_filtered)
         json.dump(thresholds, f_ths)
 
     print("------GENERATING PRIOR KNOWLEDGE------")
@@ -124,7 +127,3 @@ def trainticket_visualization():
     with open(path_mapping, 'r') as f_map:
         data_visualization.___main__(pd.read_csv(path_df), path_png, list(set(json.load(f_map).keys())))
 
-
-mubench_visualization()
-sockshop_visualization()
-trainticket_visualization()
