@@ -20,7 +20,7 @@ minikube addons enable metrics-server
 #start minikube and muBench
 echo "starting Minikube"
 nmcli radio wifi off
-minikube start --extra-config=kubelet.housekeeping-interval=10s
+minikube start --memory 8192 --cpus 4  --extra-config=kubelet.housekeeping-interval=10s
 nmcli radio wifi on
 echo "starting muBench"
 docker start mubench
