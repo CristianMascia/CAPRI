@@ -16,7 +16,7 @@ def __main__(path_git, path_arch):
             if ser == "ts-voucher-service":
                 arch[ser] = ['ts-order-service', 'ts-order-other-service']
             else:
-                path = os.path.join("train-ticket", ser)
+                path = os.path.join(path_git, ser)
                 impls = []
                 for (dir_path, dir_names, file_names) in os.walk(path):
                     for f in file_names:
@@ -34,7 +34,6 @@ def __main__(path_git, path_arch):
                         for line in f_f.readlines():
                             if "getServiceUrl(\"ts" in line:
                                 ser_called = line[line.rfind('(\"') + 2:line.rfind('"')]
-                                # print(ser_called)
                                 list_called.append(ser_called)
                     if len(list_called) > 0:
                         list_called = list(set(list_called))
