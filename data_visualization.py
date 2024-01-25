@@ -64,8 +64,6 @@ def ___main__(df, path_png, services, ths_filtered=False):
                     else:
                         y_min = min(y_min, min(y))
                     y_max = max(y_max, max(y), ths[met])
-            if y_min == y_max:
-                continue
 
             for ax in axs.flat:
                 offset = (y_max - y_min) * 0.1
