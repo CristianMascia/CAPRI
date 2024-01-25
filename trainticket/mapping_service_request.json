@@ -10,7 +10,6 @@
   "create_consign": "ts-consign-service",
   "collect_ticket": "ts-execute-service",
   "enter_station": "ts-execute-service",
-  "get_voucher": "ts-voucher-service",
   "admin_login": "ts-auth-service",
   "admin_create_user": "ts-admin-user-service",
   "login": "ts-auth-service",
