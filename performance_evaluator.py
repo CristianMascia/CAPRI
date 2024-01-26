@@ -7,7 +7,7 @@ import data_preparation
 import utils
 
 
-def calc_metrics(path_df, path_configs, path_runned_configs, services, mapping, metrics=None):
+def calc_metrics(path_df, path_configs, path_run_configs, services, mapping, ths_filtered=False, metrics=None):
     if metrics is None:
         metrics = ['RES_TIME', 'CPU', 'MEM']
 
@@ -35,13 +35,13 @@ def calc_metrics(path_df, path_configs, path_runned_configs, services, mapping, 
         false_negative = 0
         false_positive = 0
         for ser in services:
-            ths = utils.calc_thresholds(df, ser)
+            ths = utils.calc_thresholds(df, ser, filtered=ths_filtered)
             name_config = "configs_{}_{}".format(met, ser)
             path_config = os.path.join(path_configs, name_config + ".json")
             if os.path.isfile(path_config):
                 with open(path_config, 'r') as f_c:
                     config = json.load(f_c)
-                    exp_dir = os.path.join(path_runned_configs, name_config,
+                    exp_dir = os.path.join(path_run_configs, name_config,
                                            "experiments_sr_" + str(config['spawn_rates'][0]),
                                            'users_' + str(config['nusers'][0]), config['loads'][0])
 
@@ -74,13 +74,3 @@ def calc_metrics(path_df, path_configs, path_runned_configs, services, mapping, 
         metrics_dict[met] = {"precision": precision, "recall": recall}
 
     return metrics_dict
-
-
-def sockshop():
-    with open("sockshop/mapping_service_request.json", 'r') as f_map:
-        mapping = json.load(f_map)
-        mets = calc_metrics("sockshop/work/df.csv", "sockshop/work/generated_configs", "sockshop/work/runned_configs",
-                            list(mapping.keys()), mapping)
-
-        with open("sockshop/work/metrics.json", 'w') as f_mets:
-            json.dump(mets, f_mets)
