@@ -94,12 +94,15 @@ fi
 if [ -z "$config_dir" ]; then
 	configs=($config_file)
 else
-	configs=$(ls $config_dir | grep -E '*.json' | sed 's/.*/'$config_dir'\/&/')
-	if [ ${#configs[@]} -eq 0 ] || [ -z ${configs[0]} ]; then
+
+	configs=( $(ls $config_dir | grep -E '*.json') )
+	if [[ ${#configs[@]} -eq 0 ||   -z ${configs[0]} ]]; then
 	    echo "There are not configs in $config_dir">&2
 	    exit
 	fi
+	configs=( "${configs[@]/#/$config_dir/}" )
 fi
+
 
 cd $system
 . ./init.sh #import host
