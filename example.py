@@ -24,9 +24,9 @@ def get_system_info(system):
         pods = services
         arch = utils.get_architecture_from_wm("mubench/configs/workmodel.json")
     else:
-        with open("sockshop/architecture.json", 'r') as f_arch:
+        with open(os.path.join(str(system.value), "architecture.json"), 'r') as f_arch:
             with open(os.path.join(str(system.value), "mapping_service_request.json"), 'r') as f_map:
-                with open(os.path.join(str(system.value), "mapping_service_request.json"), 'r') as f_pods:
+                with open(os.path.join(str(system.value), "pods.txt"), 'r') as f_pods:
                     arch = json.load(f_arch)
                     mapping = json.load(f_map)
                     services = list(set(mapping))
