@@ -31,7 +31,9 @@ def ___main__(df, path_png, services, ths_filtered=False):
     df_grouped = df.groupby(['NUSER', 'LOAD', 'SR']).mean()
 
     text_fontsize = 14
-
+    th_linewidth = 2
+    unita_misura = {'CPU': 'cores', 'RES_TIME': 'ms', 'MEM': 'bytes'}
+    label_met = {'CPU': 'CPU', 'RES_TIME': 'Response Time', 'MEM': 'Memory'}
     path_nuser_vs_met = os.path.join(path_png, "NUSER_vs_MET")
 
     if os.path.exists(path_png):
@@ -43,7 +45,7 @@ def ___main__(df, path_png, services, ths_filtered=False):
         ths = utils.calc_thresholds(df, service, ths_filtered)
         for met in ['RES_TIME', 'CPU', 'MEM']:
             fig, axs = plt.subplots(len(loads), len(SRs), figsize=(23, 10))
-            fig.suptitle("{} for {}".format(met, service), fontsize=text_fontsize * 1.5)
+            # fig.suptitle("{} for {}".format(met, service), fontsize=text_fontsize * 1.5)
             y_min = -1.
             y_max = -1.
 
@@ -52,12 +54,14 @@ def ___main__(df, path_png, services, ths_filtered=False):
                     y = [df_grouped.loc[(n, load, sr), met + "_" + service] for n in nusers]
                     axs[l, s].plot(nusers, y, marker='o')
                     plt.setp(axs[l, s], xticks=nusers)
-                    axs[l, s].axhline(ths[met], color='red', linestyle='solid')
+                    axs[l, s].axhline(ths[met], color='red', linestyle='solid', linewidth=th_linewidth)
+                    axs[l, s].text((max(nusers) - min(nusers)) * 0.3, ths[met] + th_linewidth,
+                                   "TH={:.2f}".format(ths[met]))
 
-                    trans = transforms.blended_transform_factory(
-                        axs[l, s].get_yticklabels()[0].get_transform(), axs[l, s].transData)
-                    axs[l, s].text(0, ths[met], "{:.0f}".format(ths[met]), color="red", transform=trans,
-                                   ha="right", va="center")
+                    # trans = transforms.blended_transform_factory(
+                    #    axs[l, s].get_yticklabels()[0].get_transform(), axs[l, s].transData)
+                    # axs[l, s].text(0, ths[met], "{:.2f}".format(ths[met]), color="red", transform=trans,
+                    #               ha="right", va="center")
 
                     if y_min == -1.:
                         y_min = min(y)
@@ -68,17 +72,19 @@ def ___main__(df, path_png, services, ths_filtered=False):
             for ax in axs.flat:
                 offset = (y_max - y_min) * 0.1
                 ax.set_ylim(y_min - offset, y_max + offset)
+                ax.yaxis.labelpad = 10
+                ax.xaxis.labelpad = 10
                 # ax.label_outer()
 
             for s, sr in enumerate(SRs):
-                axs[0, s].set_title("SR=" + str(sr), fontsize=text_fontsize)
+                axs[0, s].set_title("Spawn Rate=" + str(sr), fontsize=text_fontsize)
 
             for l, load in enumerate(loads):
-                vertical_align_text(fig, axs[l, len(SRs) - 1], 1.1, "LOAD=" + load.replace("-", " "), text_fontsize,
+                vertical_align_text(fig, axs[l, len(SRs) - 1], 1.1, "LOAD=" + load.replace("_", " "), text_fontsize,
                                     y_min, y_max)
 
-            axs[int(len(loads) / 2), 0].set_ylabel(met, fontsize=text_fontsize)
-            axs[len(loads) - 1, int(len(SRs) / 2)].set_xlabel('NUSER', fontsize=text_fontsize)
+            axs[int(len(loads) / 2), 0].set_ylabel("{}[{}]".format(label_met[met], unita_misura[met]), fontsize=text_fontsize)
+            axs[len(loads) - 1, int(len(SRs) / 2)].set_xlabel('Users Size', fontsize=text_fontsize)
             fig.subplots_adjust(left=0.03, right=0.85)
             fig.savefig(os.path.join(path_nuser_vs_met, "{}_{}.png".format(service, met)))
             plt.close(fig)
