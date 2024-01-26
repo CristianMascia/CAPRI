@@ -1,2 +1,1 @@
 Method,Name,Error,Occurrences
-POST,get_trip_information,HTTPError('504 Server Error: Gateway Time-out for url: get_trip_information'),1

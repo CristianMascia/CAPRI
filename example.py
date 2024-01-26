@@ -130,3 +130,6 @@ def system_performance_evaluation(system, path_work, sensibility=0.):
 
     with open(path_metrics, 'w') as f_metrics:
         json.dump(metrics, f_metrics)
+
+
+system_visualization(System.TRAINTICKET)
