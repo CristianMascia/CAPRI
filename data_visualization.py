@@ -55,7 +55,7 @@ def ___main__(df, path_png, services, ths_filtered=False):
                     axs[l, s].plot(nusers, y, marker='o')
                     plt.setp(axs[l, s], xticks=nusers)
                     axs[l, s].axhline(ths[met], color='red', linestyle='solid', linewidth=th_linewidth)
-                    axs[l, s].text((max(nusers) - min(nusers)) * 0.3, ths[met] + th_linewidth,
+                    axs[l, s].text((max(nusers) - min(nusers)) * 0.3, ths[met],
                                    "TH={:.2f}".format(ths[met]))
 
                     # trans = transforms.blended_transform_factory(
