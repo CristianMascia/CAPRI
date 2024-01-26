@@ -45,6 +45,7 @@ def discovery(df_dict, dags_dir):
         X = df_discovery_met.to_numpy(dtype=np.float64)
 
         prior = qu.get_prior_mubench(df_discovery_met.columns, [met])
+        utils.draw_prior_knwoledge_mat(prior, df_discovery_met.columns, os.path.join(dags_dir, "prior_" + met))
         qu.save_adjusted_dag(os.path.join(dags_dir, "dlingam_prior_" + met),
                              qu.dlingam_discovery(X, prior_knowledge=prior), maps)
 
