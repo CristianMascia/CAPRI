@@ -7,7 +7,8 @@ import data_preparation
 import utils
 
 
-def calc_metrics(path_df, path_configs, path_run_configs, services, mapping, ths_filtered=False, metrics=None):
+def calc_metrics(path_df, path_configs, path_run_configs, services, mapping, ths_filtered=False, metrics=None,
+                 sensibility=0.):
     if metrics is None:
         metrics = ['RES_TIME', 'CPU', 'MEM']
 
@@ -45,7 +46,7 @@ def calc_metrics(path_df, path_configs, path_run_configs, services, mapping, ths
                                            "experiments_sr_" + str(config['spawn_rates'][0]),
                                            'users_' + str(config['nusers'][0]), config['loads'][0])
 
-                    if get_exp_value(exp_dir, ser, mapping[ser], met) > ths[met]:
+                    if get_exp_value(exp_dir, ser, mapping[ser], met) > ((1 - sensibility) * ths[met]):
                         true_positive += 1
                     else:
                         false_positive += 1
@@ -56,7 +57,7 @@ def calc_metrics(path_df, path_configs, path_run_configs, services, mapping, ths
                     for l in list(set(df['LOAD'])):
                         for sr in list(set(df['SR'])):
                             a = df[(df['NUSER'] == n) & (df['LOAD'] == l) & (df['SR'] == sr)]
-                            if a[met + "_" + ser].mean() > ths[met]:
+                            if a[met + "_" + ser].mean() > ((1 + sensibility) * ths[met]):
                                 false_negative += 1
                                 break
             # print("Service {} Met: {}".format(ser, met))

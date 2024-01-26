@@ -7,6 +7,7 @@ import utils
 from causal_model_generator import build_model
 from configuration_generator import generate_config
 from enum import Enum
+
 from performance_evaluator import calc_metrics
 
 
@@ -117,14 +118,15 @@ def system_workflow(system, path_work, generation_conf_FAST=False):
                             FAST=generation_conf_FAST, ths_filtered=ths_filtered, nuser_start=nuser_start)
 
 
-def system_performance_evaluation(system, path_work):
+def system_performance_evaluation(system, path_work, sensibility=0.):
     path_df = os.path.join(path_work, "df.csv")
     path_metrics = os.path.join(path_work, "metrics.json")
     path_configs = os.path.join(path_work, "generated_configs")
     path_run_configs = os.path.join(path_work, "run_configs")
 
     services, mapping, _, _ = get_system_info(system)
-    metrics = calc_metrics(path_df, path_configs, path_run_configs, services, mapping)
+    metrics = calc_metrics(path_df, path_configs, path_run_configs, services, mapping,
+                           ths_filtered=(system != System.MUBENCH), sensibility=sensibility)
 
     with open(path_metrics, 'w') as f_metrics:
         json.dump(metrics, f_metrics)
