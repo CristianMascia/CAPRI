@@ -162,6 +162,8 @@ def calc_threshold_met(df, service, met, filtered=False):
     d = df[df['NUSER'] == 1][met + "_" + service]
     if filtered:
         d = d[df["{}_{}".format(met, service)] > 0]
+    if len(d) == 0:
+        return 0
     return d.mean() + 3 * d.std()
 
 
