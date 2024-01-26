@@ -1,1 +1,5 @@
 Method,Name,Error,Occurrences
+GET,enter_station,HTTPError('500 Server Error:  for url: enter_station'),79
+POST,preserve_ticket,HTTPError('503 Server Error:  for url: preserve_ticket'),402
+POST,get_trip_information,HTTPError('500 Server Error:  for url: get_trip_information'),12
+POST,preserve_ticket,HTTPError('500 Server Error:  for url: preserve_ticket'),100

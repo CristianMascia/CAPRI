@@ -1,2 +1,1 @@
 Method,Name,Error,Occurrences
-POST,admin_create_user,HTTPError('500 Server Error:  for url: admin_create_user'),20
