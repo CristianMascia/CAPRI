@@ -55,8 +55,7 @@ def ___main__(df, path_png, services, ths_filtered=False):
                     axs[l, s].plot(nusers, y, marker='o')
                     plt.setp(axs[l, s], xticks=nusers)
                     axs[l, s].axhline(ths[met], color='red', linestyle='solid', linewidth=th_linewidth)
-                    axs[l, s].text((max(nusers) - min(nusers)) * 0.3, ths[met],
-                                   "TH={:.2f}".format(ths[met]))
+                    axs[l, s].text((max(nusers) - min(nusers)) * 0.3, ths[met], "TH={:.2f}".format(ths[met]))
 
                     # trans = transforms.blended_transform_factory(
                     #    axs[l, s].get_yticklabels()[0].get_transform(), axs[l, s].transData)
@@ -83,7 +82,8 @@ def ___main__(df, path_png, services, ths_filtered=False):
                 vertical_align_text(fig, axs[l, len(SRs) - 1], 1.1, "LOAD=" + load.replace("_", " "), text_fontsize,
                                     y_min, y_max)
 
-            axs[int(len(loads) / 2), 0].set_ylabel("{}[{}]".format(label_met[met], unita_misura[met]), fontsize=text_fontsize)
+            axs[int(len(loads) / 2), 0].set_ylabel("{}[{}]".format(label_met[met], unita_misura[met]),
+                                                   fontsize=text_fontsize)
             axs[len(loads) - 1, int(len(SRs) / 2)].set_xlabel('Users Size', fontsize=text_fontsize)
             fig.subplots_adjust(left=0.03, right=0.85)
             fig.savefig(os.path.join(path_nuser_vs_met, "{}_{}.png".format(service, met)))
