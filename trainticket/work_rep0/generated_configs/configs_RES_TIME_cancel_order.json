@@ -1,0 +1,1 @@
+{"nusers": [4], "loads": ["stress_booking"], "spawn_rates": [10], "anomalous_metrics": ["RES_TIME"]}
