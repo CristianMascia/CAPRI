@@ -95,7 +95,7 @@ if [ -z "$config_dir" ]; then
 	configs=($config_file)
 else
 
-	configs=( $(ls $config_dir | grep -E '*.json') )
+	configs=($(ls $config_dir | grep -E '*.json'))
 	if [[ ${#configs[@]} -eq 0 ||   -z ${configs[0]} ]]; then
 	    echo "There are not configs in $config_dir">&2
 	    exit
@@ -103,12 +103,11 @@ else
 	configs=( "${configs[@]/#/$config_dir/}" )
 fi
 
-
 cd $system
 . ./init.sh #import host
 cd ..
 
-for cf in $configs; do
+for cf in "${configs[@]}"; do
 	filename=$(basename -- "$cf" .json)
 	echo "Running "$filename
 

@@ -39,7 +39,7 @@ kubectl create -f configs/complete-demo.yaml #> /dev/null
 echo "Waiting services and metrics are available"
 while kubectl get pods    -n sockshop | awk '(NR>1)' | wc -l | grep -q -v $n_nodes  ||
       kubectl get pods -A -n sockshop | awk '(NR>1) {print $4}' | grep -v -q 'Running' ||
-      kubectl get pods -A -n sockshop | awk '(NR>1) {print $3}' | grep -v -q '1/1\|2/2' ||
+      kubectl get pods -A -n sockshop | awk '(NR>1) {print $3}' | grep -v -q '1/1\|2/2\|3/3' ||
       kubectl top pod     -n sockshop 2>/dev/null | awk '(NR>1)' | wc -l | grep -q -v $n_nodes ; do
    
   sleep 3
