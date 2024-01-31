@@ -2,6 +2,7 @@ import json
 import os.path
 import random
 
+import numpy as np
 import pandas as pd
 import data_preparation
 import data_visualization
@@ -159,3 +160,43 @@ def system_performance_evaluation(system, path_work, sensibility=0.):
 
     with open(path_metrics, 'w') as f_metrics:
         json.dump(metrics, f_metrics)
+
+
+def system_mean_performance(system, path_works, reps, sensibility=0.):
+    path_mean_metrics = os.path.join(path_works, 'avg_metrics_{}.json'.format(sensibility))
+    metrics = ['RES_TIME', 'CPU', 'MEM']
+    mean_metrics = {}
+    metrics_reps = {}
+
+    for met in metrics:
+        metrics_reps[met] = {
+            'precision': [0.] * len(reps),
+            'recall': [0.] * len(reps)
+        }
+        mean_metrics[met] = {
+            'precision_mean': 0.,
+            'recall_mean': 0.,
+            'precision_std': 0.,
+            'recall_std': 0.
+        }
+
+    for k, rep in enumerate(reps):
+        path_rep = os.path.join(path_works, "work_rep" + str(rep))
+        path_rep_metrics = os.path.join(path_rep, "metrics.json")
+
+        system_performance_evaluation(system, path_rep, sensibility)
+
+        with open(path_rep_metrics, 'r') as f_mets:
+            mets = json.load(f_mets)
+            for met in metrics:
+                metrics_reps[met]['precision'][k] = mets[met]['precision']
+                metrics_reps[met]['recall'][k] = mets[met]['recall']
+
+    for met in metrics:
+        mean_metrics[met]['precision_mean'] = round(np.mean(metrics_reps[met]['precision']), 3)
+        mean_metrics[met]['precision_std'] = round(np.std(metrics_reps[met]['precision']), 3)
+        mean_metrics[met]['recall_mean'] = round(np.mean(metrics_reps[met]['recall']), 3)
+        mean_metrics[met]['recall_std'] = round(np.std(metrics_reps[met]['recall']), 3)
+
+    with open(path_mean_metrics, 'w') as f_metrics:
+        json.dump(mean_metrics, f_metrics)
