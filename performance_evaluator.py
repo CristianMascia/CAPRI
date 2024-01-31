@@ -7,6 +7,12 @@ import data_preparation
 import utils
 
 
+def calc_hamming_distance(conf_real, conf_pred):
+    return abs(conf_real['NUSER'] - conf_pred['nusers'][0]) + (
+        0 if conf_real['LOAD'] == conf_pred['loads'][0] else 1) + (
+        0 if conf_real['SR'] == conf_pred['spawn_rates'][0] else 1)
+
+
 def calc_metrics(path_df, path_configs, path_run_configs, services, mapping, ths_filtered=False, metrics=None,
                  sensibility=0.):
     if metrics is None:
@@ -28,10 +34,29 @@ def calc_metrics(path_df, path_configs, path_run_configs, services, mapping, ths
                 values[k] = loc[loc['Name'] == s]['Average Response Time'].mean()
             return np.mean(values)
 
+    def calc_mhd(c_pred):
+
+        nusers = list(set(df['NUSER']) & set(range(1, c_pred['nusers'][0])))
+        loads = list(set(df['LOAD']))
+        srs = list(set(df['SR']))
+        nusers.sort()
+        for n1 in nusers:
+            dists = []
+            for l1 in loads:
+                for sr1 in srs:
+                    value1 = df[(df['NUSER'] == n1) & (df['LOAD'] == l1) & (df['SR'] == sr1)][met + "_" + ser].mean()
+                    if value1 > ths[met]:
+                        dists.append(calc_hamming_distance({'NUSER': n1, 'LOAD': l1, 'SR': sr1}, c_pred))
+            if len(dists) > 0:
+                return np.min(dists)
+        return 0
+
     metrics_dict = {}
 
     df = pd.read_csv(path_df)
+
     for met in metrics:
+        mhd_values = []
         true_positive = 0
         false_negative = 0
         false_positive = 0
@@ -48,6 +73,7 @@ def calc_metrics(path_df, path_configs, path_run_configs, services, mapping, ths
 
                     if get_exp_value(exp_dir, ser, mapping[ser], met) > ((1 - sensibility) * ths[met]):
                         true_positive += 1
+                        mhd_values.append(calc_mhd(config))
                     else:
                         false_positive += 1
 
@@ -72,6 +98,6 @@ def calc_metrics(path_df, path_configs, path_run_configs, services, mapping, ths
                 recall = true_positive / (true_positive + false_negative)
             else:
                 recall = 1
-        metrics_dict[met] = {"precision": precision, "recall": recall}
+        metrics_dict[met] = {"precision": precision, "recall": recall, "mhd": np.mean(mhd_values)}
 
     return metrics_dict

@@ -150,7 +150,7 @@ def random_predictor(system, path_work):
 
 def system_performance_evaluation(system, path_work, sensibility=0.):
     path_df = os.path.join(path_work, "df.csv")
-    path_metrics = os.path.join(path_work, "metrics.json")
+    path_metrics = os.path.join(path_work, "metrics{}.json".format(sensibility))
     path_configs = os.path.join(path_work, "generated_configs")
     path_run_configs = os.path.join(path_work, "run_configs")
 
@@ -171,18 +171,21 @@ def system_mean_performance(system, path_works, reps, sensibility=0.):
     for met in metrics:
         metrics_reps[met] = {
             'precision': [0.] * len(reps),
-            'recall': [0.] * len(reps)
+            'recall': [0.] * len(reps),
+            'mhd': [0.] * len(reps),
         }
         mean_metrics[met] = {
             'precision_mean': 0.,
             'recall_mean': 0.,
             'precision_std': 0.,
-            'recall_std': 0.
+            'recall_std': 0.,
+            "mhd_mean": 0.,
+            "mhd_std": 0.
         }
 
     for k, rep in enumerate(reps):
         path_rep = os.path.join(path_works, "work_rep" + str(rep))
-        path_rep_metrics = os.path.join(path_rep, "metrics.json")
+        path_rep_metrics = os.path.join(path_rep, "metrics{}.json".format(sensibility))
 
         system_performance_evaluation(system, path_rep, sensibility)
 
@@ -191,12 +194,15 @@ def system_mean_performance(system, path_works, reps, sensibility=0.):
             for met in metrics:
                 metrics_reps[met]['precision'][k] = mets[met]['precision']
                 metrics_reps[met]['recall'][k] = mets[met]['recall']
+                metrics_reps[met]['mhd'][k] = mets[met]['mhd']
 
     for met in metrics:
         mean_metrics[met]['precision_mean'] = round(np.mean(metrics_reps[met]['precision']), 3)
         mean_metrics[met]['precision_std'] = round(np.std(metrics_reps[met]['precision']), 3)
         mean_metrics[met]['recall_mean'] = round(np.mean(metrics_reps[met]['recall']), 3)
         mean_metrics[met]['recall_std'] = round(np.std(metrics_reps[met]['recall']), 3)
+        mean_metrics[met]['mhd_mean'] = round(np.mean(metrics_reps[met]['mhd']), 3)
+        mean_metrics[met]['mhd_std'] = round(np.std(metrics_reps[met]['mhd']), 3)
 
     with open(path_mean_metrics, 'w') as f_metrics:
         json.dump(mean_metrics, f_metrics)
