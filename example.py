@@ -1,5 +1,7 @@
 import json
 import os.path
+import random
+
 import pandas as pd
 import data_preparation
 import data_visualization
@@ -118,6 +120,33 @@ def system_workflow(system, path_work, generation_conf_FAST=False):
                             FAST=generation_conf_FAST, ths_filtered=ths_filtered, nuser_start=nuser_start)
 
 
+def random_predictor(system, path_work):
+    gen_path = os.path.join(path_work, "generated_configs")
+    os.makedirs(gen_path, exist_ok=True)
+
+    SRs = [1, 5, 10]
+    if system == System.MUBENCH:
+        model_limit = 30
+        nstart = 2
+        loads = ['uniform', 'randomly_balanced', 'unbalanced_one']
+    else:
+        model_limit = 50
+        nstart = 4
+        if system == System.SOCKSHOP:
+            loads = ['normal', 'stress_cart', 'stress_shop']
+        else:
+            loads = ['normal', 'stress_booking', 'stress_cancel']
+
+    services, _, _, _ = get_system_info(system)
+
+    for ser in services:
+        for met in ['RES_TIME', 'CPU', 'MEM']:
+            with open(os.path.join(gen_path, 'configs_{}_{}.json'.format(met, ser)),
+                      'w') as f_conf:
+                json.dump({"nusers": [random.randint(nstart, model_limit + 1)], "loads": [random.choice(loads)],
+                           "spawn_rates": [random.choice(SRs)], "anomalous_metrics": [met]}, f_conf)
+
+
 def system_performance_evaluation(system, path_work, sensibility=0.):
     path_df = os.path.join(path_work, "df.csv")
     path_metrics = os.path.join(path_work, "metrics.json")
@@ -130,6 +159,3 @@ def system_performance_evaluation(system, path_work, sensibility=0.):
 
     with open(path_metrics, 'w') as f_metrics:
         json.dump(metrics, f_metrics)
-
-
-system_visualization(System.TRAINTICKET)
