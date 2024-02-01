@@ -8,12 +8,13 @@ import utils
 
 
 def calc_hamming_distance(conf_real, conf_pred):
-    return abs(conf_real['NUSER'] - conf_pred['nusers'][0]) + (
-        0 if conf_real['LOAD'] == conf_pred['loads'][0] else 1) + (
-        0 if conf_real['SR'] == conf_pred['spawn_rates'][0] else 1)
+    return abs(conf_real['NUSER'] - conf_pred['nusers'][0]) / 3 + (
+        0 if conf_real['LOAD'] == conf_pred['loads'][0] else 1) / 3 + (
+        0 if conf_real['SR'] == conf_pred['spawn_rates'][0] else 1) / 3
 
 
-def calc_metrics(path_df, path_configs, path_run_configs, services, mapping, ths_filtered=False, metrics=None,
+def calc_metrics(path_df, path_configs, path_run_configs, services, mapping, model_limit, ths_filtered=False,
+                 metrics=None,
                  sensibility=0.):
     if metrics is None:
         metrics = ['RES_TIME', 'CPU', 'MEM']
@@ -34,9 +35,13 @@ def calc_metrics(path_df, path_configs, path_run_configs, services, mapping, ths
                 values[k] = loc[loc['Name'] == s]['Average Response Time'].mean()
             return np.mean(values)
 
-    def calc_mhd(c_pred):
+    def calc_mhd(c_pred, true_positive=True):
 
-        nusers = list(set(df['NUSER']) & set(range(1, c_pred['nusers'][0])))
+        if true_positive:
+            nusers = list(set(df['NUSER']) & set(range(1, c_pred['nusers'][0])))
+        else:
+            nusers = list(set(df['NUSER']) & set(range(c_pred['nusers'][0], model_limit + 1)))
+
         loads = list(set(df['LOAD']))
         srs = list(set(df['SR']))
         nusers.sort()
@@ -56,7 +61,8 @@ def calc_metrics(path_df, path_configs, path_run_configs, services, mapping, ths
     df = pd.read_csv(path_df)
 
     for met in metrics:
-        mhd_values = []
+        mhd_values_pos = []
+        mhd_values_false = []
         true_positive = 0
         false_negative = 0
         false_positive = 0
@@ -73,9 +79,10 @@ def calc_metrics(path_df, path_configs, path_run_configs, services, mapping, ths
 
                     if get_exp_value(exp_dir, ser, mapping[ser], met) > ((1 - sensibility) * ths[met]):
                         true_positive += 1
-                        mhd_values.append(calc_mhd(config))
+                        mhd_values_pos.append(calc_mhd(config))
                     else:
                         false_positive += 1
+                        mhd_values_false.append(calc_mhd(config, False))
 
             else:
                 # print("No anomaly for {} for {}".format(ser, met))
@@ -98,6 +105,8 @@ def calc_metrics(path_df, path_configs, path_run_configs, services, mapping, ths
                 recall = true_positive / (true_positive + false_negative)
             else:
                 recall = 1
-        metrics_dict[met] = {"precision": precision, "recall": recall, "mhd": np.mean(mhd_values)}
+        metrics_dict[met] = {"precision": precision, "recall": recall, "mhd_pos": np.mean(mhd_values_pos),
+                             "mhd_false": np.mean(mhd_values_false)}
 
     return metrics_dict
+

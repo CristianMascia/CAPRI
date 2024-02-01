@@ -149,13 +149,18 @@ def random_predictor(system, path_work):
 
 
 def system_performance_evaluation(system, path_work, sensibility=0.):
+    if system == System.MUBENCH:
+        model_limit = 30
+    else:
+        model_limit = 50
+
     path_df = os.path.join(path_work, "df.csv")
     path_metrics = os.path.join(path_work, "metrics{}.json".format(sensibility))
     path_configs = os.path.join(path_work, "generated_configs")
     path_run_configs = os.path.join(path_work, "run_configs")
 
     services, mapping, _, _ = get_system_info(system)
-    metrics = calc_metrics(path_df, path_configs, path_run_configs, services, mapping,
+    metrics = calc_metrics(path_df, path_configs, path_run_configs, services, mapping, model_limit,
                            ths_filtered=(system != System.MUBENCH), sensibility=sensibility)
 
     with open(path_metrics, 'w') as f_metrics:
@@ -172,15 +177,18 @@ def system_mean_performance(system, path_works, reps, sensibility=0.):
         metrics_reps[met] = {
             'precision': [0.] * len(reps),
             'recall': [0.] * len(reps),
-            'mhd': [0.] * len(reps),
+            'mhd_pos': [0.] * len(reps),
+            'mhd_false': [0.] * len(reps),
         }
         mean_metrics[met] = {
             'precision_mean': 0.,
             'recall_mean': 0.,
             'precision_std': 0.,
             'recall_std': 0.,
-            "mhd_mean": 0.,
-            "mhd_std": 0.
+            "mhd_pos_mean": 0.,
+            "mhd_pos_std": 0.,
+            "mhd_false_mean": 0.,
+            "mhd_false_std": 0.
         }
 
     for k, rep in enumerate(reps):
@@ -194,15 +202,18 @@ def system_mean_performance(system, path_works, reps, sensibility=0.):
             for met in metrics:
                 metrics_reps[met]['precision'][k] = mets[met]['precision']
                 metrics_reps[met]['recall'][k] = mets[met]['recall']
-                metrics_reps[met]['mhd'][k] = mets[met]['mhd']
+                metrics_reps[met]['mhd_pos'][k] = mets[met]['mhd_pos']
+                metrics_reps[met]['mhd_false'][k] = mets[met]['mhd_false']
 
     for met in metrics:
         mean_metrics[met]['precision_mean'] = round(np.mean(metrics_reps[met]['precision']), 3)
         mean_metrics[met]['precision_std'] = round(np.std(metrics_reps[met]['precision']), 3)
         mean_metrics[met]['recall_mean'] = round(np.mean(metrics_reps[met]['recall']), 3)
         mean_metrics[met]['recall_std'] = round(np.std(metrics_reps[met]['recall']), 3)
-        mean_metrics[met]['mhd_mean'] = round(np.mean(metrics_reps[met]['mhd']), 3)
-        mean_metrics[met]['mhd_std'] = round(np.std(metrics_reps[met]['mhd']), 3)
+        mean_metrics[met]['mhd_pos_mean'] = round(np.mean(metrics_reps[met]['mhd_pos']), 3)
+        mean_metrics[met]['mhd_pos_std'] = round(np.std(metrics_reps[met]['mhd_pos']), 3)
+        mean_metrics[met]['mhd_false_mean'] = round(np.mean(metrics_reps[met]['mhd_false']), 3)
+        mean_metrics[met]['mhd_false_std'] = round(np.std(metrics_reps[met]['mhd_false']), 3)
 
     with open(path_mean_metrics, 'w') as f_metrics:
         json.dump(mean_metrics, f_metrics)
