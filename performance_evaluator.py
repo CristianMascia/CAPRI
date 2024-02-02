@@ -1,6 +1,9 @@
 import glob
 import json
 import os
+import string
+from typing import Callable, Tuple
+
 import numpy as np
 import pandas as pd
 import data_preparation
@@ -13,7 +16,11 @@ def calc_hamming_distance(conf_real, conf_pred):
         0 if conf_real['SR'] == conf_pred['spawn_rates'][0] else 1) / 3
 
 
-def calc_metrics(path_df, path_configs, path_run_configs, services, mapping, model_limit, ths_filtered=False,
+# get_path: Callable[[string, string], string]
+# get_path(service, met) -> path_config, path_config_runned
+
+def calc_metrics(path_df, get_path: Callable[[str, str], Tuple[str, str]], services, mapping, model_limit,
+                 ths_filtered=False,
                  metrics=None,
                  sensibility=0.):
     if metrics is None:
@@ -68,16 +75,12 @@ def calc_metrics(path_df, path_configs, path_run_configs, services, mapping, mod
         false_positive = 0
         for ser in services:
             ths = utils.calc_thresholds(df, ser, filtered=ths_filtered)
-            name_config = "configs_{}_{}".format(met, ser)
-            path_config = os.path.join(path_configs, name_config + ".json")
-            if os.path.isfile(path_config):
+            path_config, path_run_config = get_path(ser, met)
+            if path_config is not None:
                 with open(path_config, 'r') as f_c:
                     config = json.load(f_c)
-                    exp_dir = os.path.join(path_run_configs, name_config,
-                                           "experiments_sr_" + str(config['spawn_rates'][0]),
-                                           'users_' + str(config['nusers'][0]), config['loads'][0])
 
-                    if get_exp_value(exp_dir, ser, mapping[ser], met) > ((1 - sensibility) * ths[met]):
+                    if get_exp_value(path_run_config, ser, mapping[ser], met) > ((1 - sensibility) * ths[met]):
                         true_positive += 1
                         mhd_values_pos.append(calc_mhd(config))
                     else:
@@ -109,4 +112,3 @@ def calc_metrics(path_df, path_configs, path_run_configs, services, mapping, mod
                              "mhd_false": np.mean(mhd_values_false)}
 
     return metrics_dict
-

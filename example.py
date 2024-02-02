@@ -155,20 +155,41 @@ def system_performance_evaluation(system, path_work, sensibility=0.):
         model_limit = 50
 
     path_df = os.path.join(path_work, "df.csv")
-    path_metrics = os.path.join(path_work, "metrics{}.json".format(sensibility))
+    if sensibility > 0:
+        path_metrics = os.path.join(path_work, "metrics{}.json".format(sensibility))
+    else:
+        path_metrics = os.path.join(path_work, "metrics.json")
     path_configs = os.path.join(path_work, "generated_configs")
     path_run_configs = os.path.join(path_work, "run_configs")
 
     services, mapping, _, _ = get_system_info(system)
-    metrics = calc_metrics(path_df, path_configs, path_run_configs, services, mapping, model_limit,
-                           ths_filtered=(system != System.MUBENCH), sensibility=sensibility)
+
+    def get_path(ser, met):
+        name_config = "configs_{}_{}".format(met, ser)
+        path_config = os.path.join(path_configs, name_config + ".json")
+        if os.path.isfile(path_config):
+            with open(path_config, 'r') as f_c:
+                c = json.load(f_c)
+                exp_dir = os.path.join(path_run_configs, name_config,
+                                       "experiments_sr_" + str(c['spawn_rates'][0]),
+                                       'users_' + str(c['nusers'][0]), c['loads'][0])
+                return path_config, exp_dir
+        else:
+            return None, None
+
+    metrics = calc_metrics(path_df, get_path, services, mapping, model_limit, ths_filtered=(system != System.MUBENCH),
+                           sensibility=sensibility)
 
     with open(path_metrics, 'w') as f_metrics:
         json.dump(metrics, f_metrics)
 
 
 def system_mean_performance(system, path_works, reps, sensibility=0.):
-    path_mean_metrics = os.path.join(path_works, 'avg_metrics_{}.json'.format(sensibility))
+    if sensibility > 0:
+        path_mean_metrics = os.path.join(path_works, 'avg_metrics_{}.json'.format(sensibility))
+    else:
+        path_mean_metrics = os.path.join(path_works, 'avg_metrics.json')
+
     metrics = ['RES_TIME', 'CPU', 'MEM']
     mean_metrics = {}
     metrics_reps = {}
@@ -193,7 +214,10 @@ def system_mean_performance(system, path_works, reps, sensibility=0.):
 
     for k, rep in enumerate(reps):
         path_rep = os.path.join(path_works, "work_rep" + str(rep))
-        path_rep_metrics = os.path.join(path_rep, "metrics{}.json".format(sensibility))
+        if sensibility > 0:
+            path_rep_metrics = os.path.join(path_rep, "metrics{}.json".format(sensibility))
+        else:
+            path_rep_metrics = os.path.join(path_rep, "metrics.json")
 
         system_performance_evaluation(system, path_rep, sensibility)
 
