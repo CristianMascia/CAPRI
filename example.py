@@ -49,9 +49,9 @@ def create_dataset(system, path_df=None, path_exp=None):
     return df
 
 
-def system_visualization(system, path_png=None):
-    if path_png is None:
-        path_png = os.path.join(str(system.value), "png")
+def system_visualization(system, path_images=None):
+    if path_images is None:
+        path_images = os.path.join(str(system.value), "images")
 
     services, _, _, _ = get_system_info(system)
     path_df = os.path.join(str(system.value), "data", str(system.value) + "_df.csv")
@@ -63,9 +63,9 @@ def system_visualization(system, path_png=None):
 
     if system == System.MUBENCH:
         df_disc = df[df['NUSER'].isin([i for i in range(1, 30, 2)] + [30])]
-        data_visualization.___main__(df_disc, path_png, services)
+        data_visualization.___main__(df_disc, path_images, services)
     else:
-        data_visualization.___main__(df, path_png, services, True)
+        data_visualization.___main__(df, path_images, services, True)
 
 
 def system_workflow(system, path_work, generation_conf_FAST=False):

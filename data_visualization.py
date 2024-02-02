@@ -20,7 +20,7 @@ def vertical_align_text(fig, ax, x, text, fontsize, y_min, y_max):
     ax.text(x, 0.5 - offset, text, fontsize=fontsize, transform=ax.transAxes)
 
 
-def ___main__(df, path_png, services, ths_filtered=False):
+def ___main__(df, path_images, services, ths_filtered=False):
     nusers = list(set(df['NUSER']))
     nusers.sort()
     loads = list(set(df['LOAD']))
@@ -34,11 +34,11 @@ def ___main__(df, path_png, services, ths_filtered=False):
     th_linewidth = 2
     unita_misura = {'CPU': 'cores', 'RES_TIME': 'ms', 'MEM': 'bytes'}
     label_met = {'CPU': 'CPU', 'RES_TIME': 'Response Time', 'MEM': 'Memory'}
-    path_nuser_vs_met = os.path.join(path_png, "NUSER_vs_MET")
+    path_nuser_vs_met = os.path.join(path_images, "NUSER_vs_MET")
 
-    if os.path.exists(path_png):
-        shutil.rmtree(path_png)
-    os.mkdir(path_png)
+    if os.path.exists(path_images):
+        shutil.rmtree(path_images)
+    os.mkdir(path_images)
     os.mkdir(path_nuser_vs_met)
 
     for service in services:
@@ -86,5 +86,5 @@ def ___main__(df, path_png, services, ths_filtered=False):
                                                    fontsize=text_fontsize)
             axs[len(loads) - 1, int(len(SRs) / 2)].set_xlabel('Users Size', fontsize=text_fontsize)
             fig.subplots_adjust(left=0.03, right=0.85)
-            fig.savefig(os.path.join(path_nuser_vs_met, "{}_{}.png".format(service, met)))
+            fig.savefig(os.path.join(path_nuser_vs_met, "{}_{}.pdf".format(service, met)), format='pdf')
             plt.close(fig)
