@@ -135,7 +135,6 @@ for cf in "${configs[@]}"; do
 				l_dir=$u_dir/$l
 				mkdir -p $l_dir
 
-                sleep $wait_time
 				echo "Run Experiment("$cur_exp"/"$n_exp"):"$u"_"$l"_"$sr
 
 				for ((r = 1; r <= "$num_rep"; r++)); do
