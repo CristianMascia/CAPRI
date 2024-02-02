@@ -66,13 +66,8 @@ def show_metrics(df_dict, config_dir, path_mets):
     mets_models = {}
     for met in CONFIG.all_metrics:
         print("  -----DLINGAM WITH PRIOR FOR {}-----".format(met))
-        mets_models[met] = qu.calc_metrics(df_dict[met]['DF_ALL'],
-                                           path_configs=os.path.join(config_dir, "dlingam_prior_" + met),
-                                           metrics=[met])
-        print("{} -> PREC: {:.2f} RECALL: {:.2f} MEAN DIST: {:.2f} MIN DIST: {} MAX DIST: {}"
-              .format(met, mets_models[met]['precision'], mets_models[met]['recall'],
-                      mets_models[met]['mean_hamming_distance'], mets_models[met]['min_hamming_distance'],
-                      mets_models[met]['max_hamming_distance']))
+        mets_models[met] = qu.calc_metrics(df_dict[met]['DF_ALL'], config_dir, "dlingam_prior",
+                                           metrics=[met])[met]
     with open(path_mets, 'w') as f:
         json.dump(mets_models, f)
 

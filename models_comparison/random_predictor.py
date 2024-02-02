@@ -35,15 +35,7 @@ def show_metrics(df_all, config_dir, path_mets):
     print("----------METRICS----------")
 
     print("  -----RANDOM PREDICTOR-----")
-    mets = {}
-    for met in CONFIG.all_metrics:
-        mets[met] = qu.calc_metrics(df_all, path_configs=os.path.join(config_dir, "random_predictor_" + met),
-                                    metrics=[met])
-        print("{} -> PREC: {:.2f} RECALL: {:.2f} MEAN DIST: {:.2f} MIN DIST: {} MAX DIST: {}"
-              .format(met, mets[met]['precision'], mets[met]['recall'],
-                      mets[met]['mean_hamming_distance'],
-                      mets[met]['min_hamming_distance'],
-                      mets[met]['max_hamming_distance']))
+    mets = qu.calc_metrics(df_all, config_dir, "random_predictor")
 
     with open(path_mets, 'w') as f:
         json.dump(mets, f)
@@ -60,7 +52,7 @@ def __main__(path_df, path_main_dir):
 
         df = data_preparation(path_df)
 
-        configuration_generation(df, path_dir_configs)
+        # configuration_generation(df, path_dir_configs)
         mets[rep] = show_metrics(df, path_dir_configs, path_metric_file)
 
     with open(os.path.join(path_main_dir, "mean_metrics_random_predictor.json"), 'w') as f_mean_mets:

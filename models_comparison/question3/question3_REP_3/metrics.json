@@ -1,48 +1,42 @@
 {
   "0.1": {
     "RES_TIME": {
-      "precision": 0,
-      "recall": 0,
-      "mean_hamming_distance": -1.0,
-      "min_hamming_distance": -1,
-      "max_hamming_distance": -1
+      "precision": 1.0,
+      "recall": 1,
+      "mhd_pos": 1.2999999999999998,
+      "mhd_false": -1
     },
     "CPU": {
-      "precision": 0,
-      "recall": 0,
-      "mean_hamming_distance": -1.0,
-      "min_hamming_distance": -1,
-      "max_hamming_distance": -1
+      "precision": 1.0,
+      "recall": 1,
+      "mhd_pos": 0.0,
+      "mhd_false": -1
     },
     "MEM": {
       "precision": 0,
       "recall": 0,
-      "mean_hamming_distance": -1.0,
-      "min_hamming_distance": -1,
-      "max_hamming_distance": -1
+      "mhd_pos": -1,
+      "mhd_false": 0.3333333333333333
     }
   },
   "0.3": {
     "RES_TIME": {
-      "precision": 0,
-      "recall": 0,
-      "mean_hamming_distance": -1.0,
-      "min_hamming_distance": -1,
-      "max_hamming_distance": -1
+      "precision": 1.0,
+      "recall": 1,
+      "mhd_pos": 1.3666666666666665,
+      "mhd_false": -1
     },
     "CPU": {
-      "precision": 0,
-      "recall": 0,
-      "mean_hamming_distance": -1.0,
-      "min_hamming_distance": -1,
-      "max_hamming_distance": -1
+      "precision": 1.0,
+      "recall": 1,
+      "mhd_pos": 0.0,
+      "mhd_false": -1
     },
     "MEM": {
-      "precision": 0,
-      "recall": 0,
-      "mean_hamming_distance": -1.0,
-      "min_hamming_distance": -1,
-      "max_hamming_distance": -1
+      "precision": 1.0,
+      "recall": 1,
+      "mhd_pos": 0.0,
+      "mhd_false": -1
     }
   }
 }

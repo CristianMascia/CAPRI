@@ -47,17 +47,7 @@ def show_metrics(df_all, config_dir, path_mets):
     mets_models = {}
     for cmodel in algorithms:
         print("  -----" + cmodel.upper() + "-----")
-        mets_models[cmodel] = {}
-        for met in CONFIG.all_metrics:
-            mets_models[cmodel][met] = qu.calc_metrics(df_all,
-                                                       path_configs=os.path.join(config_dir,
-                                                                                 "{}_{}".format(cmodel, met)),
-                                                       metrics=[met])
-            print("{} -> PREC: {:.2f} RECALL: {:.2f} MEAN DIST: {:.2f} MIN DIST: {} MAX DIST: {}"
-                  .format(met, mets_models[cmodel][met]['precision'], mets_models[cmodel][met]['recall'],
-                          mets_models[cmodel][met]['mean_hamming_distance'],
-                          mets_models[cmodel][met]['min_hamming_distance'],
-                          mets_models[cmodel][met]['max_hamming_distance']))
+        mets_models[cmodel] = qu.calc_metrics(df_all, config_dir, cmodel)
 
     with open(path_mets, 'w') as f:
         json.dump(mets_models, f)

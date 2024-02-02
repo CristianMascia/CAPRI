@@ -12,6 +12,7 @@ from dagma.linear import DagmaLinear
 from dagma.nonlinear import DagmaMLP, DagmaNonlinear
 from dowhy import gcm
 import configuration_generator as conf_gen
+import performance_evaluator
 import utils
 import shutil
 import subprocess
@@ -174,72 +175,23 @@ def create_min_anomalies_file(df, path, metrics=None):
         json.dump(out_j, f_out)
 
 
-def calc_metrics(df, path_configs, metrics=None):
+def calc_metrics(df, path_configs_dir, model_name, metrics=None):
     if metrics is None:
         metrics = CONFIG.all_metrics
 
-    def calc_hamming_distance(conf_real, conf_pred):
+    def get_config(ser, met):
+        path_conf = os.path.join(path_configs_dir, "{}_{}_{}.json".format(model_name, met, ser))
+        if os.path.isfile(path_conf):
+            with open(path_conf, 'r') as f_c:
+                config = json.load(f_c)
+                df_config = df[(df['NUSER'] == config['nusers'][0]) &
+                               (df['LOAD'] == config['loads'][0]) &
+                               (df['SR'] == config['spawn_rates'][0])]
+                return config, df_config[met + "_" + ser].mean()
+        else:
+            return None, None
 
-        return abs(conf_real['NUSER'] - conf_pred['nusers'][0]) + (
-            0 if conf_real['LOAD'] == conf_pred['loads'][0] else 1) + (
-            0 if conf_real['SR'] == conf_pred['spawn_rates'][0] else 1)
-
-    if not os.path.exists(CONFIG.path_minimal_configs_anomaly):
-        create_min_anomalies_file(pd.read_csv(CONFIG.path_df), CONFIG.path_minimal_configs_anomaly)
-
-    with open(CONFIG.path_minimal_configs_anomaly, 'r') as f_minimal_conf:
-        minimal_confs = json.load(f_minimal_conf)
-
-        true_positive = 0
-        false_negative = 0
-        false_positive = 0
-        dists = []
-
-        for ser in CONFIG.services:
-
-            path_config = path_configs + "_" + ser + ".json"
-            ths = utils.calc_thresholds(df, ser)
-
-            if os.path.exists(path_config):
-                with open(path_config, 'r') as f_c:
-                    config = json.load(f_c)
-
-                    df_config = df[(df['NUSER'] == config['nusers'][0]) &
-                                   (df['LOAD'] == config['loads'][0]) &
-                                   (df['SR'] == config['spawn_rates'][0])]
-
-                    # X - Positive
-                    for met in [m for m in config['anomalous_metrics'] if m in metrics]:
-                        if df_config[met + "_" + ser].mean() > ths[met]:  # True - Positive
-                            true_positive += 1
-                            dists_c = np.zeros(len(minimal_confs[ser][met]), dtype=int)
-                            for i, mc in enumerate(minimal_confs[ser][met]):
-                                dists_c[i] = calc_hamming_distance(mc, config)
-                            dists.append(min(dists_c))
-                        else:  # False - Positive
-                            false_positive += 1
-
-            else:  # X - Negative
-                false_negative = 0
-                # check there is anomalies for service ser
-                if all(met in minimal_confs[ser] for met in metrics):  # False - Negative
-                    false_negative += 1
-
-        precision = 0
-        recall = 0
-
-        if true_positive > 0:
-            precision = true_positive / (true_positive + false_positive)
-
-            if false_negative > 0:
-                recall = true_positive / (true_positive + false_negative)
-            else:
-                recall = 1
-        if len(dists) == 0:
-            dists.append(-1)
-        return {'precision': precision, 'recall': recall, 'mean_hamming_distance': np.mean(dists),
-                'min_hamming_distance': int(np.min(dists)),
-                'max_hamming_distance': int(np.max(dists))}
+    return performance_evaluator.calc_metrics(df, get_config, CONFIG.services, CONFIG.model_limit, metrics=metrics)
 
 
 def merge_met_dict(met_dicts):
@@ -250,43 +202,27 @@ def merge_met_dict(met_dicts):
         out_dict[met] = {
             "mean_precision": 0,
             "mean_recall": 0,
-            "mean_mean_hamming_distance": 0,
-            "mean_min_hamming_distance": 0,
-            "mean_max_hamming_distance": 0
+            "mean_mhd_pos": 0,
+            "mean_mhd_false": 0
         }
         count_dict[met] = {
-            "count_mean_hamming_distance": 0,
-            "count_min_hamming_distance": 0,
-            "count_max_hamming_distance": 0
+            "count_mhd_pos": 0,
+            "count_mhd_false": 0
         }
         for met_dict in met_dicts:
             out_dict[met]['mean_precision'] += met_dict[met]['precision'] / len(met_dicts)
             out_dict[met]['mean_recall'] += met_dict[met]['recall'] / len(met_dicts)
 
-            if met_dict[met]['mean_hamming_distance'] >= 0:
-                out_dict[met]['mean_mean_hamming_distance'] += met_dict[met]['mean_hamming_distance']
-                count_dict[met]['count_mean_hamming_distance'] += 1
-            if met_dict[met]['min_hamming_distance'] >= 0:
-                out_dict[met]['mean_min_hamming_distance'] += met_dict[met]['min_hamming_distance']
-                count_dict[met]['count_min_hamming_distance'] += 1
-            if met_dict[met]['max_hamming_distance']:
-                out_dict[met]['mean_max_hamming_distance'] += met_dict[met]['max_hamming_distance']
-                count_dict[met]['count_max_hamming_distance'] += 1
+            for t in ['pos', 'false']:
+                if met_dict[met]['mhd_' + t] >= 0:
+                    out_dict[met]['mean_mhd_' + t] += met_dict[met]['mhd_' + t]
+                    count_dict[met]['count_mhd_' + t] += 1
 
-        if count_dict[met]['count_mean_hamming_distance'] > 0:
-            out_dict[met]['mean_mean_hamming_distance'] /= count_dict[met]['count_mean_hamming_distance']
-        else:
-            out_dict[met]['mean_mean_hamming_distance'] = -1
-
-        if count_dict[met]['count_min_hamming_distance'] > 0:
-            out_dict[met]['mean_min_hamming_distance'] /= count_dict[met]['count_min_hamming_distance']
-        else:
-            out_dict[met]['mean_min_hamming_distance'] = -1
-
-        if count_dict[met]['count_max_hamming_distance'] > 0:
-            out_dict[met]['mean_max_hamming_distance'] /= count_dict[met]['count_max_hamming_distance']
-        else:
-            out_dict[met]['mean_max_hamming_distance'] = -1
+        for t in ['pos', 'false']:
+            if count_dict[met]['count_mhd_' + t] > 0:
+                out_dict[met]['mean_mhd_' + t] /= count_dict[met]['count_mhd_' + t]
+            else:
+                out_dict[met]['mean_mhd_' + t] = -1
     return out_dict
 
 

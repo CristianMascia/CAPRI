@@ -2,22 +2,19 @@
   "RES_TIME": {
     "precision": 1.0,
     "recall": 1,
-    "mean_hamming_distance": 4.0,
-    "min_hamming_distance": 1,
-    "max_hamming_distance": 17
+    "mhd_pos": 1.3333333333333333,
+    "mhd_false": -1
   },
   "CPU": {
     "precision": 1.0,
     "recall": 1,
-    "mean_hamming_distance": 0.3,
-    "min_hamming_distance": 0,
-    "max_hamming_distance": 2
+    "mhd_pos": 0.1,
+    "mhd_false": -1
   },
   "MEM": {
     "precision": 1.0,
     "recall": 1,
-    "mean_hamming_distance": 1.0,
-    "min_hamming_distance": 1,
-    "max_hamming_distance": 1
+    "mhd_pos": 0.3333333333333333,
+    "mhd_false": -1
   }
 }

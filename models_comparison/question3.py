@@ -52,15 +52,7 @@ def show_metrics(df_all, config_dir, path_mets):
     mets_models = {}
     for th in ths:
         print("  -----TH:" + str(th) + "-----")
-        mets_models[str(th)] = {}
-        for met in CONFIG.all_metrics:
-            mets_models[str(th)][met] = qu.calc_metrics(df_all, path_configs=os.path.join(config_dir, "TH_" + str(th)),
-                                                        metrics=[met])
-            print("{} -> PREC: {:.2f} RECALL: {:.2f} MEAN DIST: {:.2f} MIN DIST: {} MAX DIST: {}"
-                  .format(met, mets_models[str(th)][met]['precision'], mets_models[str(th)][met]['recall'],
-                          mets_models[str(th)][met]['mean_hamming_distance'],
-                          mets_models[str(th)][met]['min_hamming_distance'],
-                          mets_models[str(th)][met]['max_hamming_distance']))
+        mets_models[str(th)] = qu.calc_metrics(df_all, config_dir, "TH_" + str(th))
 
     with open(path_mets, 'w') as f:
         json.dump(mets_models, f)

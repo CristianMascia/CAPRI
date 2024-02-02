@@ -40,14 +40,8 @@ def configuration_generation(df_discovery, loads_mapping, dags_dir, config_dir):
 def show_metrics(df_all, config_dir, path_mets):
     print("----------METRICS----------")
     print("  -----DLINGAM_PRIOR-----")
-    mets_model = {}
-    for met in CONFIG.all_metrics:
-        mets_model[met] = qu.calc_metrics(df_all, path_configs=os.path.join(config_dir, "dlingam_prior_" + met),
-                                          metrics=[met])
-        print("{} -> PREC: {:.2f} RECALL: {:.2f} MEAN DIST: {:.2f} MIN DIST: {} MAX DIST: {}"
-              .format(met, mets_model[met]['precision'], mets_model[met]['recall'],
-                      mets_model[met]['mean_hamming_distance'], mets_model[met]['min_hamming_distance'],
-                      mets_model[met]['max_hamming_distance']))
+    mets_model = qu.calc_metrics(df_all, config_dir, "dlingam_prior")
+
     with open(path_mets, 'w') as f:
         json.dump(mets_model, f)
 
