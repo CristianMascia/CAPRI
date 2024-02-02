@@ -13,6 +13,8 @@ from enum import Enum
 
 from performance_evaluator import calc_metrics
 
+CURRENT_PATH = os.path.dirname(__file__)
+
 
 class System(Enum):
     MUBENCH = "mubench"
@@ -25,11 +27,11 @@ def get_system_info(system):
         services = ['s' + str(i) for i in range(10)]
         mapping = {s: s for s in services}
         pods = services
-        arch = utils.get_architecture_from_wm("mubench/configs/workmodel.json")
+        arch = utils.get_architecture_from_wm(os.path.join(CURRENT_PATH, "mubench/configs/workmodel.json"))
     else:
-        with open(os.path.join(str(system.value), "architecture.json"), 'r') as f_arch:
-            with open(os.path.join(str(system.value), "mapping_service_request.json"), 'r') as f_map:
-                with open(os.path.join(str(system.value), "pods.txt"), 'r') as f_pods:
+        with open(os.path.join(CURRENT_PATH, str(system.value), "architecture.json"), 'r') as f_arch:
+            with open(os.path.join(CURRENT_PATH, str(system.value), "mapping_service_request.json"), 'r') as f_map:
+                with open(os.path.join(CURRENT_PATH, str(system.value), "pods.txt"), 'r') as f_pods:
                     arch = json.load(f_arch)
                     mapping = json.load(f_map)
                     services = list(set(mapping))
@@ -41,9 +43,9 @@ def get_system_info(system):
 def create_dataset(system, path_df=None, path_exp=None):
     services, mapping, pods, arch = get_system_info(system)
     if path_df is None:
-        path_df = os.path.join(str(system.value), "data", str(system.value) + "_df.csv")
+        path_df = os.path.join(CURRENT_PATH, str(system.value), "data", str(system.value) + "_df.csv")
     if path_exp is None:
-        path_exp = os.path.join(str(system.value), "data")
+        path_exp = os.path.join(CURRENT_PATH, str(system.value), "data")
     df = data_preparation.read_experiments(path_exp, mapping, pods)
     df.to_csv(path_df, index=False)
     return df
@@ -51,10 +53,10 @@ def create_dataset(system, path_df=None, path_exp=None):
 
 def system_visualization(system, path_images=None):
     if path_images is None:
-        path_images = os.path.join(str(system.value), "images")
+        path_images = os.path.join(CURRENT_PATH, str(system.value), "images")
 
     services, _, _, _ = get_system_info(system)
-    path_df = os.path.join(str(system.value), "data", str(system.value) + "_df.csv")
+    path_df = os.path.join(CURRENT_PATH, str(system.value), "data", str(system.value) + "_df.csv")
 
     if not os.path.exists(path_df):
         df = create_dataset(system)
@@ -152,14 +154,14 @@ def system_performance_evaluation(system, path_work=None, sensibility=0.):
     if system == System.MUBENCH:
         model_limit = 30
         if path_work is None:
-            path_work = "mubench"
+            path_work = os.path.join(CURRENT_PATH, "mubench")
     else:
         model_limit = 50
         if path_work is None:
             if system == System.SOCKSHOP:
-                path_work = "sockshop"
+                path_work = os.path.join(CURRENT_PATH, "sockshop")
             else:
-                path_work = "trainticket"
+                path_work = os.path.join(CURRENT_PATH, "trainticket")
 
     path_df = os.path.join(path_work, "df.csv")
     if sensibility > 0:
@@ -194,11 +196,11 @@ def system_performance_evaluation(system, path_work=None, sensibility=0.):
 def system_mean_performance(system, reps, path_works=None, sensibility=0.):
     if path_works is None:
         if system == System.MUBENCH:
-            path_works = "mubench"
+            path_works = os.path.join(CURRENT_PATH, "mubench")
         elif system == System.SOCKSHOP:
-            path_works = "sockshop"
+            path_works = os.path.join(CURRENT_PATH, "sockshop")
         else:
-            path_works = "trainticket"
+            path_works = os.path.join(CURRENT_PATH, "trainticket")
 
     if sensibility > 0:
         path_mean_metrics = os.path.join(path_works, 'avg_metrics_{}.json'.format(sensibility))
