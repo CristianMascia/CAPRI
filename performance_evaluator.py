@@ -50,8 +50,6 @@ def calc_metrics(df: Union[str, pd.DataFrame], get_config: Callable[[str, str], 
 
     metrics_dict = {}
 
-    df = pd.read_csv(path_df)
-
     for met in metrics:
         mhd_values_pos = []
         mhd_values_false = []
