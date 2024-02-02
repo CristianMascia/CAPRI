@@ -88,7 +88,17 @@ def calc_metrics(df: Union[str, pd.DataFrame], get_config: Callable[[str, str], 
                 recall = true_positive / (true_positive + false_negative)
             else:
                 recall = 1
-        metrics_dict[met] = {"precision": precision, "recall": recall, "mhd_pos": np.mean(mhd_values_pos),
-                             "mhd_false": np.mean(mhd_values_false)}
+
+        if len(mhd_values_pos) > 0:
+            mhd_pos = np.mean(mhd_values_pos)
+        else:
+            mhd_pos = -1
+
+        if len(mhd_values_false) > 0:
+            mhd_false = np.mean(mhd_values_false)
+        else:
+            mhd_false = -1
+
+        metrics_dict[met] = {"precision": precision, "recall": recall, "mhd_pos": mhd_pos, "mhd_false": mhd_false}
 
     return metrics_dict
