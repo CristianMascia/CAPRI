@@ -2,7 +2,7 @@ import glob
 import json
 import os
 import string
-from typing import Callable, Tuple
+from typing import Callable, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -16,10 +16,16 @@ def calc_hamming_distance(conf_real, conf_pred):
         0 if conf_real['SR'] == conf_pred['spawn_rates'][0] else 1) / 3
 
 
-def calc_metrics(path_df, get_config: Callable[[str, str], Tuple[dict, float]], services, model_limit,
+def calc_metrics(df: Union[str, pd.DataFrame], get_config: Callable[[str, str], Tuple[dict, float]], services,
+                 model_limit,
                  ths_filtered=False, metrics=None, sensibility=0.):
     if metrics is None:
         metrics = ['RES_TIME', 'CPU', 'MEM']
+
+    if isinstance(df, str):
+        df = pd.read_csv(df)
+    elif not isinstance(df, pd.DataFrame):
+        raise ValueError("The parameter df must be a path or a DataFrame.")
 
     def calc_mhd(c_pred, true_positive=True):
 
@@ -88,4 +94,3 @@ def calc_metrics(path_df, get_config: Callable[[str, str], Tuple[dict, float]], 
                              "mhd_false": np.mean(mhd_values_false)}
 
     return metrics_dict
-
