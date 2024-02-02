@@ -16,31 +16,10 @@ def calc_hamming_distance(conf_real, conf_pred):
         0 if conf_real['SR'] == conf_pred['spawn_rates'][0] else 1) / 3
 
 
-# get_path: Callable[[string, string], string]
-# get_path(service, met) -> path_config, path_config_runned
-
-def calc_metrics(path_df, get_path: Callable[[str, str], Tuple[str, str]], services, mapping, model_limit,
-                 ths_filtered=False,
-                 metrics=None,
-                 sensibility=0.):
+def calc_metrics(path_df, get_config: Callable[[str, str], Tuple[dict, float]], services, model_limit,
+                 ths_filtered=False, metrics=None, sensibility=0.):
     if metrics is None:
         metrics = ['RES_TIME', 'CPU', 'MEM']
-
-    def get_exp_value(edir, s, pod, m):
-        if m in ['CPU', 'MEM']:
-            mem_cpu_s = glob.glob(os.path.join(edir, 'mem_cpu_*.txt'))
-            values = [0.] * len(mem_cpu_s)
-            for k, rep in enumerate(mem_cpu_s):
-                values[k] = data_preparation.dockerstats_extractor(rep, [pod], data_preparation.rename_startwith)[
-                    m + " AVG"].mean()
-            return np.mean(values)
-        else:
-            stats = glob.glob(os.path.join(edir, 'esec_*.csv_stats.csv'))
-            values = [0.] * len(stats)
-            for k, rep in enumerate(stats):
-                loc = data_preparation.locuststats_extractor(rep)
-                values[k] = loc[loc['Name'] == s]['Average Response Time'].mean()
-            return np.mean(values)
 
     def calc_mhd(c_pred, true_positive=True):
 
@@ -75,17 +54,14 @@ def calc_metrics(path_df, get_path: Callable[[str, str], Tuple[str, str]], servi
         false_positive = 0
         for ser in services:
             ths = utils.calc_thresholds(df, ser, filtered=ths_filtered)
-            path_config, path_run_config = get_path(ser, met)
-            if path_config is not None:
-                with open(path_config, 'r') as f_c:
-                    config = json.load(f_c)
-
-                    if get_exp_value(path_run_config, ser, mapping[ser], met) > ((1 - sensibility) * ths[met]):
-                        true_positive += 1
-                        mhd_values_pos.append(calc_mhd(config))
-                    else:
-                        false_positive += 1
-                        mhd_values_false.append(calc_mhd(config, False))
+            config, value_config = get_config(ser, met)
+            if config is not None:
+                if value_config > ((1 - sensibility) * ths[met]):
+                    true_positive += 1
+                    mhd_values_pos.append(calc_mhd(config))
+                else:
+                    false_positive += 1
+                    mhd_values_false.append(calc_mhd(config, False))
 
             else:
                 # print("No anomaly for {} for {}".format(ser, met))
@@ -112,3 +88,4 @@ def calc_metrics(path_df, get_path: Callable[[str, str], Tuple[str, str]], servi
                              "mhd_false": np.mean(mhd_values_false)}
 
     return metrics_dict
+

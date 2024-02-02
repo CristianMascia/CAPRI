@@ -148,11 +148,18 @@ def random_predictor(system, path_work):
                            "spawn_rates": [random.choice(SRs)], "anomalous_metrics": [met]}, f_conf)
 
 
-def system_performance_evaluation(system, path_work, sensibility=0.):
+def system_performance_evaluation(system, path_work=None, sensibility=0.):
     if system == System.MUBENCH:
         model_limit = 30
+        if path_work is None:
+            path_work = "mubench"
     else:
         model_limit = 50
+        if path_work is None:
+            if system == System.SOCKSHOP:
+                path_work = "sockshop"
+            else:
+                path_work = "trainticket"
 
     path_df = os.path.join(path_work, "df.csv")
     if sensibility > 0:
@@ -164,7 +171,7 @@ def system_performance_evaluation(system, path_work, sensibility=0.):
 
     services, mapping, _, _ = get_system_info(system)
 
-    def get_path(ser, met):
+    def get_config(ser, met):
         name_config = "configs_{}_{}".format(met, ser)
         path_config = os.path.join(path_configs, name_config + ".json")
         if os.path.isfile(path_config):
@@ -173,18 +180,26 @@ def system_performance_evaluation(system, path_work, sensibility=0.):
                 exp_dir = os.path.join(path_run_configs, name_config,
                                        "experiments_sr_" + str(c['spawn_rates'][0]),
                                        'users_' + str(c['nusers'][0]), c['loads'][0])
-                return path_config, exp_dir
+                return c, utils.get_experiment_value(exp_dir, ser, mapping[ser], met)
         else:
             return None, None
 
-    metrics = calc_metrics(path_df, get_path, services, mapping, model_limit, ths_filtered=(system != System.MUBENCH),
+    metrics = calc_metrics(path_df, get_config, services, model_limit, ths_filtered=(system != System.MUBENCH),
                            sensibility=sensibility)
 
     with open(path_metrics, 'w') as f_metrics:
         json.dump(metrics, f_metrics)
 
 
-def system_mean_performance(system, path_works, reps, sensibility=0.):
+def system_mean_performance(system, reps, path_works=None, sensibility=0.):
+    if path_works is None:
+        if system == System.MUBENCH:
+            path_works = "mubench"
+        elif system == System.SOCKSHOP:
+            path_works = "sockshop"
+        else:
+            path_works = "trainticket"
+
     if sensibility > 0:
         path_mean_metrics = os.path.join(path_works, 'avg_metrics_{}.json'.format(sensibility))
     else:

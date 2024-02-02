@@ -1,7 +1,12 @@
+import glob
 import json
+import os
+
 import networkx as nx
 import numpy as np
 from networkx.drawing.nx_agraph import to_agraph
+
+import data_preparation
 
 
 def threshold_matrix(mat, th=0.):
@@ -190,3 +195,20 @@ def get_architecture_from_wm(path_wm):
                     for ser in eser['services']:
                         arch[k].append(ser)
     return arch
+
+
+def get_experiment_value(edir, service, pod, metric):
+    if metric in ['CPU', 'MEM']:
+        mem_cpu_s = glob.glob(os.path.join(edir, 'mem_cpu_*.txt'))
+        values = [0.] * len(mem_cpu_s)
+        for k, rep in enumerate(mem_cpu_s):
+            values[k] = data_preparation.dockerstats_extractor(rep, [pod], data_preparation.rename_startwith)[
+                metric + " AVG"].mean()
+        return np.mean(values)
+    else:
+        stats = glob.glob(os.path.join(edir, 'esec_*.csv_stats.csv'))
+        values = [0.] * len(stats)
+        for k, rep in enumerate(stats):
+            loc = data_preparation.locuststats_extractor(rep)
+            values[k] = loc[loc['Name'] == service]['Average Response Time'].mean()
+        return np.mean(values)
