@@ -127,18 +127,16 @@ def random_predictor(system, path_work):
     gen_path = os.path.join(path_work, "generated_configs")
     os.makedirs(gen_path, exist_ok=True)
 
-    SRs = [1, 5, 10]
+    df = create_dataset(system, os.path.join(path_work, "df.csv"))
+
+    SRs = list(set(df['SR']))
+    loads = list(set(df['LOAD']))
     if system == System.MUBENCH:
         model_limit = 30
         nstart = 2
-        loads = ['uniform', 'randomly_balanced', 'unbalanced_one']
     else:
         model_limit = 50
         nstart = 4
-        if system == System.SOCKSHOP:
-            loads = ['normal', 'stress_cart', 'stress_shop']
-        else:
-            loads = ['normal', 'stress_booking', 'stress_cancel']
 
     services, _, _, _ = get_system_info(system)
 
@@ -193,7 +191,7 @@ def system_performance_evaluation(system, path_work=None, sensibility=0.):
         json.dump(metrics, f_metrics)
 
 
-def system_mean_performance(system, reps, path_works=None, sensibility=0.):
+def system_mean_performance(system, reps, name_sub_dir="work_rep", path_works=None, sensibility=0.):
     if path_works is None:
         if system == System.MUBENCH:
             path_works = os.path.join(CURRENT_PATH, "mubench")
@@ -230,7 +228,7 @@ def system_mean_performance(system, reps, path_works=None, sensibility=0.):
         }
 
     for k, rep in enumerate(reps):
-        path_rep = os.path.join(path_works, "work_rep" + str(rep))
+        path_rep = os.path.join(path_works, name_sub_dir + str(rep))
         if sensibility > 0:
             path_rep_metrics = os.path.join(path_rep, "metrics{}.json".format(sensibility))
         else:
