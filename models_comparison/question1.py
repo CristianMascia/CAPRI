@@ -6,8 +6,10 @@ import questions_utils as qu
 import utils
 import CONFIG
 
+######## Which is the best-performing CD algorithm in predicting anomalies?
 
-######## Does prior knowledge improve performance?
+algorithms = ['dlingam', 'dagma_lin', 'dagma_mlp', 'dag_gnn']
+
 
 def data_preparation(path_df):
     print("----------DATA PREPARATION----------")
@@ -22,32 +24,41 @@ def discovery(df_discovery, dags_dir):
     maps = {i: df_discovery.columns[i] for i in range(0, len(df_discovery.columns))}
     X = df_discovery.to_numpy(dtype=np.float64)
 
-    print("  -----DLINGAM WITH PRIOR-----")
-
-    prior = qu.get_prior_mubench(df_discovery.columns)
-    utils.draw_prior_knwoledge_mat(prior, df_discovery.columns, os.path.join(dags_dir, "prior"))
-    qu.save_adjusted_dag(os.path.join(dags_dir, "dlingam_prior"), qu.dlingam_discovery(X, prior_knowledge=prior), maps)
+    for cmod in algorithms:
+        print("  -----" + cmod.upper() + "-----")
+        path_mod = os.path.join(dags_dir, cmod)
+        if cmod == 'dag_gnn':
+            qu.dag_gnn_discovery(df_discovery, path_mod)
+        else:
+            qu.save_adjusted_dag(path_mod, getattr(qu, cmod + "_discovery")(X, th=0), maps)
 
 
 def configuration_generation(df_discovery, loads_mapping, dags_dir, config_dir):
     print("----------CONFIGURATION GENERATION----------")
 
-    print("  -----DLINGAM WITH PRIOR-----")
-    qu.gen_configs_per_metric(df_discovery, loads_mapping, os.path.join(dags_dir, "dlingam_prior.dot"),
-                              os.path.join(config_dir, "dlingam_prior"))
+    for cmodel in algorithms:
+        print("  -----" + cmodel.upper() + "-----")
+        qu.gen_configs_per_metric(df_discovery, loads_mapping, os.path.join(dags_dir, cmodel + ".dot"),
+                                  os.path.join(config_dir, cmodel))
 
 
 def show_metrics(df_all, config_dir, path_mets):
     print("----------METRICS----------")
-    print("  -----DLINGAM_PRIOR-----")
-    mets_model = qu.calc_metrics(df_all, config_dir, "dlingam_prior")
+    mets_models = {}
+    for cmodel in algorithms:
+        print("  -----" + cmodel.upper() + "-----")
+        mets_models[cmodel] = qu.calc_metrics(df_all, config_dir, cmodel)
 
     with open(path_mets, 'w') as f:
-        json.dump(mets_model, f)
+        json.dump(mets_models, f)
 
 
 def merge_mets(met_dicts):
-    return qu.merge_met_dict(met_dicts)
+    out_dict = {}
+    for alg in algorithms:
+        out_dict[alg] = qu.merge_met_dict([m[alg] for m in met_dicts])
+
+    return out_dict
 
 
 def __main__(path_df, path_main_dir):

@@ -1,14 +1,16 @@
 import json
 import os
+import lingam
 import numpy as np
 import pandas as pd
 import questions_utils as qu
 import utils
 import CONFIG
 
-######## Which is the best-performing CD algorithm in predicting anomalies?
+######## How does performance vary with changing the minimum confidence required for a causal relation identification?
 
-algorithms = ['dlingam', 'dagma_lin', 'dagma_mlp', 'dag_gnn']
+
+ths = [0.1, 0.3]
 
 
 def data_preparation(path_df):
@@ -24,30 +26,33 @@ def discovery(df_discovery, dags_dir):
     maps = {i: df_discovery.columns[i] for i in range(0, len(df_discovery.columns))}
     X = df_discovery.to_numpy(dtype=np.float64)
 
-    for cmod in algorithms:
-        print("  -----" + cmod.upper() + "-----")
-        path_mod = os.path.join(dags_dir, cmod)
-        if cmod == 'dag_gnn':
-            qu.dag_gnn_discovery(df_discovery, path_mod)
-        else:
-            qu.save_adjusted_dag(path_mod, getattr(qu, cmod + "_discovery")(X, th=0), maps)
+    prior = qu.get_prior_mubench(df_discovery.columns)
+    utils.draw_prior_knwoledge_mat(prior, df_discovery.columns, os.path.join(dags_dir, "prior"))
+    model = lingam.DirectLiNGAM(prior_knowledge=prior)
+    model.fit(X)
+    adj_mat = np.transpose(model.adjacency_matrix_)
+
+    for th in ths:
+        print("  -----DLINGAM WITH PRIOR TH: {}-----".format(th))
+        qu.save_dag(os.path.join(dags_dir, "dlingam_prior_th" + str(th)), utils.threshold_matrix(adj_mat, th=th), maps)
 
 
 def configuration_generation(df_discovery, loads_mapping, dags_dir, config_dir):
     print("----------CONFIGURATION GENERATION----------")
 
-    for cmodel in algorithms:
-        print("  -----" + cmodel.upper() + "-----")
-        qu.gen_configs_per_metric(df_discovery, loads_mapping, os.path.join(dags_dir, cmodel + ".dot"),
-                                  os.path.join(config_dir, cmodel))
+    for th in ths:
+        print("  -----TH:" + str(th) + "-----")
+        qu.gen_configs_per_metric(df_discovery, loads_mapping,
+                                  os.path.join(dags_dir, "dlingam_prior_th{}.dot".format(th)),
+                                  os.path.join(config_dir, "TH_" + str(th)))
 
 
 def show_metrics(df_all, config_dir, path_mets):
     print("----------METRICS----------")
     mets_models = {}
-    for cmodel in algorithms:
-        print("  -----" + cmodel.upper() + "-----")
-        mets_models[cmodel] = qu.calc_metrics(df_all, config_dir, cmodel)
+    for th in ths:
+        print("  -----TH:" + str(th) + "-----")
+        mets_models[str(th)] = qu.calc_metrics(df_all, config_dir, "TH_" + str(th))
 
     with open(path_mets, 'w') as f:
         json.dump(mets_models, f)
@@ -55,8 +60,8 @@ def show_metrics(df_all, config_dir, path_mets):
 
 def merge_mets(met_dicts):
     out_dict = {}
-    for alg in algorithms:
-        out_dict[alg] = qu.merge_met_dict([m[alg] for m in met_dicts])
+    for th in ths:
+        out_dict[str(th)] = qu.merge_met_dict([m[str(th)] for m in met_dicts])
 
     return out_dict
 
