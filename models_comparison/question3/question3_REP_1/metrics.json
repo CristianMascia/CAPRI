@@ -1,42 +1,20 @@
 {
-  "0.1": {
-    "RES_TIME": {
-      "precision": 1.0,
-      "recall": 1,
-      "mhd_pos": 1.2666666666666664,
-      "mhd_false": -1
-    },
-    "CPU": {
-      "precision": 1.0,
-      "recall": 1,
-      "mhd_pos": 0.0,
-      "mhd_false": -1
-    },
-    "MEM": {
-      "precision": 1.0,
-      "recall": 1,
-      "mhd_pos": 0.0,
-      "mhd_false": -1
-    }
+  "RES_TIME": {
+    "precision": 0.9,
+    "recall": 1,
+    "mhd_pos": 0.8148148148148147,
+    "mhd_false": 0.3333333333333333
   },
-  "0.3": {
-    "RES_TIME": {
-      "precision": 1.0,
-      "recall": 1,
-      "mhd_pos": 1.333333333333333,
-      "mhd_false": -1
-    },
-    "CPU": {
-      "precision": 1.0,
-      "recall": 1,
-      "mhd_pos": 0.0,
-      "mhd_false": -1
-    },
-    "MEM": {
-      "precision": 1.0,
-      "recall": 1,
-      "mhd_pos": 0.0,
-      "mhd_false": -1
-    }
+  "CPU": {
+    "precision": 1.0,
+    "recall": 1,
+    "mhd_pos": 0.1,
+    "mhd_false": -1
+  },
+  "MEM": {
+    "precision": 1.0,
+    "recall": 1,
+    "mhd_pos": 0.3333333333333333,
+    "mhd_false": -1
   }
 }

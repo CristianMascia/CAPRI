@@ -7,69 +7,43 @@ import utils
 import CONFIG
 
 
-######## How does performance vary if we consider one model per performance metric or one model for all metrics?
-
+######## Does prior knowledge improve performance?
 
 def data_preparation(path_df):
     print("----------DATA PREPARATION----------")
     df = pd.read_csv(path_df)
     df_d, maps = utils.get_discovery_dataset(df)
-    cols_base_all = ['NUSER', 'LOAD', 'SR'] + ['REQ/s_' + s for s in CONFIG.services]
-    cols_base_disc = ['NUSER'] + ['LOAD_' + str(i) for i in range(3)] + ['SR'] + ['REQ/s_' + s for s in CONFIG.services]
-    return {
-        'DF_ALL': df,
-        'LOAD_MAPS': maps,
-        'RES_TIME': {
-            'DF_ALL': df[cols_base_all + ["RES_TIME_" + s for s in CONFIG.services]],
-            'DF_DISC': df_d[cols_base_disc + ["RES_TIME_" + s for s in CONFIG.services]]
-        },
-        'CPU': {
-            'DF_ALL': df[cols_base_all + ["CPU_" + s for s in CONFIG.services]],
-            'DF_DISC': df_d[cols_base_disc + ["CPU_" + s for s in CONFIG.services]]
-        },
-        'MEM': {
-            'DF_ALL': df[cols_base_all + ["MEM_" + s for s in CONFIG.services]],
-            'DF_DISC': df_d[cols_base_disc + ["MEM_" + s for s in CONFIG.services]]
-        }
-    }
+    return df, df_d, maps
 
 
-def discovery(df_dict, dags_dir):
+def discovery(df_discovery, dags_dir):
     print("----------CAUSAL DISCOVERY----------")
 
-    for met in CONFIG.all_metrics:
-        print("  -----DLINGAM WITH PRIOR FOR {}-----".format(met))
+    maps = {i: df_discovery.columns[i] for i in range(0, len(df_discovery.columns))}
+    X = df_discovery.to_numpy(dtype=np.float64)
 
-        df_discovery_met = df_dict[met]['DF_DISC']
-        maps = {i: df_discovery_met.columns[i] for i in range(0, len(df_discovery_met.columns))}
-        X = df_discovery_met.to_numpy(dtype=np.float64)
+    print("  -----DLINGAM WITH PRIOR-----")
 
-        prior = qu.get_prior_mubench(df_discovery_met.columns, [met])
-        utils.draw_prior_knwoledge_mat(prior, df_discovery_met.columns, os.path.join(dags_dir, "prior_" + met))
-        qu.save_adjusted_dag(os.path.join(dags_dir, "dlingam_prior_" + met),
-                             qu.dlingam_discovery(X, prior_knowledge=prior), maps)
+    prior = qu.get_prior_mubench(df_discovery.columns)
+    utils.draw_prior_knwoledge_mat(prior, df_discovery.columns, os.path.join(dags_dir, "prior"))
+    qu.save_adjusted_dag(os.path.join(dags_dir, "dlingam_prior"), qu.dlingam_discovery(X, prior_knowledge=prior), maps)
 
 
-def configuration_generation(df_dict, dags_dir, config_dir):
+def configuration_generation(df_discovery, loads_mapping, dags_dir, config_dir):
     print("----------CONFIGURATION GENERATION----------")
 
-    for met in CONFIG.all_metrics:
-        print("  -----DLINGAM WITH PRIOR FOR {}-----".format(met))
-
-        qu.gen_configs_per_metric(df_dict[met]['DF_DISC'], df_dict['LOAD_MAPS'],
-                                  os.path.join(dags_dir, "dlingam_prior_{}.dot".format(met)),
-                                  os.path.join(config_dir, "dlingam_prior"), metrics=[met])
+    print("  -----DLINGAM WITH PRIOR-----")
+    qu.gen_configs_per_metric(df_discovery, loads_mapping, os.path.join(dags_dir, "dlingam_prior.dot"),
+                              os.path.join(config_dir, "dlingam_prior"))
 
 
-def show_metrics(df_dict, config_dir, path_mets):
+def show_metrics(df_all, config_dir, path_mets):
     print("----------METRICS----------")
-    mets_models = {}
-    for met in CONFIG.all_metrics:
-        print("  -----DLINGAM WITH PRIOR FOR {}-----".format(met))
-        mets_models[met] = qu.calc_metrics(df_dict[met]['DF_ALL'], config_dir, "dlingam_prior",
-                                           metrics=[met])[met]
+    print("  -----DLINGAM_PRIOR-----")
+    mets_model = qu.calc_metrics(df_all, config_dir, "dlingam_prior")
+
     with open(path_mets, 'w') as f:
-        json.dump(mets_models, f)
+        json.dump(mets_model, f)
 
 
 def merge_mets(met_dicts):
@@ -84,7 +58,8 @@ def __main__(path_df, path_main_dir):
     os.makedirs(path_dir_dags, exist_ok=True)
     os.makedirs(path_dir_configs, exist_ok=True)
 
-    df_dict = data_preparation(path_df)
-    discovery(df_dict, path_dir_dags)
-    configuration_generation(df_dict, path_dir_dags, path_dir_configs)
-    show_metrics(df_dict, path_dir_configs, path_metric_file)
+    df, df_discovery, loads_map = data_preparation(path_df)
+
+    discovery(df_discovery, path_dir_dags)
+    configuration_generation(df_discovery, loads_map, path_dir_dags, path_dir_configs)
+    show_metrics(df, path_dir_configs, path_metric_file)
