@@ -1,0 +1,32 @@
+{
+  "RES_TIME": {
+    "precision_mean": 0.769,
+    "recall_mean": 1.0,
+    "precision_std": 0.069,
+    "recall_std": 0.0,
+    "mhd_pos_mean": 1.236,
+    "mhd_pos_std": 0.104,
+    "mhd_false_mean": 0.861,
+    "mhd_false_std": 0.17
+  },
+  "CPU": {
+    "precision_mean": 0.831,
+    "recall_mean": 1.0,
+    "precision_std": 0.031,
+    "recall_std": 0.0,
+    "mhd_pos_mean": 0.0,
+    "mhd_pos_std": 0.0,
+    "mhd_false_mean": 1.711,
+    "mhd_false_std": 0.244
+  },
+  "MEM": {
+    "precision_mean": 0.909,
+    "recall_mean": 1.0,
+    "precision_std": 0.0,
+    "recall_std": 0.0,
+    "mhd_pos_mean": 0.0,
+    "mhd_pos_std": 0.0,
+    "mhd_false_mean": 0.067,
+    "mhd_false_std": 0.133
+  }
+}
