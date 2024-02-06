@@ -196,9 +196,9 @@ def system_mean_performance(system, reps, name_sub_dir="work_rep", path_works=No
         if system == System.MUBENCH:
             path_works = os.path.join(CURRENT_PATH, "mubench")
         elif system == System.SOCKSHOP:
-            path_works = os.path.join(CURRENT_PATH, "sockshop")
+            path_works = os.path.join(CURRENT_PATH, "sockshop/works")
         else:
-            path_works = os.path.join(CURRENT_PATH, "trainticket")
+            path_works = os.path.join(CURRENT_PATH, "trainticket/works")
 
     if sensibility > 0:
         path_mean_metrics = os.path.join(path_works, 'avg_metrics_{}.json'.format(sensibility))
