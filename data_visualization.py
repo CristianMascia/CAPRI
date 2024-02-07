@@ -1,8 +1,11 @@
 import os
 import shutil
+
+import matplotlib
 import matplotlib.pyplot as plt
+import pandas as pd
+
 import utils
-import matplotlib.transforms as transforms
 
 
 def vertical_align_text(fig, ax, x, text, fontsize, y_min, y_max):
@@ -20,7 +23,7 @@ def vertical_align_text(fig, ax, x, text, fontsize, y_min, y_max):
     ax.text(x, 0.5 - offset, text, fontsize=fontsize, transform=ax.transAxes)
 
 
-def ___main__(df, path_images, services, ths_filtered=False):
+def nusers_vs_met(df, path_images, services, ths_filtered=False):
     nusers = list(set(df['NUSER']))
     nusers.sort()
     loads = list(set(df['LOAD']))
@@ -36,10 +39,7 @@ def ___main__(df, path_images, services, ths_filtered=False):
     label_met = {'CPU': 'CPU', 'RES_TIME': 'Response Time', 'MEM': 'Memory'}
     path_nuser_vs_met = os.path.join(path_images, "NUSER_vs_MET")
 
-    if os.path.exists(path_images):
-        shutil.rmtree(path_images)
-    os.mkdir(path_images)
-    os.mkdir(path_nuser_vs_met)
+    os.makedirs(path_nuser_vs_met, exist_ok=True)
 
     for service in services:
         ths = utils.calc_thresholds(df, service, ths_filtered)
@@ -88,3 +88,43 @@ def ___main__(df, path_images, services, ths_filtered=False):
             fig.subplots_adjust(left=0.03, right=0.85)
             fig.savefig(os.path.join(path_nuser_vs_met, "{}_{}.pdf".format(service, met)), format='pdf')
             plt.close(fig)
+
+
+def loads_comparison(df, path_images, services, SR=1, ths_filtered=False):
+    df = df[df['SR'] == SR].drop(columns=['SR'])
+
+    nusers = list(set(df['NUSER']))
+    nusers.sort()
+    loads = list(set(df['LOAD']))
+    loads.sort()
+    services.sort()
+    df_grouped = df.groupby(['NUSER', 'LOAD']).mean()
+
+    unita_misura = {'CPU': 'cores', 'RES_TIME': 'ms', 'MEM': 'bytes'}
+    label_met = {'CPU': 'CPU', 'RES_TIME': 'Response Time', 'MEM': 'Memory'}
+    palette = ["#003f5c", "#bc5090", "#ffa600"]
+
+    path_images = os.path.join(path_images, "loads_comparison")
+    os.makedirs(path_images, exist_ok=True)
+
+    matplotlib.rcParams.update({'font.size': 18, 'lines.linewidth': 3})
+
+    for service in services:
+        ths = utils.calc_thresholds(df, service, ths_filtered)
+        for met in ['RES_TIME', 'CPU', 'MEM']:
+            fig = plt.figure(figsize=(20, 10))
+
+            for l, load in enumerate(loads):
+                plt.plot(nusers, [df_grouped.loc[(n, load), met + "_" + service] for n in nusers], marker='o',
+                         label=load, markersize=10, color=palette[l])
+            plt.ylabel("{}[{}]".format(label_met[met], unita_misura[met]), fontweight='bold')
+            plt.xlabel('Users Size', fontweight='bold')
+            plt.axhline(ths[met], color='red', linestyle='solid', label="Threshold")
+            plt.xticks(nusers)
+            plt.text((max(nusers) - min(nusers)) * 0.3, ths[met], "TH={:.2f}".format(ths[met]), fontweight='bold')
+            plt.legend()
+            fig.savefig(os.path.join(path_images, "{}_{}.pdf".format(service, met)), format='pdf', bbox_inches='tight')
+            plt.close(fig)
+
+
+loads_comparison(pd.read_csv("mubench/data/mubench_df.csv"), "prova", ["s0"])

@@ -65,9 +65,11 @@ def system_visualization(system, path_images=None):
 
     if system == System.MUBENCH:
         df_disc = df[df['NUSER'].isin([i for i in range(1, 30, 2)] + [30])]
-        data_visualization.___main__(df_disc, path_images, services)
+        data_visualization.nusers_vs_met(df_disc, path_images, services)
+        data_visualization.loads_comparison(df_disc, path_images, services)
     else:
-        data_visualization.___main__(df, path_images, services, True)
+        data_visualization.nusers_vs_met(df, path_images, services, True)
+        data_visualization.loads_comparison(df, path_images, services, 1, True)
 
 
 def system_workflow(system, path_work, generation_conf_FAST=False):
