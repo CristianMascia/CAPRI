@@ -4,19 +4,31 @@
       "precision": 1.0,
       "recall": 1,
       "mhd_pos": 0.7,
-      "mhd_false": -1
+      "mhd_false": -1,
+      "true_positive": 10,
+      "true_negative": 0,
+      "false_positive": 0,
+      "false_negative": 0
     },
     "CPU": {
       "precision": 0.9,
       "recall": 1,
       "mhd_pos": 0.0,
-      "mhd_false": 0.3333333333333333
+      "mhd_false": 0.3333333333333333,
+      "true_positive": 9,
+      "true_negative": 0,
+      "false_positive": 1,
+      "false_negative": 0
     },
     "MEM": {
       "precision": 1.0,
       "recall": 1,
       "mhd_pos": 0.3333333333333333,
-      "mhd_false": -1
+      "mhd_false": -1,
+      "true_positive": 1,
+      "true_negative": 9,
+      "false_positive": 0,
+      "false_negative": 0
     }
   },
   "dagma_lin": {
@@ -24,19 +36,31 @@
       "precision": 0,
       "recall": 0,
       "mhd_pos": -1,
-      "mhd_false": 4.7407407407407405
+      "mhd_false": 4.7407407407407405,
+      "true_positive": 0,
+      "true_negative": 0,
+      "false_positive": 9,
+      "false_negative": 1
     },
     "CPU": {
       "precision": 0.9,
       "recall": 1,
       "mhd_pos": 0.0,
-      "mhd_false": 0.3333333333333333
+      "mhd_false": 0.3333333333333333,
+      "true_positive": 9,
+      "true_negative": 0,
+      "false_positive": 1,
+      "false_negative": 0
     },
     "MEM": {
       "precision": 0,
       "recall": 0,
       "mhd_pos": -1,
-      "mhd_false": 6.333333333333333
+      "mhd_false": 6.333333333333333,
+      "true_positive": 0,
+      "true_negative": 9,
+      "false_positive": 1,
+      "false_negative": 0
     }
   },
   "dagma_mlp": {
@@ -44,19 +68,31 @@
       "precision": 0,
       "recall": 0,
       "mhd_pos": -1,
-      "mhd_false": 4.925925925925926
+      "mhd_false": 4.925925925925926,
+      "true_positive": 0,
+      "true_negative": 0,
+      "false_positive": 9,
+      "false_negative": 1
     },
     "CPU": {
       "precision": 0.7,
       "recall": 1,
       "mhd_pos": 0.0,
-      "mhd_false": 0.3333333333333333
+      "mhd_false": 0.3333333333333333,
+      "true_positive": 7,
+      "true_negative": 0,
+      "false_positive": 3,
+      "false_negative": 0
     },
     "MEM": {
       "precision": 0,
       "recall": 0,
       "mhd_pos": -1,
-      "mhd_false": 6.666666666666667
+      "mhd_false": 6.666666666666667,
+      "true_positive": 0,
+      "true_negative": 9,
+      "false_positive": 1,
+      "false_negative": 0
     }
   },
   "dag_gnn": {
@@ -64,19 +100,31 @@
       "precision": 0.3,
       "recall": 1,
       "mhd_pos": 2.0,
-      "mhd_false": 4.190476190476191
+      "mhd_false": 4.190476190476191,
+      "true_positive": 3,
+      "true_negative": 0,
+      "false_positive": 7,
+      "false_negative": 0
     },
     "CPU": {
       "precision": 1.0,
       "recall": 1,
       "mhd_pos": 0.0,
-      "mhd_false": -1
+      "mhd_false": -1,
+      "true_positive": 10,
+      "true_negative": 0,
+      "false_positive": 0,
+      "false_negative": 0
     },
     "MEM": {
       "precision": 0,
       "recall": 0,
       "mhd_pos": -1,
-      "mhd_false": 1.6666666666666667
+      "mhd_false": 1.6666666666666667,
+      "true_positive": 0,
+      "true_negative": 9,
+      "false_positive": 1,
+      "false_negative": 0
     }
   }
 }

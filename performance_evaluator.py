@@ -54,6 +54,7 @@ def calc_metrics(df: Union[str, pd.DataFrame], get_config: Callable[[str, str], 
         mhd_values_pos = []
         mhd_values_false = []
         true_positive = 0
+        true_negative = 0
         false_negative = 0
         false_positive = 0
         for ser in services:
@@ -68,14 +69,20 @@ def calc_metrics(df: Union[str, pd.DataFrame], get_config: Callable[[str, str], 
                     mhd_values_false.append(calc_mhd(config, False))
 
             else:
+                is_anomaly = False
                 # print("No anomaly for {} for {}".format(ser, met))
                 for n in reversed(range(1 + max(df['NUSER']))):
                     for l in list(set(df['LOAD'])):
                         for sr in list(set(df['SR'])):
                             a = df[(df['NUSER'] == n) & (df['LOAD'] == l) & (df['SR'] == sr)]
                             if a[met + "_" + ser].mean() > ((1 + sensibility) * ths[met]):
-                                false_negative += 1
+                                is_anomaly = True
+                                # false_negative += 1
                                 break
+                if is_anomaly:
+                    false_negative += 1
+                else:
+                    true_negative += 1
             # print("Service {} Met: {}".format(ser, met))
 
         precision = 0
@@ -99,6 +106,8 @@ def calc_metrics(df: Union[str, pd.DataFrame], get_config: Callable[[str, str], 
         else:
             mhd_false = -1
 
-        metrics_dict[met] = {"precision": precision, "recall": recall, "mhd_pos": mhd_pos, "mhd_false": mhd_false}
+        metrics_dict[met] = {"precision": precision, "recall": recall, "mhd_pos": mhd_pos, "mhd_false": mhd_false,
+                             "true_positive": true_positive, "true_negative": true_negative,
+                             "false_positive": false_positive, "false_negative": false_negative}
 
     return metrics_dict

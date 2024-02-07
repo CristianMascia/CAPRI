@@ -196,33 +196,30 @@ def calc_metrics(df, path_configs_dir, model_name, metrics=None):
 
 def merge_met_dict(met_dicts):
     out_dict = {}
-    count_dict = {}
 
+    metrics_performance = ["precision",
+                           "recall",
+                           "true_positive",
+                           "true_negative",
+                           "false_positive",
+                           "false_negative"]
     for met in CONFIG.all_metrics:
         out_dict[met] = {
-            "mean_precision": 0,
-            "mean_recall": 0,
-            "mean_mhd_pos": 0,
-            "mean_mhd_false": 0
+            mp + "_mean": np.round(np.mean([md[met][mp] for md in met_dicts]), 3) for mp in
+            metrics_performance
         }
-        count_dict[met] = {
-            "count_mhd_pos": 0,
-            "count_mhd_false": 0
-        }
-        for met_dict in met_dicts:
-            out_dict[met]['mean_precision'] += met_dict[met]['precision'] / len(met_dicts)
-            out_dict[met]['mean_recall'] += met_dict[met]['recall'] / len(met_dicts)
 
-            for t in ['pos', 'false']:
-                if met_dict[met]['mhd_' + t] >= 0:
-                    out_dict[met]['mean_mhd_' + t] += met_dict[met]['mhd_' + t]
-                    count_dict[met]['count_mhd_' + t] += 1
+        mhd_pos_arr = [md[met]["mhd_pos"] for md in met_dicts if md[met]["mhd_pos"] >= 0]
+        mhd_false_arr = [md[met]["mhd_false"] for md in met_dicts if md[met]["mhd_false"] >= 0]
+        if len(mhd_pos_arr) > 0:
+            out_dict[met]["mhd_pos"] = np.round(np.mean(mhd_pos_arr), 3)
+        else:
+            out_dict[met]["mhd_pos"] = -1
 
-        for t in ['pos', 'false']:
-            if count_dict[met]['count_mhd_' + t] > 0:
-                out_dict[met]['mean_mhd_' + t] /= count_dict[met]['count_mhd_' + t]
-            else:
-                out_dict[met]['mean_mhd_' + t] = -1
+        if len(mhd_false_arr) > 0:
+            out_dict[met]["mhd_false"] = np.round(np.mean(mhd_false_arr), 3)
+        else:
+            out_dict[met]["mhd_false"] = -1
     return out_dict
 
 

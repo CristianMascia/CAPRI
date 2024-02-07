@@ -7,7 +7,7 @@ import importlib
 
 
 def __main__():
-    n_reps = 5
+    n_reps = 10
     n_questions = 4
 
     path_system = os.path.join("..", "mubench")
@@ -17,7 +17,7 @@ def __main__():
     if not os.path.exists(path_df):
         data_preparation.read_experiments(path_exps, {s: s for s in CONFIG.services}, CONFIG.services,
                                           data_preparation.rename_startwith).to_csv(path_df, index=False)
-    for i in range(n_questions):
+    for i in range(1, n_questions + 1):
         print("QUESTION {}".format(i))
         q = "question{}".format(i)
         mets_dicts = [{} for j in range(n_reps)]

@@ -1,1 +1,130 @@
-{"dlingam": {"RES_TIME": {"precision": 1.0, "recall": 1, "mhd_pos": 0.6666666666666666, "mhd_false": -1}, "CPU": {"precision": 0.8, "recall": 1, "mhd_pos": 0.041666666666666664, "mhd_false": 0.3333333333333333}, "MEM": {"precision": 1.0, "recall": 1, "mhd_pos": 0.3333333333333333, "mhd_false": -1}}, "dagma_lin": {"RES_TIME": {"precision": 0, "recall": 0, "mhd_pos": -1, "mhd_false": 4.962962962962963}, "CPU": {"precision": 0.8, "recall": 1, "mhd_pos": 0.041666666666666664, "mhd_false": 0.3333333333333333}, "MEM": {"precision": 0, "recall": 0, "mhd_pos": -1, "mhd_false": 4.0}}, "dagma_mlp": {"RES_TIME": {"precision": 0, "recall": 0, "mhd_pos": -1, "mhd_false": 4.740740740740741}, "CPU": {"precision": 0.7, "recall": 1, "mhd_pos": 0.0, "mhd_false": 0.3333333333333333}, "MEM": {"precision": 0, "recall": 0, "mhd_pos": -1, "mhd_false": 6.666666666666667}}, "dag_gnn": {"RES_TIME": {"precision": 0.8, "recall": 1, "mhd_pos": 0.08333333333333333, "mhd_false": 1.0}, "CPU": {"precision": 1.0, "recall": 1, "mhd_pos": 0.4333333333333333, "mhd_false": -1}, "MEM": {"precision": 0, "recall": 0, "mhd_pos": -1, "mhd_false": 1.6666666666666667}}}
+{
+  "dlingam": {
+    "RES_TIME": {
+      "precision": 1.0,
+      "recall": 1,
+      "mhd_pos": 0.6666666666666666,
+      "mhd_false": -1,
+      "true_positive": 10,
+      "true_negative": 0,
+      "false_positive": 0,
+      "false_negative": 0
+    },
+    "CPU": {
+      "precision": 0.8,
+      "recall": 1,
+      "mhd_pos": 0.041666666666666664,
+      "mhd_false": 0.3333333333333333,
+      "true_positive": 8,
+      "true_negative": 0,
+      "false_positive": 2,
+      "false_negative": 0
+    },
+    "MEM": {
+      "precision": 1.0,
+      "recall": 1,
+      "mhd_pos": 0.3333333333333333,
+      "mhd_false": -1,
+      "true_positive": 1,
+      "true_negative": 9,
+      "false_positive": 0,
+      "false_negative": 0
+    }
+  },
+  "dagma_lin": {
+    "RES_TIME": {
+      "precision": 0,
+      "recall": 0,
+      "mhd_pos": -1,
+      "mhd_false": 4.962962962962963,
+      "true_positive": 0,
+      "true_negative": 0,
+      "false_positive": 9,
+      "false_negative": 1
+    },
+    "CPU": {
+      "precision": 0.8,
+      "recall": 1,
+      "mhd_pos": 0.041666666666666664,
+      "mhd_false": 0.3333333333333333,
+      "true_positive": 8,
+      "true_negative": 0,
+      "false_positive": 2,
+      "false_negative": 0
+    },
+    "MEM": {
+      "precision": 0,
+      "recall": 0,
+      "mhd_pos": -1,
+      "mhd_false": 4.0,
+      "true_positive": 0,
+      "true_negative": 9,
+      "false_positive": 1,
+      "false_negative": 0
+    }
+  },
+  "dagma_mlp": {
+    "RES_TIME": {
+      "precision": 0,
+      "recall": 0,
+      "mhd_pos": -1,
+      "mhd_false": 4.740740740740741,
+      "true_positive": 0,
+      "true_negative": 0,
+      "false_positive": 9,
+      "false_negative": 1
+    },
+    "CPU": {
+      "precision": 0.7,
+      "recall": 1,
+      "mhd_pos": 0.0,
+      "mhd_false": 0.3333333333333333,
+      "true_positive": 7,
+      "true_negative": 0,
+      "false_positive": 3,
+      "false_negative": 0
+    },
+    "MEM": {
+      "precision": 0,
+      "recall": 0,
+      "mhd_pos": -1,
+      "mhd_false": 6.666666666666667,
+      "true_positive": 0,
+      "true_negative": 9,
+      "false_positive": 1,
+      "false_negative": 0
+    }
+  },
+  "dag_gnn": {
+    "RES_TIME": {
+      "precision": 0.8,
+      "recall": 1,
+      "mhd_pos": 0.08333333333333333,
+      "mhd_false": 1.0,
+      "true_positive": 8,
+      "true_negative": 0,
+      "false_positive": 2,
+      "false_negative": 0
+    },
+    "CPU": {
+      "precision": 1.0,
+      "recall": 1,
+      "mhd_pos": 0.4333333333333333,
+      "mhd_false": -1,
+      "true_positive": 10,
+      "true_negative": 0,
+      "false_positive": 0,
+      "false_negative": 0
+    },
+    "MEM": {
+      "precision": 0,
+      "recall": 0,
+      "mhd_pos": -1,
+      "mhd_false": 1.6666666666666667,
+      "true_positive": 0,
+      "true_negative": 9,
+      "false_positive": 1,
+      "false_negative": 0
+    }
+  }
+}
