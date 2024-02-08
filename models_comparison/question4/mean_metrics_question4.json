@@ -1,42 +1,66 @@
 {
   "0.1": {
     "RES_TIME": {
-      "mean_precision": 0.96,
-      "mean_recall": 1.0,
-      "mean_mhd_pos": 1.2251851851851852,
-      "mean_mhd_false": 0.3333333333333333
+      "precision_mean": 0.92,
+      "recall_mean": 1.0,
+      "true_positive_mean": 9.2,
+      "true_negative_mean": 0.0,
+      "false_positive_mean": 0.8,
+      "false_negative_mean": 0.0,
+      "mhd_pos": 0.873,
+      "mhd_false": 1.778
     },
     "CPU": {
-      "mean_precision": 1.0,
-      "mean_recall": 1.0,
-      "mean_mhd_pos": 0.0,
-      "mean_mhd_false": -1
+      "precision_mean": 1.0,
+      "recall_mean": 1.0,
+      "true_positive_mean": 10.0,
+      "true_negative_mean": 0.0,
+      "false_positive_mean": 0.0,
+      "false_negative_mean": 0.0,
+      "mhd_pos": 0.19,
+      "mhd_false": -1
     },
     "MEM": {
-      "mean_precision": 0.8,
-      "mean_recall": 0.8,
-      "mean_mhd_pos": 0.0,
-      "mean_mhd_false": 0.3333333333333333
+      "precision_mean": 0.9,
+      "recall_mean": 0.9,
+      "true_positive_mean": 0.9,
+      "true_negative_mean": 9.0,
+      "false_positive_mean": 0.1,
+      "false_negative_mean": 0.0,
+      "mhd_pos": 0.185,
+      "mhd_false": 0.333
     }
   },
   "0.3": {
     "RES_TIME": {
-      "mean_precision": 0.98,
-      "mean_recall": 1.0,
-      "mean_mhd_pos": 1.3466666666666662,
-      "mean_mhd_false": 0.3333333333333333
+      "precision_mean": 0.93,
+      "recall_mean": 1.0,
+      "true_positive_mean": 9.3,
+      "true_negative_mean": 0.0,
+      "false_positive_mean": 0.7,
+      "false_negative_mean": 0.0,
+      "mhd_pos": 0.93,
+      "mhd_false": 2.5
     },
     "CPU": {
-      "mean_precision": 1.0,
-      "mean_recall": 1.0,
-      "mean_mhd_pos": 0.0,
-      "mean_mhd_false": -1
+      "precision_mean": 1.0,
+      "recall_mean": 1.0,
+      "true_positive_mean": 10.0,
+      "true_negative_mean": 0.0,
+      "false_positive_mean": 0.0,
+      "false_negative_mean": 0.0,
+      "mhd_pos": 0.21,
+      "mhd_false": -1
     },
     "MEM": {
-      "mean_precision": 0.8,
-      "mean_recall": 0.8,
-      "mean_mhd_pos": 0.0,
-      "mean_mhd_false": 0.3333333333333333
+      "precision_mean": 0.9,
+      "recall_mean": 0.9,
+      "true_positive_mean": 0.9,
+      "true_negative_mean": 9.0,
+      "false_positive_mean": 0.1,
+      "false_negative_mean": 0.0,
+      "mhd_pos": 0.185,
+      "mhd_false": 0.333
     }
   }
 }
