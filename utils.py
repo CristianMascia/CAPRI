@@ -48,7 +48,7 @@ def adjmat2dot(adj_mat, cols):
 def save_dot(G, path):
     A = to_agraph(G)
     A.write(path + ".dot")
-    A.draw(path + ".png", prog='dot')
+    A.draw(path + ".pdf", prog='dot')
 
 
 def hot_encode_array(a):

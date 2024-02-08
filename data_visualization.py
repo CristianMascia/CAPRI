@@ -125,6 +125,3 @@ def loads_comparison(df, path_images, services, SR=1, ths_filtered=False):
             plt.legend()
             fig.savefig(os.path.join(path_images, "{}_{}.pdf".format(service, met)), format='pdf', bbox_inches='tight')
             plt.close(fig)
-
-
-loads_comparison(pd.read_csv("mubench/data/mubench_df.csv"), "prova", ["s0"])
