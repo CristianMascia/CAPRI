@@ -1,20 +1,32 @@
 {
   "RES_TIME": {
-    "mean_precision": 0.22,
-    "mean_recall": 1.0,
-    "mean_mhd_pos": 2.138888888888889,
-    "mean_mhd_false": 2.594576719576719
+    "precision_mean": 0.3,
+    "recall_mean": 1.0,
+    "true_positive_mean": 3.0,
+    "true_negative_mean": 0.0,
+    "false_positive_mean": 7.0,
+    "false_negative_mean": 0.0,
+    "mhd_pos": 4.006,
+    "mhd_false": 2.427
   },
   "CPU": {
-    "mean_precision": 0.96,
-    "mean_recall": 1.0,
-    "mean_mhd_pos": 4.858518518518518,
-    "mean_mhd_false": 0.16666666666666666
+    "precision_mean": 0.94,
+    "recall_mean": 1.0,
+    "true_positive_mean": 9.4,
+    "true_negative_mean": 0.0,
+    "false_positive_mean": 0.6,
+    "false_negative_mean": 0.0,
+    "mhd_pos": 5.031,
+    "mhd_false": 0.167
   },
   "MEM": {
-    "mean_precision": 0.0,
-    "mean_recall": 0.0,
-    "mean_mhd_pos": -1,
-    "mean_mhd_false": 0.3666666666666667
+    "precision_mean": 0.0,
+    "recall_mean": 0.0,
+    "true_positive_mean": 0.0,
+    "true_negative_mean": 0.0,
+    "false_positive_mean": 10.0,
+    "false_negative_mean": 0.0,
+    "mhd_pos": -1,
+    "mhd_false": 0.303
   }
 }

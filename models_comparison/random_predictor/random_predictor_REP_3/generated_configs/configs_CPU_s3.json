@@ -1,1 +1,1 @@
-{"nusers": [17], "loads": ["uniform"], "spawn_rates": [5], "anomalous_metrics": ["CPU"]}
+{"nusers": [21], "loads": ["uniform"], "spawn_rates": [10], "anomalous_metrics": ["CPU"]}

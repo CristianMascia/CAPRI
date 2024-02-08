@@ -1,23 +1,20 @@
 import json
 import os
-import random
-
-import numpy as np
 import pandas as pd
-
-import example
-import questions_utils as qu
-import utils
 import CONFIG
-
+import questions_utils as qu
+import example
 
 ######## Random Predictor
+
+num_reps = 10
+
 
 def __main__(path_df, path_main_dir):
     df = pd.read_csv(path_df)
 
-    mets = [{}] * 5
-    for rep in range(5):
+    mets = [{}] * num_reps
+    for rep in range(num_reps):
         path_dir = os.path.join(path_main_dir, "random_predictor_REP_{}".format(rep))
         path_dir_configs = os.path.join(path_main_dir, "random_predictor_REP_{}".format(rep), "generated_configs")
         path_metric_file = os.path.join(path_main_dir, "random_predictor_REP_{}".format(rep), "metrics.json")
