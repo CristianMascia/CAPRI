@@ -1,23 +1,23 @@
 {
   "RES_TIME": {
-    "precision_mean": 0.769,
+    "precision_mean": 0.792,
     "recall_mean": 1.0,
-    "precision_std": 0.069,
+    "precision_std": 0.077,
     "recall_std": 0.0,
-    "mhd_pos_mean": 1.236,
-    "mhd_pos_std": 0.104,
-    "mhd_false_mean": 0.861,
-    "mhd_false_std": 0.17
+    "mhd_pos_mean": 1.202,
+    "mhd_pos_std": 0.11,
+    "mhd_false_mean": 0.714,
+    "mhd_false_std": 0.28
   },
   "CPU": {
-    "precision_mean": 0.831,
+    "precision_mean": 0.838,
     "recall_mean": 1.0,
-    "precision_std": 0.031,
+    "precision_std": 0.023,
     "recall_std": 0.0,
     "mhd_pos_mean": 0.0,
     "mhd_pos_std": 0.0,
-    "mhd_false_mean": 1.711,
-    "mhd_false_std": 0.244
+    "mhd_false_mean": 1.772,
+    "mhd_false_std": 0.183
   },
   "MEM": {
     "precision_mean": 0.909,
@@ -26,7 +26,7 @@
     "recall_std": 0.0,
     "mhd_pos_mean": 0.0,
     "mhd_pos_std": 0.0,
-    "mhd_false_mean": 0.067,
-    "mhd_false_std": 0.133
+    "mhd_false_mean": 0.033,
+    "mhd_false_std": 0.1
   }
 }

@@ -2,7 +2,7 @@
   "RES_TIME": {
     "precision": 0.6923076923076923,
     "recall": 1,
-    "mhd_pos": 1.3703703703703702,
+    "mhd_pos": 1.3333333333333333,
     "mhd_false": 0.8333333333333333,
     "true_positive": 9,
     "true_negative": 0,
