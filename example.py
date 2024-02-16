@@ -231,7 +231,7 @@ def system_mean_performance(system, reps, name_sub_dir="work_rep", path_works=No
         else:
             path_rep_metrics = os.path.join(path_rep, "metrics.json")
 
-        #system_performance_evaluation(system, path_rep, sensibility)
+        system_performance_evaluation(system, path_rep, sensibility)
 
         with open(path_rep_metrics, 'r') as f_mets:
             mets = json.load(f_mets)
