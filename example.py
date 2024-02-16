@@ -217,6 +217,10 @@ def system_mean_performance(system, reps, name_sub_dir="work_rep", path_works=No
             'recall': [0.] * len(reps),
             'mhd_pos': [0.] * len(reps),
             'mhd_false': [0.] * len(reps),
+            'true_positive': [0.] * len(reps),
+            'true_negative': [0.] * len(reps),
+            'false_positive': [0.] * len(reps),
+            'false_negative': [0.] * len(reps)
         }
         mean_metrics[met] = {
             'precision_mean': 0.,
@@ -226,7 +230,11 @@ def system_mean_performance(system, reps, name_sub_dir="work_rep", path_works=No
             "mhd_pos_mean": 0.,
             "mhd_pos_std": 0.,
             "mhd_false_mean": 0.,
-            "mhd_false_std": 0.
+            "mhd_false_std": 0.,
+            'true_positive': 0.,
+            'true_negative': 0.,
+            'false_positive': 0,
+            'false_negative': 0
         }
 
     for k, rep in enumerate(reps):
@@ -241,20 +249,13 @@ def system_mean_performance(system, reps, name_sub_dir="work_rep", path_works=No
         with open(path_rep_metrics, 'r') as f_mets:
             mets = json.load(f_mets)
             for met in metrics:
-                metrics_reps[met]['precision'][k] = mets[met]['precision']
-                metrics_reps[met]['recall'][k] = mets[met]['recall']
-                metrics_reps[met]['mhd_pos'][k] = mets[met]['mhd_pos']
-                metrics_reps[met]['mhd_false'][k] = mets[met]['mhd_false']
+                for key, val in mets[met].items():
+                    metrics_reps[met][key][k] = val
 
     for met in metrics:
-        mean_metrics[met]['precision_mean'] = round(np.mean(metrics_reps[met]['precision']), 3)
-        mean_metrics[met]['precision_std'] = round(np.std(metrics_reps[met]['precision']), 3)
-        mean_metrics[met]['recall_mean'] = round(np.mean(metrics_reps[met]['recall']), 3)
-        mean_metrics[met]['recall_std'] = round(np.std(metrics_reps[met]['recall']), 3)
-        mean_metrics[met]['mhd_pos_mean'] = round(np.mean(metrics_reps[met]['mhd_pos']), 3)
-        mean_metrics[met]['mhd_pos_std'] = round(np.std(metrics_reps[met]['mhd_pos']), 3)
-        mean_metrics[met]['mhd_false_mean'] = round(np.mean(metrics_reps[met]['mhd_false']), 3)
-        mean_metrics[met]['mhd_false_std'] = round(np.std(metrics_reps[met]['mhd_false']), 3)
+        for key, val in metrics_reps[met].items():
+            mean_metrics[met][key + '_mean'] = round(np.mean(val), 3)
+            mean_metrics[met][key + '_std'] = round(np.std(val), 3)
 
     with open(path_mean_metrics, 'w') as f_metrics:
         json.dump(mean_metrics, f_metrics)
