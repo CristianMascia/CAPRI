@@ -3,18 +3,30 @@
     "precision": 0.23076923076923078,
     "recall": 1,
     "mhd_pos": 5.888888888888889,
-    "mhd_false": 5.4
+    "mhd_false": 5.4,
+    "true_positive": 3,
+    "true_negative": 0,
+    "false_positive": 10,
+    "false_negative": 0
   },
   "CPU": {
     "precision": 0.7692307692307693,
     "recall": 1,
-    "mhd_pos": 7.666666666666666,
-    "mhd_false": 0.7777777777777777
+    "mhd_pos": 7.666666666666667,
+    "mhd_false": 0.7777777777777778,
+    "true_positive": 10,
+    "true_negative": 0,
+    "false_positive": 3,
+    "false_negative": 0
   },
   "MEM": {
     "precision": 0.7692307692307693,
     "recall": 1,
     "mhd_pos": 5.9,
-    "mhd_false": 0.3333333333333333
+    "mhd_false": 0.3333333333333333,
+    "true_positive": 10,
+    "true_negative": 0,
+    "false_positive": 3,
+    "false_negative": 0
   }
 }
