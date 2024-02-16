@@ -222,20 +222,7 @@ def system_mean_performance(system, reps, name_sub_dir="work_rep", path_works=No
             'false_positive': [0.] * len(reps),
             'false_negative': [0.] * len(reps)
         }
-        mean_metrics[met] = {
-            'precision_mean': 0.,
-            'recall_mean': 0.,
-            'precision_std': 0.,
-            'recall_std': 0.,
-            "mhd_pos_mean": 0.,
-            "mhd_pos_std": 0.,
-            "mhd_false_mean": 0.,
-            "mhd_false_std": 0.,
-            'true_positive': 0.,
-            'true_negative': 0.,
-            'false_positive': 0,
-            'false_negative': 0
-        }
+        mean_metrics[met] = {}
 
     for k, rep in enumerate(reps):
         path_rep = os.path.join(path_works, name_sub_dir + str(rep))
@@ -244,7 +231,7 @@ def system_mean_performance(system, reps, name_sub_dir="work_rep", path_works=No
         else:
             path_rep_metrics = os.path.join(path_rep, "metrics.json")
 
-        system_performance_evaluation(system, path_rep, sensibility)
+        #system_performance_evaluation(system, path_rep, sensibility)
 
         with open(path_rep_metrics, 'r') as f_mets:
             mets = json.load(f_mets)
