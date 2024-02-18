@@ -1,12 +1,12 @@
 {
   "RES_TIME": {
-    "precision": 0.6923076923076923,
+    "precision": 0.8461538461538461,
     "recall": 1,
-    "mhd_pos": 1.3333333333333333,
-    "mhd_false": 0.5,
-    "true_positive": 9,
+    "mhd_pos": 1.0909090909090908,
+    "mhd_false": 0.6666666666666666,
+    "true_positive": 11,
     "true_negative": 0,
-    "false_positive": 4,
+    "false_positive": 2,
     "false_negative": 0
   },
   "CPU": {
