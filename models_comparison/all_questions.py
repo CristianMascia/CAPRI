@@ -7,7 +7,7 @@ import importlib
 
 
 def __main__():
-    n_reps = 10
+    n_reps = 20
     n_questions = 4
 
     path_system = os.path.join("..", "mubench")
@@ -33,6 +33,3 @@ def __main__():
 
         with open(os.path.join(q, "mean_metrics_{}.json".format(q)), 'w') as f_mean:
             json.dump(getattr(sys.modules[q], "merge_mets")(mets_dicts), f_mean)
-
-
-__main__()
