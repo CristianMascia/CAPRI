@@ -7,7 +7,7 @@ import example
 
 ######## Random Predictor
 
-num_reps = 10
+num_reps = 20
 
 
 def __main__(path_df, path_main_dir):
@@ -29,6 +29,3 @@ def __main__(path_df, path_main_dir):
 
     with open(os.path.join(path_main_dir, "mean_metrics_random_predictor.json"), 'w') as f_mean_mets:
         json.dump(qu.merge_met_dict(mets), f_mean_mets)
-
-
-__main__(CONFIG.path_df, "random_predictor")
