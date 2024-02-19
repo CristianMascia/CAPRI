@@ -3,7 +3,7 @@
     "precision": 0.3076923076923077,
     "recall": 1,
     "mhd_pos": 6.25,
-    "mhd_false": 3.2222222222222223,
+    "mhd_false": 3.222222222222222,
     "true_positive": 4,
     "true_negative": 0,
     "false_positive": 9,
@@ -12,7 +12,7 @@
   "CPU": {
     "precision": 0.8461538461538461,
     "recall": 1,
-    "mhd_pos": 6.545454545454546,
+    "mhd_pos": 6.545454545454544,
     "mhd_false": 0.16666666666666666,
     "true_positive": 11,
     "true_negative": 0,
@@ -22,7 +22,7 @@
   "MEM": {
     "precision": 0.7692307692307693,
     "recall": 1,
-    "mhd_pos": 6.066666666666667,
+    "mhd_pos": 6.066666666666666,
     "mhd_false": 0.1111111111111111,
     "true_positive": 10,
     "true_negative": 0,

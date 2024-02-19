@@ -12,7 +12,7 @@
   "CPU": {
     "precision": 0.7692307692307693,
     "recall": 1,
-    "mhd_pos": 7.733333333333334,
+    "mhd_pos": 7.7333333333333325,
     "mhd_false": 2.555555555555556,
     "true_positive": 10,
     "true_negative": 0,

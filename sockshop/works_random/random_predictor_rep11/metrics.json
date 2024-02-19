@@ -3,7 +3,7 @@
     "precision": 0.5384615384615384,
     "recall": 1,
     "mhd_pos": 4.714285714285714,
-    "mhd_false": 3.222222222222222,
+    "mhd_false": 3.2222222222222228,
     "true_positive": 7,
     "true_negative": 0,
     "false_positive": 6,
@@ -22,7 +22,7 @@
   "MEM": {
     "precision": 0.7692307692307693,
     "recall": 1,
-    "mhd_pos": 4.666666666666667,
+    "mhd_pos": 4.666666666666666,
     "mhd_false": 0.0,
     "true_positive": 10,
     "true_negative": 0,
