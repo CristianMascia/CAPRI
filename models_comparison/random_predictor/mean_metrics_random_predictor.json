@@ -1,23 +1,23 @@
 {
   "RES_TIME": {
-    "precision_mean": 0.3,
+    "precision_mean": 0.28,
     "recall_mean": 1.0,
-    "true_positive_mean": 3.0,
+    "true_positive_mean": 2.8,
     "true_negative_mean": 0.0,
-    "false_positive_mean": 7.0,
+    "false_positive_mean": 7.2,
     "false_negative_mean": 0.0,
-    "mhd_pos": 4.006,
-    "mhd_false": 2.427
+    "mhd_pos": 3.588,
+    "mhd_false": 2.419
   },
   "CPU": {
-    "precision_mean": 0.94,
+    "precision_mean": 0.925,
     "recall_mean": 1.0,
-    "true_positive_mean": 9.4,
+    "true_positive_mean": 9.25,
     "true_negative_mean": 0.0,
-    "false_positive_mean": 0.6,
+    "false_positive_mean": 0.75,
     "false_negative_mean": 0.0,
-    "mhd_pos": 5.031,
-    "mhd_false": 0.167
+    "mhd_pos": 4.885,
+    "mhd_false": 0.074
   },
   "MEM": {
     "precision_mean": 0.0,
@@ -27,6 +27,6 @@
     "false_positive_mean": 10.0,
     "false_negative_mean": 0.0,
     "mhd_pos": -1,
-    "mhd_false": 0.303
+    "mhd_false": 0.278
   }
 }

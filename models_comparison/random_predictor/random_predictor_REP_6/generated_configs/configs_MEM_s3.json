@@ -1,1 +1,1 @@
-{"nusers": [20], "loads": ["uniform"], "spawn_rates": [1], "anomalous_metrics": ["MEM"]}
+{"nusers": [11], "loads": ["unbalanced_one"], "spawn_rates": [10], "anomalous_metrics": ["MEM"]}
