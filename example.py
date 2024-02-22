@@ -13,6 +13,11 @@ from enum import Enum
 
 from performance_evaluator import calc_metrics
 
+from keras import Input
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+from sklearn.model_selection import KFold
+
 CURRENT_PATH = os.path.dirname(__file__)
 
 
@@ -246,3 +251,277 @@ def system_mean_performance(system, reps, name_sub_dir="work_rep", path_works=No
 
     with open(path_mean_metrics, 'w') as f_metrics:
         json.dump(mean_metrics, f_metrics)
+
+
+def mlp_predictor(system, path_work):
+    services, mapping, pods, architecture = get_system_info(system)
+    metrics = ['RES_TIME', 'CPU', 'MEM']
+
+    path_df_train = os.path.join(path_work, "df_train.csv")
+    path_thresholds = os.path.join(path_work, "thresholds.json")
+    path_configs = os.path.join(path_work, "generated_configs")
+    path_model = os.path.join(path_work, "model.h5")
+
+    if system == System.MUBENCH:
+        ths_filtered = False
+        model_limit = 30
+        nuser_start = 2
+        path_read_df = "mubench/data/mubench_df.csv"
+    else:
+        ths_filtered = True
+        model_limit = 50
+        nuser_start = 4
+        path_read_df = "sockshop/data/sockshop_df.csv"
+
+    if not os.path.exists(path_work):
+        os.mkdir(path_work)
+    if not os.path.exists(path_configs):
+        os.mkdir(path_configs)
+
+    print("------READING EXPERIMENTS------")
+    # df = create_dataset(system, path_df=path_df, path_exp=os.path.join(str(system.value), "data"))
+    df = pd.read_csv(path_read_df)
+
+    df_train, loads_mapping = utils.hot_encode_col_mapping(df, 'LOAD')
+    df_train = df_train[df_train['NUSER'].isin([i for i in range(1, 30, 2)] + [30])]
+    input_col = ['NUSER'] + ['LOAD_' + str(i) for i in range(len(loads_mapping.keys()))] + ['SR']
+    output_col = [met + "_" + ser for met in metrics for ser in services]
+    df_train = df_train[input_col + output_col]
+    # df_train[output_col] = (df_train[output_col] - df_train[output_col].min()) / (
+    #            df_train[output_col].max() - df_train[output_col].min())
+    df_train.to_csv(path_df_train, index=False)
+
+    X_train = df_train[input_col].values
+    Y_train = df_train[output_col].values
+
+    loads = loads_mapping.keys()
+    spawn_rates = list(set(df['SR']))
+
+    thresholds = {}
+    with open(path_thresholds, 'w') as f_ths:
+        for ser in services:
+            thresholds[ser] = utils.calc_thresholds(df_train, ser, filtered=ths_filtered)
+        json.dump(thresholds, f_ths)
+
+    print("------DEFINING MLP------")
+    model = Sequential()
+    model.add(Input(shape=(5,), dtype=int))  # settare interi
+    model.add(Dense(units=64, activation='relu'))
+    model.add(Dense(units=64, activation='relu'))
+    model.add(Dense(units=len(output_col), activation='linear'))
+
+    model.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy'])
+
+    print("------TRAIN------")
+    kfold = KFold(n_splits=5, shuffle=True)
+
+    for fold, (train_index, val_index) in enumerate(kfold.split(X_train)):
+        print(f"Fold {fold + 1}:")
+
+        X_train_fold, X_val_fold = X_train[train_index], X_train[val_index]
+        y_train_fold, y_val_fold = Y_train[train_index], Y_train[val_index]
+
+        # Addestramento del modello su X_train_fold, y_train_fold
+        model.fit(X_train_fold, y_train_fold, epochs=300, batch_size=32, verbose=0)
+
+        # Valutazione del modello su X_val_fold, y_val_fold
+        loss, accuracy = model.evaluate(X_val_fold, y_val_fold)
+        print(f"Validation Loss: {loss:.4f}, Validation Accuracy: {accuracy:.4f}")
+
+    model.save(path_model)
+
+    print("------GENERATING CONFIGRATIONS-")
+
+    def search_config():
+        for n in range(nuser_start, model_limit + 1):
+            print(n)
+            for load in loads:
+                for sr in spawn_rates:
+
+                    input_data = np.zeros(len(input_col), )
+                    input_data[input_col.index('NUSER')] = n
+                    input_data[input_col.index('SR')] = sr
+
+                    for li in range(len(loads)):
+                        input_data[input_col.index('LOAD_{}'.format(li))] = loads_mapping[load][li]
+
+                    target_pred = model.predict(np.array([input_data]))[:, [output_col.index(target_col)]]
+
+                    if target_pred > thresholds[ser][met]:
+                        print("CONFIGURAZIONE TROVATA")
+                        with open(os.path.join(path_configs, "{}_{}_{}.json".format("configs", met, ser)),
+                                  'w') as f_out:
+                            json.dump({"nusers": [n], "loads": [load], "spawn_rates": [sr],
+                                       "anomalous_metrics": [met]}, f_out)
+                        return
+        print("NON TROVATA")
+
+    for ser in services:
+        for met in metrics:
+            target_col = met + "_" + ser
+            print("Searching configuration for service: {} for metric: {}".format(ser, met))
+
+            search_config()
+
+
+def anomalies_filter(df_in, services_in, mets, ths_filtered=False):
+    cancel_index = []
+
+    for i in df_in.index:
+        def a():
+            for ser in services_in:
+                ths = utils.calc_thresholds(df_in, ser, filtered=ths_filtered)
+                for met in mets:
+                    if df_in.loc[i, met + "_" + ser] > ths[met]:
+                        cancel_index.append(i)
+                        return
+
+        a()
+
+    return df_in.drop(index=cancel_index).reset_index(drop=True)
+
+
+def system_workflow_without_anom(system, path_work, generation_conf_FAST=False):
+    services, mapping, pods, architecture = get_system_info(system)
+
+    path_prior = os.path.join(path_work, "prior_knowledge")
+    path_configs = os.path.join(path_work, "generated_configs")
+
+    if system == System.MUBENCH:
+        ths_filtered = False
+        model_limit = 30
+        nuser_start = 2
+        path_df = "mubench/data/mubench_df.csv"
+    else:
+        ths_filtered = True
+        model_limit = 50
+        nuser_start = 4
+        path_df = "sockshop/data/sockshop_df.csv"
+
+    if not os.path.exists(path_work):
+        os.mkdir(path_work)
+    if not os.path.exists(path_configs):
+        os.mkdir(path_configs)
+
+    df, loads_mapping = utils.hot_encode_col_mapping(pd.read_csv(path_df), 'LOAD')
+
+    print("------GENERATING PRIOR KNOWLEDGE------")
+    pk = utils.get_generic_priorknorledge_mat(df.columns, services, mapping, architecture)
+    utils.draw_prior_knwoledge_mat(pk, df.columns, path_prior)
+
+    for met in ['CPU', 'RES_TIME', 'MEM']:
+        df = anomalies_filter(pd.read_csv(path_df), services, [met])
+        df_discovery, loads_mapping = utils.hot_encode_col_mapping(df, 'LOAD')
+        df_discovery.to_csv(os.path.join(path_work, "df_discovery_" + met + ".csv"))
+        causal_model = build_model(df_discovery, os.path.join(path_work, "dag_" + met), pk)
+
+        for ser in services:
+            print("Searching configuration for service: {} for metric: {}".format(ser, met))
+            generate_config(causal_model, df_discovery, ser,
+                            os.path.join(path_configs, "{}_{}_{}.json".format("configs", met, ser)), loads_mapping,
+                            metrics=[met], stability=0, nuser_limit=model_limit, show_comment=True,
+                            FAST=generation_conf_FAST, ths_filtered=ths_filtered, nuser_start=nuser_start)
+
+
+def mlp_workflow_without_anom(system, path_work):
+    services, mapping, pods, architecture = get_system_info(system)
+
+    path_thresholds = os.path.join(path_work, "thresholds.json")
+    path_configs = os.path.join(path_work, "generated_configs")
+
+    if system == System.MUBENCH:
+        ths_filtered = False
+        model_limit = 30
+        nuser_start = 2
+        path_df = "mubench/data/mubench_df.csv"
+
+    else:
+        ths_filtered = True
+        model_limit = 50
+        nuser_start = 4
+        path_df = "sockshop/data/sockshop_df.csv"
+
+    if not os.path.exists(path_work):
+        os.mkdir(path_work)
+    if not os.path.exists(path_configs):
+        os.mkdir(path_configs)
+
+    for met in ['RES_TIME', 'CPU', 'MEM']:
+        df = anomalies_filter(pd.read_csv(path_df), services, [met])
+        if system == System.MUBENCH:
+            df = df[df['NUSER'].isin([i for i in range(1, 30, 2)] + [30])].reset_index(drop=True)
+
+        df_train, loads_mapping = utils.hot_encode_col_mapping(df, 'LOAD')
+        loads = loads_mapping.keys()
+        spawn_rates = list(set(df_train['SR']))
+
+        input_col = ['NUSER'] + ['LOAD_' + str(i) for i in range(len(loads_mapping.keys()))] + ['SR']
+        output_col = [met + "_" + ser for met in ['RES_TIME', 'CPU', 'MEM'] for ser in services]
+
+        df_train = df_train[input_col + output_col]
+        df_train.to_csv(os.path.join(path_work, "df_train_" + met + ".csv"), index=False)
+
+        thresholds = {}
+        with open(path_thresholds, 'w') as f_ths:
+            for ser in services:
+                thresholds[ser] = utils.calc_thresholds(df_train, ser, filtered=ths_filtered)
+            json.dump(thresholds, f_ths)
+
+        X_train = df_train[input_col].values
+        Y_train = df_train[output_col].values
+
+        print("------DEFINING MLP------")
+        model = Sequential()
+        model.add(Input(shape=(5,), dtype=int))  # settare interi
+        model.add(Dense(units=64, activation='relu'))
+        model.add(Dense(units=64, activation='relu'))
+        model.add(Dense(units=len(output_col), activation='linear'))
+
+        model.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy'])
+
+        print("------TRAIN------")
+        kfold = KFold(n_splits=5, shuffle=True)
+
+        for fold, (train_index, val_index) in enumerate(kfold.split(X_train)):
+            print(f"Fold {fold + 1}:")
+
+            X_train_fold, X_val_fold = X_train[train_index], X_train[val_index]
+            y_train_fold, y_val_fold = Y_train[train_index], Y_train[val_index]
+
+            # Addestramento del modello su X_train_fold, y_train_fold
+            model.fit(X_train_fold, y_train_fold, epochs=300, batch_size=32, verbose=0)
+
+            # Valutazione del modello su X_val_fold, y_val_fold
+            loss, accuracy = model.evaluate(X_val_fold, y_val_fold)
+            print(f"Validation Loss: {loss:.4f}, Validation Accuracy: {accuracy:.4f}")
+
+        model.save(os.path.join(path_work, "model_" + met + ".h5"))
+
+        def search_config():
+            for n in range(nuser_start, model_limit + 1):
+                print(n)
+                for load in loads:
+                    for sr in spawn_rates:
+
+                        input_data = np.zeros(len(input_col), )
+                        input_data[input_col.index('NUSER')] = n
+                        input_data[input_col.index('SR')] = sr
+
+                        for li in range(len(loads)):
+                            input_data[input_col.index('LOAD_{}'.format(li))] = loads_mapping[load][li]
+
+                        target_pred = model.predict(np.array([input_data]))[:, [output_col.index(target_col)]]
+
+                        if target_pred > thresholds[ser][met]:
+                            print("CONFIGURAZIONE TROVATA")
+                            with open(os.path.join(path_configs, "{}_{}_{}.json".format("configs", met, ser)),
+                                      'w') as f_out:
+                                json.dump({"nusers": [n], "loads": [load], "spawn_rates": [sr],
+                                           "anomalous_metrics": [met]}, f_out)
+                            return
+            print("NON TROVATA")
+
+        for ser in services:
+            target_col = met + "_" + ser
+            print("Searching configuration for service: {} for metric: {}".format(ser, met))
+            search_config()
