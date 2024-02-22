@@ -12,7 +12,7 @@ from tensorflow.keras.layers import Dense
 from sklearn.model_selection import KFold
 import questions_utils as qu
 
-num_reps = 1
+num_reps = 20
 
 
 def __main__(path_main_dir):
