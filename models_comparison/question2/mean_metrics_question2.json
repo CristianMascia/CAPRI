@@ -6,8 +6,16 @@
     "true_negative_mean": 0.0,
     "false_positive_mean": 0.35,
     "false_negative_mean": 0.0,
-    "mhd_pos": 0.768,
-    "mhd_false": 4.0
+    "precision_std": 0.153,
+    "recall_std": 0.0,
+    "true_positive_std": 1.526,
+    "true_negative_std": 0.0,
+    "false_positive_std": 1.526,
+    "false_negative_std": 0.0,
+    "mhd_pos_mean": 0.768,
+    "mhd_pos_std": 0.346,
+    "mhd_false_mean": 4.0,
+    "mhd_false_std": 0.0
   },
   "CPU": {
     "precision_mean": 1.0,
@@ -16,8 +24,16 @@
     "true_negative_mean": 0.0,
     "false_positive_mean": 0.0,
     "false_negative_mean": 0.0,
-    "mhd_pos": 0.317,
-    "mhd_false": -1
+    "precision_std": 0.0,
+    "recall_std": 0.0,
+    "true_positive_std": 0.0,
+    "true_negative_std": 0.0,
+    "false_positive_std": 0.0,
+    "false_negative_std": 0.0,
+    "mhd_pos_mean": 0.317,
+    "mhd_pos_std": 0.183,
+    "mhd_false_mean": -1,
+    "mhd_false_std": -1
   },
   "MEM": {
     "precision_mean": 0.95,
@@ -26,7 +42,15 @@
     "true_negative_mean": 9.0,
     "false_positive_mean": 0.05,
     "false_negative_mean": 0.0,
-    "mhd_pos": 0.246,
-    "mhd_false": 0.333
+    "precision_std": 0.218,
+    "recall_std": 0.218,
+    "true_positive_std": 0.218,
+    "true_negative_std": 0.0,
+    "false_positive_std": 0.218,
+    "false_negative_std": 0.0,
+    "mhd_pos_mean": 0.246,
+    "mhd_pos_std": 0.147,
+    "mhd_false_mean": 0.333,
+    "mhd_false_std": 0.0
   }
 }

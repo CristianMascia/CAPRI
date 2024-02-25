@@ -205,21 +205,28 @@ def merge_met_dict(met_dicts):
                            "false_negative"]
     for met in CONFIG.all_metrics:
         out_dict[met] = {
-            mp + "_mean": np.round(np.mean([md[met][mp] for md in met_dicts]), 3) for mp in
-            metrics_performance
+            mp + "_mean": np.round(np.mean([md[met][mp] for md in met_dicts]), 3) for mp in metrics_performance
         }
+
+        out_dict[met].update({
+            mp + "_std": np.round(np.std([md[met][mp] for md in met_dicts]), 3) for mp in metrics_performance
+        })
 
         mhd_pos_arr = [md[met]["mhd_pos"] for md in met_dicts if md[met]["mhd_pos"] >= 0]
         mhd_false_arr = [md[met]["mhd_false"] for md in met_dicts if md[met]["mhd_false"] >= 0]
         if len(mhd_pos_arr) > 0:
-            out_dict[met]["mhd_pos"] = np.round(np.mean(mhd_pos_arr), 3)
+            out_dict[met]["mhd_pos_mean"] = np.round(np.mean(mhd_pos_arr), 3)
+            out_dict[met]["mhd_pos_std"] = np.round(np.std(mhd_pos_arr), 3)
         else:
-            out_dict[met]["mhd_pos"] = -1
+            out_dict[met]["mhd_pos_mean"] = -1
+            out_dict[met]["mhd_pos_std"] = -1
 
         if len(mhd_false_arr) > 0:
-            out_dict[met]["mhd_false"] = np.round(np.mean(mhd_false_arr), 3)
+            out_dict[met]["mhd_false_mean"] = np.round(np.mean(mhd_false_arr), 3)
+            out_dict[met]["mhd_false_std"] = np.round(np.std(mhd_false_arr), 3)
         else:
-            out_dict[met]["mhd_false"] = -1
+            out_dict[met]["mhd_false_mean"] = -1
+            out_dict[met]["mhd_false_std"] = -1
     return out_dict
 
 

@@ -7,8 +7,16 @@
       "true_negative_mean": 0.0,
       "false_positive_mean": 0.2,
       "false_negative_mean": 0.0,
-      "mhd_pos": 0.668,
-      "mhd_false": 0.333
+      "precision_std": 0.04,
+      "recall_std": 0.0,
+      "true_positive_std": 0.4,
+      "true_negative_std": 0.0,
+      "false_positive_std": 0.4,
+      "false_negative_std": 0.0,
+      "mhd_pos_mean": 0.668,
+      "mhd_pos_std": 0.025,
+      "mhd_false_mean": 0.333,
+      "mhd_false_std": 0.0
     },
     "CPU": {
       "precision_mean": 0.76,
@@ -17,8 +25,16 @@
       "true_negative_mean": 0.0,
       "false_positive_mean": 2.4,
       "false_negative_mean": 0.0,
-      "mhd_pos": 0.031,
-      "mhd_false": 0.333
+      "precision_std": 0.111,
+      "recall_std": 0.0,
+      "true_positive_std": 1.114,
+      "true_negative_std": 0.0,
+      "false_positive_std": 1.114,
+      "false_negative_std": 0.0,
+      "mhd_pos_mean": 0.031,
+      "mhd_pos_std": 0.021,
+      "mhd_false_mean": 0.333,
+      "mhd_false_std": 0.0
     },
     "MEM": {
       "precision_mean": 1.0,
@@ -27,8 +43,16 @@
       "true_negative_mean": 9.0,
       "false_positive_mean": 0.0,
       "false_negative_mean": 0.0,
-      "mhd_pos": 0.333,
-      "mhd_false": -1
+      "precision_std": 0.0,
+      "recall_std": 0.0,
+      "true_positive_std": 0.0,
+      "true_negative_std": 0.0,
+      "false_positive_std": 0.0,
+      "false_negative_std": 0.0,
+      "mhd_pos_mean": 0.333,
+      "mhd_pos_std": 0.0,
+      "mhd_false_mean": -1,
+      "mhd_false_std": -1
     }
   },
   "dagma_lin": {
@@ -39,8 +63,16 @@
       "true_negative_mean": 0.0,
       "false_positive_mean": 9.15,
       "false_negative_mean": 0.8,
-      "mhd_pos": 1.333,
-      "mhd_false": 4.724
+      "precision_std": 0.022,
+      "recall_std": 0.218,
+      "true_positive_std": 0.218,
+      "true_negative_std": 0.0,
+      "false_positive_std": 0.357,
+      "false_negative_std": 0.4,
+      "mhd_pos_mean": 1.333,
+      "mhd_pos_std": 0.0,
+      "mhd_false_mean": 4.724,
+      "mhd_false_std": 0.173
     },
     "CPU": {
       "precision_mean": 0.76,
@@ -49,8 +81,16 @@
       "true_negative_mean": 0.0,
       "false_positive_mean": 2.4,
       "false_negative_mean": 0.0,
-      "mhd_pos": 0.075,
-      "mhd_false": 0.333
+      "precision_std": 0.12,
+      "recall_std": 0.0,
+      "true_positive_std": 1.2,
+      "true_negative_std": 0.0,
+      "false_positive_std": 1.2,
+      "false_negative_std": 0.0,
+      "mhd_pos_mean": 0.075,
+      "mhd_pos_std": 0.157,
+      "mhd_false_mean": 0.333,
+      "mhd_false_std": 0.0
     },
     "MEM": {
       "precision_mean": 0.0,
@@ -59,8 +99,16 @@
       "true_negative_mean": 8.65,
       "false_positive_mean": 1.35,
       "false_negative_mean": 0.0,
-      "mhd_pos": -1,
-      "mhd_false": 4.489
+      "precision_std": 0.0,
+      "recall_std": 0.0,
+      "true_positive_std": 0.0,
+      "true_negative_std": 1.314,
+      "false_positive_std": 1.314,
+      "false_negative_std": 0.0,
+      "mhd_pos_mean": -1,
+      "mhd_pos_std": -1,
+      "mhd_false_mean": 4.489,
+      "mhd_false_std": 1.639
     }
   },
   "dagma_mlp": {
@@ -71,8 +119,16 @@
       "true_negative_mean": 0.0,
       "false_positive_mean": 9.0,
       "false_negative_mean": 1.0,
-      "mhd_pos": -1,
-      "mhd_false": 4.848
+      "precision_std": 0.0,
+      "recall_std": 0.0,
+      "true_positive_std": 0.0,
+      "true_negative_std": 0.0,
+      "false_positive_std": 0.0,
+      "false_negative_std": 0.0,
+      "mhd_pos_mean": -1,
+      "mhd_pos_std": -1,
+      "mhd_false_mean": 4.848,
+      "mhd_false_std": 0.065
     },
     "CPU": {
       "precision_mean": 0.71,
@@ -81,8 +137,16 @@
       "true_negative_mean": 0.0,
       "false_positive_mean": 2.9,
       "false_negative_mean": 0.0,
-      "mhd_pos": 0.0,
-      "mhd_false": 0.333
+      "precision_std": 0.109,
+      "recall_std": 0.0,
+      "true_positive_std": 1.091,
+      "true_negative_std": 0.0,
+      "false_positive_std": 1.091,
+      "false_negative_std": 0.0,
+      "mhd_pos_mean": 0.0,
+      "mhd_pos_std": 0.0,
+      "mhd_false_mean": 0.333,
+      "mhd_false_std": 0.0
     },
     "MEM": {
       "precision_mean": 0.0,
@@ -91,8 +155,16 @@
       "true_negative_mean": 9.0,
       "false_positive_mean": 1.0,
       "false_negative_mean": 0.0,
-      "mhd_pos": -1,
-      "mhd_false": 6.667
+      "precision_std": 0.0,
+      "recall_std": 0.0,
+      "true_positive_std": 0.0,
+      "true_negative_std": 0.0,
+      "false_positive_std": 0.0,
+      "false_negative_std": 0.0,
+      "mhd_pos_mean": -1,
+      "mhd_pos_std": -1,
+      "mhd_false_mean": 6.667,
+      "mhd_false_std": 0.0
     }
   },
   "dag_gnn": {
@@ -103,8 +175,16 @@
       "true_negative_mean": 0.0,
       "false_positive_mean": 1.35,
       "false_negative_mean": 0.0,
-      "mhd_pos": 0.674,
-      "mhd_false": 2.222
+      "precision_std": 0.198,
+      "recall_std": 0.0,
+      "true_positive_std": 1.982,
+      "true_negative_std": 0.0,
+      "false_positive_std": 1.982,
+      "false_negative_std": 0.0,
+      "mhd_pos_mean": 0.674,
+      "mhd_pos_std": 0.39,
+      "mhd_false_mean": 2.222,
+      "mhd_false_std": 2.053
     },
     "CPU": {
       "precision_mean": 0.95,
@@ -113,8 +193,16 @@
       "true_negative_mean": 0.0,
       "false_positive_mean": 0.5,
       "false_negative_mean": 0.0,
-      "mhd_pos": 0.3,
-      "mhd_false": 0.333
+      "precision_std": 0.107,
+      "recall_std": 0.0,
+      "true_positive_std": 1.072,
+      "true_negative_std": 0.0,
+      "false_positive_std": 1.072,
+      "false_negative_std": 0.0,
+      "mhd_pos_mean": 0.3,
+      "mhd_pos_std": 0.159,
+      "mhd_false_mean": 0.333,
+      "mhd_false_std": 0.0
     },
     "MEM": {
       "precision_mean": 0.85,
@@ -123,8 +211,16 @@
       "true_negative_mean": 9.0,
       "false_positive_mean": 0.15,
       "false_negative_mean": 0.0,
-      "mhd_pos": 0.314,
-      "mhd_false": 1.667
+      "precision_std": 0.357,
+      "recall_std": 0.357,
+      "true_positive_std": 0.357,
+      "true_negative_std": 0.0,
+      "false_positive_std": 0.357,
+      "false_negative_std": 0.0,
+      "mhd_pos_mean": 0.314,
+      "mhd_pos_std": 0.078,
+      "mhd_false_mean": 1.667,
+      "mhd_false_std": 0.0
     }
   }
 }
