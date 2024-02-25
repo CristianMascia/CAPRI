@@ -1,0 +1,32 @@
+{
+  "RES_TIME": {
+    "precision": 0.3,
+    "recall": 1,
+    "mhd_pos": 1.4444444444444444,
+    "mhd_false": 2.0,
+    "true_positive": 3,
+    "true_negative": 0,
+    "false_positive": 7,
+    "false_negative": 0
+  },
+  "CPU": {
+    "precision": 0.8,
+    "recall": 1,
+    "mhd_pos": 0.0,
+    "mhd_false": 0.3333333333333333,
+    "true_positive": 8,
+    "true_negative": 0,
+    "false_positive": 2,
+    "false_negative": 0
+  },
+  "MEM": {
+    "precision": 0.1111111111111111,
+    "recall": 1,
+    "mhd_pos": 2.0,
+    "mhd_false": 0.0,
+    "true_positive": 1,
+    "true_negative": 1,
+    "false_positive": 8,
+    "false_negative": 0
+  }
+}
