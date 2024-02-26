@@ -16,9 +16,9 @@ def calc_hamming_distance(conf_real, conf_pred):
         0 if conf_real['SR'] == conf_pred['spawn_rates'][0] else 1) / 3
 
 
-def calc_metrics(df: Union[str, pd.DataFrame], get_config: Callable[[str, str], Tuple[dict, float]], services,
-                 model_limit,
-                 ths_filtered=False, metrics=None, sensibility=0.):
+def calc_metrics(df: Union[str, pd.DataFrame], get_config: Callable[[str, str, pd.DataFrame], Tuple[dict, float]],
+                 services,
+                 model_limit, ths_filtered=False, metrics=None, sensibility=0., df_exps=None):
     if metrics is None:
         metrics = ['RES_TIME', 'CPU', 'MEM']
 
@@ -59,7 +59,7 @@ def calc_metrics(df: Union[str, pd.DataFrame], get_config: Callable[[str, str], 
         false_positive = 0
         for ser in services:
             ths = utils.calc_thresholds(df, ser, filtered=ths_filtered)
-            config, value_config = get_config(ser, met)
+            config, value_config = get_config(ser, met, df_exps)
             if config is not None:
                 if value_config > ((1 - sensibility) * ths[met]):
                     true_positive += 1
@@ -85,8 +85,8 @@ def calc_metrics(df: Union[str, pd.DataFrame], get_config: Callable[[str, str], 
                     true_negative += 1
             # print("Service {} Met: {}".format(ser, met))
 
-        precision = 0
-        recall = 0
+        precision = 0.0
+        recall = 0.0
 
         if true_positive > 0:
             precision = true_positive / (true_positive + false_positive)
@@ -94,7 +94,7 @@ def calc_metrics(df: Union[str, pd.DataFrame], get_config: Callable[[str, str], 
             if false_negative > 0:
                 recall = true_positive / (true_positive + false_negative)
             else:
-                recall = 1
+                recall = 1.0
 
         if len(mhd_values_pos) > 0:
             mhd_pos = np.mean(mhd_values_pos)
