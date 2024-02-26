@@ -2,7 +2,7 @@
   "0.1": {
     "RES_TIME": {
       "precision": 1.0,
-      "recall": 1,
+      "recall": 1.0,
       "mhd_pos": 1.2999999999999998,
       "mhd_false": -1,
       "true_positive": 10,
@@ -12,7 +12,7 @@
     },
     "CPU": {
       "precision": 1.0,
-      "recall": 1,
+      "recall": 1.0,
       "mhd_pos": 0.0,
       "mhd_false": -1,
       "true_positive": 10,
@@ -21,8 +21,8 @@
       "false_negative": 0
     },
     "MEM": {
-      "precision": 0,
-      "recall": 0,
+      "precision": 0.0,
+      "recall": 0.0,
       "mhd_pos": -1,
       "mhd_false": 0.3333333333333333,
       "true_positive": 0,
@@ -34,7 +34,7 @@
   "0.3": {
     "RES_TIME": {
       "precision": 1.0,
-      "recall": 1,
+      "recall": 1.0,
       "mhd_pos": 1.3666666666666665,
       "mhd_false": -1,
       "true_positive": 10,
@@ -44,7 +44,7 @@
     },
     "CPU": {
       "precision": 1.0,
-      "recall": 1,
+      "recall": 1.0,
       "mhd_pos": 0.0,
       "mhd_false": -1,
       "true_positive": 10,
@@ -54,7 +54,7 @@
     },
     "MEM": {
       "precision": 1.0,
-      "recall": 1,
+      "recall": 1.0,
       "mhd_pos": 0.0,
       "mhd_false": -1,
       "true_positive": 1,

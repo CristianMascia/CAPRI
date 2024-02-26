@@ -2,7 +2,7 @@
   "dlingam": {
     "RES_TIME": {
       "precision": 1.0,
-      "recall": 1,
+      "recall": 1.0,
       "mhd_pos": 0.7,
       "mhd_false": -1,
       "true_positive": 10,
@@ -12,7 +12,7 @@
     },
     "CPU": {
       "precision": 0.8,
-      "recall": 1,
+      "recall": 1.0,
       "mhd_pos": 0.0,
       "mhd_false": 0.3333333333333333,
       "true_positive": 8,
@@ -22,7 +22,7 @@
     },
     "MEM": {
       "precision": 1.0,
-      "recall": 1,
+      "recall": 1.0,
       "mhd_pos": 0.3333333333333333,
       "mhd_false": -1,
       "true_positive": 1,
@@ -33,8 +33,8 @@
   },
   "dagma_lin": {
     "RES_TIME": {
-      "precision": 0,
-      "recall": 0,
+      "precision": 0.0,
+      "recall": 0.0,
       "mhd_pos": -1,
       "mhd_false": 4.666666666666666,
       "true_positive": 0,
@@ -44,7 +44,7 @@
     },
     "CPU": {
       "precision": 0.8,
-      "recall": 1,
+      "recall": 1.0,
       "mhd_pos": 0.0,
       "mhd_false": 0.3333333333333333,
       "true_positive": 8,
@@ -53,8 +53,8 @@
       "false_negative": 0
     },
     "MEM": {
-      "precision": 0,
-      "recall": 0,
+      "precision": 0.0,
+      "recall": 0.0,
       "mhd_pos": -1,
       "mhd_false": 6.333333333333333,
       "true_positive": 0,
@@ -65,8 +65,8 @@
   },
   "dagma_mlp": {
     "RES_TIME": {
-      "precision": 0,
-      "recall": 0,
+      "precision": 0.0,
+      "recall": 0.0,
       "mhd_pos": -1,
       "mhd_false": 4.925925925925926,
       "true_positive": 0,
@@ -76,7 +76,7 @@
     },
     "CPU": {
       "precision": 0.5,
-      "recall": 1,
+      "recall": 1.0,
       "mhd_pos": 0.0,
       "mhd_false": 0.3333333333333333,
       "true_positive": 5,
@@ -85,8 +85,8 @@
       "false_negative": 0
     },
     "MEM": {
-      "precision": 0,
-      "recall": 0,
+      "precision": 0.0,
+      "recall": 0.0,
       "mhd_pos": -1,
       "mhd_false": 6.666666666666667,
       "true_positive": 0,
@@ -98,7 +98,7 @@
   "dag_gnn": {
     "RES_TIME": {
       "precision": 0.8,
-      "recall": 1,
+      "recall": 1.0,
       "mhd_pos": 0.125,
       "mhd_false": 0.5,
       "true_positive": 8,
@@ -108,7 +108,7 @@
     },
     "CPU": {
       "precision": 1.0,
-      "recall": 1,
+      "recall": 1.0,
       "mhd_pos": 0.16666666666666666,
       "mhd_false": -1,
       "true_positive": 10,
@@ -118,7 +118,7 @@
     },
     "MEM": {
       "precision": 1.0,
-      "recall": 1,
+      "recall": 1.0,
       "mhd_pos": 0.3333333333333333,
       "mhd_false": -1,
       "true_positive": 1,

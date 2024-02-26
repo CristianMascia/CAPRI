@@ -50,7 +50,7 @@
     "false_negative_std": 0.0,
     "mhd_pos_mean": -1,
     "mhd_pos_std": -1,
-    "mhd_false_mean": 0.278,
-    "mhd_false_std": 0.241
+    "mhd_false_mean": 2.783,
+    "mhd_false_std": 2.409
   }
 }
