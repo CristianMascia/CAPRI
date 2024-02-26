@@ -50,6 +50,15 @@ def calc_metrics(df: Union[str, pd.DataFrame], get_config: Callable[[str, str, p
 
     metrics_dict = {}
 
+    def check_anomaly():
+        for nuser in reversed(range(1 + max(df['NUSER']))):
+            for l in list(set(df['LOAD'])):
+                for sr in list(set(df['SR'])):
+                    aaa = df[(df['NUSER'] == nuser) & (df['LOAD'] == l) & (df['SR'] == sr)]
+                    if aaa[met + "_" + ser].mean() > ((1 + sensibility) * ths[met]):
+                        return True
+        return False
+
     for met in metrics:
         mhd_values_pos = []
         mhd_values_false = []
@@ -66,20 +75,12 @@ def calc_metrics(df: Union[str, pd.DataFrame], get_config: Callable[[str, str, p
                     mhd_values_pos.append(calc_mhd(config))
                 else:
                     false_positive += 1
-                    mhd_values_false.append(calc_mhd(config, False))
+                    if check_anomaly():
+                        mhd_values_false.append(calc_mhd(config, False))
+
 
             else:
-                is_anomaly = False
-                # print("No anomaly for {} for {}".format(ser, met))
-                for n in reversed(range(1 + max(df['NUSER']))):
-                    for l in list(set(df['LOAD'])):
-                        for sr in list(set(df['SR'])):
-                            a = df[(df['NUSER'] == n) & (df['LOAD'] == l) & (df['SR'] == sr)]
-                            if a[met + "_" + ser].mean() > ((1 + sensibility) * ths[met]):
-                                is_anomaly = True
-                                # false_negative += 1
-                                break
-                if is_anomaly:
+                if check_anomaly():
                     false_negative += 1
                 else:
                     true_negative += 1

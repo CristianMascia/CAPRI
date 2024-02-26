@@ -392,8 +392,12 @@ def system_mean_performance(system, from_experiments, reps, name_sub_dir="work_r
                 mean_metrics[met][key + '_std'] = round(np.std(val), 3)
             else:
                 filtered_vals = [v for v in val if v >= 0]
-                mean_metrics[met][key + '_mean'] = round(np.mean(filtered_vals), 3)
-                mean_metrics[met][key + '_std'] = round(np.std(filtered_vals), 3)
+                if len(filtered_vals) > 0:
+                    mean_metrics[met][key + '_mean'] = round(np.mean(filtered_vals), 3)
+                    mean_metrics[met][key + '_std'] = round(np.std(filtered_vals), 3)
+                else:
+                    mean_metrics[met][key + '_mean'] = -1
+                    mean_metrics[met][key + '_std'] = -1
 
     with open(path_mean_metrics, 'w') as f_metrics:
         json.dump(mean_metrics, f_metrics)
