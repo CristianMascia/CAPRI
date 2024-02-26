@@ -179,19 +179,20 @@ def calc_metrics(df, path_configs_dir, model_name, metrics=None):
     if metrics is None:
         metrics = CONFIG.all_metrics
 
-    def get_config(ser, met):
+    def get_config(ser, met, df_exps):
         path_conf = os.path.join(path_configs_dir, "{}_{}_{}.json".format(model_name, met, ser))
         if os.path.isfile(path_conf):
             with open(path_conf, 'r') as f_c:
                 config = json.load(f_c)
-                df_config = df[(df['NUSER'] == config['nusers'][0]) &
-                               (df['LOAD'] == config['loads'][0]) &
-                               (df['SR'] == config['spawn_rates'][0])]
+                df_config = df_exps[(df_exps['NUSER'] == config['nusers'][0]) &
+                                    (df_exps['LOAD'] == config['loads'][0]) &
+                                    (df_exps['SR'] == config['spawn_rates'][0])]
                 return config, df_config[met + "_" + ser].mean()
         else:
             return None, None
 
-    return performance_evaluator.calc_metrics(df, get_config, CONFIG.services, CONFIG.model_limit, metrics=metrics)
+    return performance_evaluator.calc_metrics(df, get_config, CONFIG.services, CONFIG.model_limit, metrics=metrics,
+                                              df_exps=df)
 
 
 def merge_met_dict(met_dicts):
