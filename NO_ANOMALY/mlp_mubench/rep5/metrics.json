@@ -11,7 +11,7 @@
   },
   "CPU": {
     "precision": 0.8,
-    "recall": 1,
+    "recall": 1.0,
     "mhd_pos": 0.0,
     "mhd_false": 0.3333333333333333,
     "true_positive": 8,
@@ -21,7 +21,7 @@
   },
   "MEM": {
     "precision": 0.1111111111111111,
-    "recall": 1,
+    "recall": 1.0,
     "mhd_pos": 2.3333333333333335,
     "mhd_false": 0.0,
     "true_positive": 1,

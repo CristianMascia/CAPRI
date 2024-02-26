@@ -1,12 +1,12 @@
 {
   "RES_TIME": {
-    "precision": 0.3,
+    "precision": 0.4,
     "recall": 1.0,
-    "mhd_pos": 1.4444444444444444,
-    "mhd_false": 2.0,
-    "true_positive": 3,
+    "mhd_pos": 1.2499999999999998,
+    "mhd_false": 1.7222222222222223,
+    "true_positive": 4,
     "true_negative": 0,
-    "false_positive": 7,
+    "false_positive": 6,
     "false_negative": 0
   },
   "CPU": {
@@ -22,7 +22,7 @@
   "MEM": {
     "precision": 0.1111111111111111,
     "recall": 1.0,
-    "mhd_pos": 2.0,
+    "mhd_pos": 1.6666666666666667,
     "mhd_false": 0.0,
     "true_positive": 1,
     "true_negative": 1,
