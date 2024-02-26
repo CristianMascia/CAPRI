@@ -23,7 +23,7 @@
     "precision": 0.1111111111111111,
     "recall": 1.0,
     "mhd_pos": 2.0,
-    "mhd_false": 0.0,
+    "mhd_false": -1,
     "true_positive": 1,
     "true_negative": 1,
     "false_positive": 8,
