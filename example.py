@@ -21,6 +21,7 @@ from sklearn.model_selection import KFold
 CURRENT_PATH = os.path.dirname(__file__)
 
 
+# TODO: salvare il dataset originale nelle repliche
 class System(Enum):
     MUBENCH = "mubench"
     SOCKSHOP = "sockshop"
@@ -77,7 +78,7 @@ def system_visualization(system, path_images=None):
         data_visualization.loads_comparison(df, path_images, services, 1, True)
 
 
-def system_workflow(system, path_work, generation_conf_FAST=False):
+def system_workflow(system, path_work, dataset=None, generation_conf_FAST=False):
     services, mapping, pods, architecture = get_system_info(system)
 
     path_df = os.path.join(path_work, "df.csv")
@@ -102,7 +103,10 @@ def system_workflow(system, path_work, generation_conf_FAST=False):
         os.mkdir(path_configs)
 
     print("------READING EXPERIMENTS------")
-    df = create_dataset(system, path_df=path_df, path_exp=os.path.join(str(system.value), "data"))
+    if dataset is None:
+        df = create_dataset(system, path_df=path_df, path_exp=os.path.join(str(system.value), "data"))
+    else:
+        df = dataset
     df_discovery, loads_mapping = utils.hot_encode_col_mapping(df, 'LOAD')
     df_discovery.to_csv(path_df_disc, index=False)
 
@@ -155,105 +159,7 @@ def random_predictor(system, path_work):
                            "spawn_rates": [random.choice(SRs)], "anomalous_metrics": [met]}, f_conf)
 
 
-def system_performance_evaluation(system, path_work=None, sensibility=0.):
-    if system == System.MUBENCH:
-        model_limit = 30
-        if path_work is None:
-            path_work = os.path.join(CURRENT_PATH, "mubench")
-    else:
-        model_limit = 50
-        if path_work is None:
-            if system == System.SOCKSHOP:
-                path_work = os.path.join(CURRENT_PATH, "sockshop")
-            else:
-                path_work = os.path.join(CURRENT_PATH, "trainticket")
-
-    path_df = os.path.join(path_work, "df.csv")
-    if sensibility > 0:
-        path_metrics = os.path.join(path_work, "metrics{}.json".format(sensibility))
-    else:
-        path_metrics = os.path.join(path_work, "metrics.json")
-    path_configs = os.path.join(path_work, "generated_configs")
-    path_run_configs = os.path.join(path_work, "run_configs")
-
-    services, mapping, _, _ = get_system_info(system)
-
-    def get_config(ser, met):
-        name_config = "configs_{}_{}".format(met, ser)
-        path_config = os.path.join(path_configs, name_config + ".json")
-        if os.path.isfile(path_config):
-            with open(path_config, 'r') as f_c:
-                c = json.load(f_c)
-                exp_dir = os.path.join(path_run_configs, name_config,
-                                       "experiments_sr_" + str(c['spawn_rates'][0]),
-                                       'users_' + str(c['nusers'][0]), c['loads'][0])
-                return c, utils.get_experiment_value(exp_dir, ser, mapping[ser], met)
-        else:
-            return None, None
-
-    metrics = calc_metrics(path_df, get_config, services, model_limit, ths_filtered=(system != System.MUBENCH),
-                           sensibility=sensibility)
-
-    with open(path_metrics, 'w') as f_metrics:
-        json.dump(metrics, f_metrics)
-
-
-def system_mean_performance(system, reps, name_sub_dir="work_rep", path_works=None, sensibility=0.):
-    if path_works is None:
-        if system == System.MUBENCH:
-            path_works = os.path.join(CURRENT_PATH, "mubench")
-        elif system == System.SOCKSHOP:
-            path_works = os.path.join(CURRENT_PATH, "sockshop/works")
-        else:
-            path_works = os.path.join(CURRENT_PATH, "trainticket/works")
-
-    if sensibility > 0:
-        path_mean_metrics = os.path.join(path_works, 'avg_metrics_{}.json'.format(sensibility))
-    else:
-        path_mean_metrics = os.path.join(path_works, 'avg_metrics.json')
-
-    metrics = ['RES_TIME', 'CPU', 'MEM']
-    mean_metrics = {}
-    metrics_reps = {}
-
-    for met in metrics:
-        metrics_reps[met] = {
-            'precision': [0.] * len(reps),
-            'recall': [0.] * len(reps),
-            'mhd_pos': [0.] * len(reps),
-            'mhd_false': [0.] * len(reps),
-            'true_positive': [0.] * len(reps),
-            'true_negative': [0.] * len(reps),
-            'false_positive': [0.] * len(reps),
-            'false_negative': [0.] * len(reps)
-        }
-        mean_metrics[met] = {}
-
-    for k, rep in enumerate(reps):
-        path_rep = os.path.join(path_works, name_sub_dir + str(rep))
-        if sensibility > 0:
-            path_rep_metrics = os.path.join(path_rep, "metrics{}.json".format(sensibility))
-        else:
-            path_rep_metrics = os.path.join(path_rep, "metrics.json")
-
-        system_performance_evaluation(system, path_rep, sensibility)
-
-        with open(path_rep_metrics, 'r') as f_mets:
-            mets = json.load(f_mets)
-            for met in metrics:
-                for key, val in mets[met].items():
-                    metrics_reps[met][key][k] = val
-
-    for met in metrics:
-        for key, val in metrics_reps[met].items():
-            mean_metrics[met][key + '_mean'] = round(np.mean(val), 3)
-            mean_metrics[met][key + '_std'] = round(np.std(val), 3)
-
-    with open(path_mean_metrics, 'w') as f_metrics:
-        json.dump(mean_metrics, f_metrics)
-
-
-def mlp_predictor(system, path_work):
+def mlp_predictor(system, path_work, dataset=None):
     services, mapping, pods, architecture = get_system_info(system)
     metrics = ['RES_TIME', 'CPU', 'MEM']
 
@@ -279,11 +185,14 @@ def mlp_predictor(system, path_work):
         os.mkdir(path_configs)
 
     print("------READING EXPERIMENTS------")
-    # df = create_dataset(system, path_df=path_df, path_exp=os.path.join(str(system.value), "data"))
-    df = pd.read_csv(path_read_df)
+    if dataset is None:
+        # df = create_dataset(system, path_df=path_df, path_exp=os.path.join(str(system.value), "data"))
+        df = pd.read_csv(path_read_df)
+    else:
+        df = dataset
 
     df_train, loads_mapping = utils.hot_encode_col_mapping(df, 'LOAD')
-    df_train = df_train[df_train['NUSER'].isin([i for i in range(1, 30, 2)] + [30])]
+    # df_train = df_train[df_train['NUSER'].isin([i for i in range(1, 30, 2)] + [30])]
     input_col = ['NUSER'] + ['LOAD_' + str(i) for i in range(len(loads_mapping.keys()))] + ['SR']
     output_col = [met + "_" + ser for met in metrics for ser in services]
     df_train = df_train[input_col + output_col]
@@ -364,6 +273,133 @@ def mlp_predictor(system, path_work):
             search_config()
 
 
+def system_performance_evaluation(system, from_experiments, path_work=None, sensibility=0., df_exps=None):
+    if not from_experiments and df_exps is None:
+        print("ERRORE: NON È STATI PASSATO IL DATASET EXPS")  # TODO: lanciare eccezione
+        quit()
+
+    if system == System.MUBENCH:
+        model_limit = 30
+        if path_work is None:
+            path_work = os.path.join(CURRENT_PATH, "mubench")
+    else:
+        model_limit = 50
+        if path_work is None:
+            if system == System.SOCKSHOP:
+                path_work = os.path.join(CURRENT_PATH, "sockshop")
+            else:
+                path_work = os.path.join(CURRENT_PATH, "trainticket")
+
+    path_df = os.path.join(path_work, "df.csv")
+    if sensibility > 0:
+        path_metrics = os.path.join(path_work, "metrics{}.json".format(sensibility))
+    else:
+        path_metrics = os.path.join(path_work, "metrics.json")
+    path_configs = os.path.join(path_work, "generated_configs")
+    path_run_configs = os.path.join(path_work, "run_configs")
+
+    services, mapping, _, _ = get_system_info(system)
+
+    def get_config_from_experiments(ser, met, df_experiments):
+        name_config = "configs_{}_{}".format(met, ser)
+        path_config = os.path.join(path_configs, name_config + ".json")
+        if os.path.isfile(path_config):
+            with open(path_config, 'r') as f_c:
+                c = json.load(f_c)
+                exp_dir = os.path.join(path_run_configs, name_config,
+                                       "experiments_sr_" + str(c['spawn_rates'][0]),
+                                       'users_' + str(c['nusers'][0]), c['loads'][0])
+                return c, utils.get_experiment_value(exp_dir, ser, mapping[ser], met)
+        else:
+            return None, None
+
+    def get_config_from_dataset(ser, met, df_experiments):
+        path_conf = os.path.join(path_configs, "configs_{}_{}.json".format(met, ser))
+        if os.path.isfile(path_conf):
+            with open(path_conf, 'r') as f_c:
+                config = json.load(f_c)
+                df_config = df_experiments[(df_experiments['NUSER'] == config['nusers'][0]) &
+                                           (df_experiments['LOAD'] == config['loads'][0]) &
+                                           (df_experiments['SR'] == config['spawn_rates'][0])]
+                return config, df_config[met + "_" + ser].mean()
+        else:
+            return None, None
+
+    if from_experiments:
+        metrics = calc_metrics(path_df, get_config_from_experiments, services, model_limit,
+                               ths_filtered=(system != System.MUBENCH),
+                               sensibility=sensibility)
+    else:
+        metrics = calc_metrics(path_df, get_config_from_dataset, services, model_limit,
+                               ths_filtered=(system != System.MUBENCH),
+                               sensibility=sensibility, df_exps=df_exps)
+
+    with open(path_metrics, 'w') as f_metrics:
+        json.dump(metrics, f_metrics)
+
+
+def system_mean_performance(system, from_experiments, reps, name_sub_dir="work_rep", path_works=None, sensibility=0.,
+                            df_exps=None):
+    if path_works is None:
+        if system == System.MUBENCH:
+            path_works = os.path.join(CURRENT_PATH, "mubench")
+        elif system == System.SOCKSHOP:
+            path_works = os.path.join(CURRENT_PATH, "sockshop/works")
+        else:
+            path_works = os.path.join(CURRENT_PATH, "trainticket/works")
+
+    if sensibility > 0:
+        path_mean_metrics = os.path.join(path_works, 'avg_metrics_{}.json'.format(sensibility))
+    else:
+        path_mean_metrics = os.path.join(path_works, 'avg_metrics.json')
+
+    metrics = ['RES_TIME', 'CPU', 'MEM']
+    mean_metrics = {}
+    metrics_reps = {}
+
+    for met in metrics:
+        metrics_reps[met] = {
+            'precision': [0.] * len(reps),
+            'recall': [0.] * len(reps),
+            'mhd_pos': [0.] * len(reps),
+            'mhd_false': [0.] * len(reps),
+            'true_positive': [0.] * len(reps),
+            'true_negative': [0.] * len(reps),
+            'false_positive': [0.] * len(reps),
+            'false_negative': [0.] * len(reps)
+        }
+        mean_metrics[met] = {}
+
+    for k, rep in enumerate(reps):
+        path_rep = os.path.join(path_works, name_sub_dir + str(rep))
+        if sensibility > 0:
+            path_rep_metrics = os.path.join(path_rep, "metrics{}.json".format(sensibility))
+        else:
+            path_rep_metrics = os.path.join(path_rep, "metrics.json")
+
+        system_performance_evaluation(system, from_experiments, path_rep, sensibility, df_exps=df_exps)
+
+        with open(path_rep_metrics, 'r') as f_mets:
+            mets = json.load(f_mets)
+            for met in metrics:
+                for key, val in mets[met].items():
+                    metrics_reps[met][key][k] = val
+
+    for met in metrics:
+        for key, val in metrics_reps[met].items():
+            if "mhd" not in key:
+                mean_metrics[met][key + '_mean'] = round(np.mean(val), 3)
+                mean_metrics[met][key + '_std'] = round(np.std(val), 3)
+            else:
+                filtered_vals = [v for v in val if v >= 0]
+                mean_metrics[met][key + '_mean'] = round(np.mean(filtered_vals), 3)
+                mean_metrics[met][key + '_std'] = round(np.std(filtered_vals), 3)
+
+    with open(path_mean_metrics, 'w') as f_metrics:
+        json.dump(mean_metrics, f_metrics)
+
+
+# TODO: rifare con whereis di pandas
 def anomalies_filter(df_in, services_in, mets, ths_filtered=False):
     cancel_index = []
 
@@ -379,149 +415,3 @@ def anomalies_filter(df_in, services_in, mets, ths_filtered=False):
         a()
 
     return df_in.drop(index=cancel_index).reset_index(drop=True)
-
-
-def system_workflow_without_anom(system, path_work, generation_conf_FAST=False):
-    services, mapping, pods, architecture = get_system_info(system)
-
-    path_prior = os.path.join(path_work, "prior_knowledge")
-    path_configs = os.path.join(path_work, "generated_configs")
-
-    if system == System.MUBENCH:
-        ths_filtered = False
-        model_limit = 30
-        nuser_start = 2
-        path_df = "mubench/data/mubench_df.csv"
-    else:
-        ths_filtered = True
-        model_limit = 50
-        nuser_start = 4
-        path_df = "sockshop/data/sockshop_df.csv"
-
-    if not os.path.exists(path_work):
-        os.mkdir(path_work)
-    if not os.path.exists(path_configs):
-        os.mkdir(path_configs)
-
-    df, loads_mapping = utils.hot_encode_col_mapping(pd.read_csv(path_df), 'LOAD')
-
-    print("------GENERATING PRIOR KNOWLEDGE------")
-    pk = utils.get_generic_priorknorledge_mat(df.columns, services, mapping, architecture)
-    utils.draw_prior_knwoledge_mat(pk, df.columns, path_prior)
-
-    for met in ['CPU', 'RES_TIME', 'MEM']:
-        df = anomalies_filter(pd.read_csv(path_df), services, [met])
-        df_discovery, loads_mapping = utils.hot_encode_col_mapping(df, 'LOAD')
-        df_discovery.to_csv(os.path.join(path_work, "df_discovery_" + met + ".csv"))
-        causal_model = build_model(df_discovery, os.path.join(path_work, "dag_" + met), pk)
-
-        for ser in services:
-            print("Searching configuration for service: {} for metric: {}".format(ser, met))
-            generate_config(causal_model, df_discovery, ser,
-                            os.path.join(path_configs, "{}_{}_{}.json".format("configs", met, ser)), loads_mapping,
-                            metrics=[met], stability=0, nuser_limit=model_limit, show_comment=True,
-                            FAST=generation_conf_FAST, ths_filtered=ths_filtered, nuser_start=nuser_start)
-
-
-def mlp_workflow_without_anom(system, path_work):
-    services, mapping, pods, architecture = get_system_info(system)
-
-    path_thresholds = os.path.join(path_work, "thresholds.json")
-    path_configs = os.path.join(path_work, "generated_configs")
-
-    if system == System.MUBENCH:
-        ths_filtered = False
-        model_limit = 30
-        nuser_start = 2
-        path_df = "mubench/data/mubench_df.csv"
-
-    else:
-        ths_filtered = True
-        model_limit = 50
-        nuser_start = 4
-        path_df = "sockshop/data/sockshop_df.csv"
-
-    if not os.path.exists(path_work):
-        os.mkdir(path_work)
-    if not os.path.exists(path_configs):
-        os.mkdir(path_configs)
-
-    for met in ['RES_TIME', 'CPU', 'MEM']:
-        df = anomalies_filter(pd.read_csv(path_df), services, [met])
-        if system == System.MUBENCH:
-            df = df[df['NUSER'].isin([i for i in range(1, 30, 2)] + [30])].reset_index(drop=True)
-
-        df_train, loads_mapping = utils.hot_encode_col_mapping(df, 'LOAD')
-        loads = loads_mapping.keys()
-        spawn_rates = list(set(df_train['SR']))
-
-        input_col = ['NUSER'] + ['LOAD_' + str(i) for i in range(len(loads_mapping.keys()))] + ['SR']
-        output_col = [met + "_" + ser for met in ['RES_TIME', 'CPU', 'MEM'] for ser in services]
-
-        df_train = df_train[input_col + output_col]
-        df_train.to_csv(os.path.join(path_work, "df_train_" + met + ".csv"), index=False)
-
-        thresholds = {}
-        with open(path_thresholds, 'w') as f_ths:
-            for ser in services:
-                thresholds[ser] = utils.calc_thresholds(df_train, ser, filtered=ths_filtered)
-            json.dump(thresholds, f_ths)
-
-        X_train = df_train[input_col].values
-        Y_train = df_train[output_col].values
-
-        print("------DEFINING MLP------")
-        model = Sequential()
-        model.add(Input(shape=(5,), dtype=int))  # settare interi
-        model.add(Dense(units=64, activation='relu'))
-        model.add(Dense(units=64, activation='relu'))
-        model.add(Dense(units=len(output_col), activation='linear'))
-
-        model.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy'])
-
-        print("------TRAIN------")
-        kfold = KFold(n_splits=5, shuffle=True)
-
-        for fold, (train_index, val_index) in enumerate(kfold.split(X_train)):
-            print(f"Fold {fold + 1}:")
-
-            X_train_fold, X_val_fold = X_train[train_index], X_train[val_index]
-            y_train_fold, y_val_fold = Y_train[train_index], Y_train[val_index]
-
-            # Addestramento del modello su X_train_fold, y_train_fold
-            model.fit(X_train_fold, y_train_fold, epochs=300, batch_size=32, verbose=0)
-
-            # Valutazione del modello su X_val_fold, y_val_fold
-            loss, accuracy = model.evaluate(X_val_fold, y_val_fold)
-            print(f"Validation Loss: {loss:.4f}, Validation Accuracy: {accuracy:.4f}")
-
-        model.save(os.path.join(path_work, "model_" + met + ".h5"))
-
-        def search_config():
-            for n in range(nuser_start, model_limit + 1):
-                print(n)
-                for load in loads:
-                    for sr in spawn_rates:
-
-                        input_data = np.zeros(len(input_col), )
-                        input_data[input_col.index('NUSER')] = n
-                        input_data[input_col.index('SR')] = sr
-
-                        for li in range(len(loads)):
-                            input_data[input_col.index('LOAD_{}'.format(li))] = loads_mapping[load][li]
-
-                        target_pred = model.predict(np.array([input_data]))[:, [output_col.index(target_col)]]
-
-                        if target_pred > thresholds[ser][met]:
-                            print("CONFIGURAZIONE TROVATA")
-                            with open(os.path.join(path_configs, "{}_{}_{}.json".format("configs", met, ser)),
-                                      'w') as f_out:
-                                json.dump({"nusers": [n], "loads": [load], "spawn_rates": [sr],
-                                           "anomalous_metrics": [met]}, f_out)
-                            return
-            print("NON TROVATA")
-
-        for ser in services:
-            target_col = met + "_" + ser
-            print("Searching configuration for service: {} for metric: {}".format(ser, met))
-            search_config()
