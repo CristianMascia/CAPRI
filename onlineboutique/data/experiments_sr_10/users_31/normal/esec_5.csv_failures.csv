@@ -1,0 +1,44 @@
+Method,Name,Error,Occurrences
+GET,/product/1YMWWN1N4O,HTTPError('500 Server Error: Internal Server Error for url: /product/1YMWWN1N4O'),240
+GET,/product/2ZYFJ3GM2N,"ConnectionRefusedError(111, 'Connection refused')",5
+POST,/cart/empty,"ConnectionRefusedError(111, 'Connection refused')",5
+GET,/product/0PUK6V6EV0,"ConnectionRefusedError(111, 'Connection refused')",5
+GET,/logout,RemoteDisconnected('Remote end closed connection without response'),1
+POST,/cart,HTTPError('500 Server Error: Internal Server Error for url: /cart'),718
+GET,/product/66VCHSJNUP,HTTPError('500 Server Error: Internal Server Error for url: /product/66VCHSJNUP'),242
+GET,/product/1YMWWN1N4O,"ConnectionRefusedError(111, 'Connection refused')",8
+GET,/logout,"ConnectionRefusedError(111, 'Connection refused')",13
+GET,/product/OLJCESPC7Z,"ConnectionRefusedError(111, 'Connection refused')",11
+GET,/,RemoteDisconnected('Remote end closed connection without response'),4
+POST,/cart,"ConnectionRefusedError(111, 'Connection refused')",21
+GET,/,"ConnectionRefusedError(111, 'Connection refused')",56
+POST,/setCurrency,"ConnectionRefusedError(111, 'Connection refused')",9
+GET,/product/6E92ZMYYFZ,RemoteDisconnected('Remote end closed connection without response'),1
+POST,/setCurrency,RemoteDisconnected('Remote end closed connection without response'),6
+GET,/,"ConnectionResetError(104, 'Connection reset by peer')",2
+POST,/cart/checkout,"ConnectionRefusedError(111, 'Connection refused')",1
+GET,/product/9SIQT8TOJO,HTTPError('500 Server Error: Internal Server Error for url: /product/9SIQT8TOJO'),254
+GET,/product/66VCHSJNUP,"ConnectionRefusedError(111, 'Connection refused')",8
+GET,/product/LS4PSXUNUM,HTTPError('500 Server Error: Internal Server Error for url: /product/LS4PSXUNUM'),244
+GET,/product/OLJCESPC7Z,RemoteDisconnected('Remote end closed connection without response'),2
+GET,/product/9SIQT8TOJO,"ConnectionResetError(104, 'Connection reset by peer')",1
+GET,/cart,"ConnectionRefusedError(111, 'Connection refused')",16
+GET,/product/OLJCESPC7Z,HTTPError('500 Server Error: Internal Server Error for url: /product/OLJCESPC7Z'),234
+POST,/setCurrency,HTTPError('500 Server Error: Internal Server Error for url: /setCurrency'),359
+GET,/,HTTPError('500 Server Error: Internal Server Error for url: /'),1856
+GET,/product/0PUK6V6EV0,HTTPError('500 Server Error: Internal Server Error for url: /product/0PUK6V6EV0'),233
+GET,/cart,HTTPError('500 Server Error: Internal Server Error for url: /cart'),410
+POST,/cart/empty,RemoteDisconnected('Remote end closed connection without response'),3
+GET,/cart,RemoteDisconnected('Remote end closed connection without response'),2
+GET,/logout,HTTPError('500 Server Error: Internal Server Error for url: /logout'),359
+GET,/product/L9ECAV7KIM,HTTPError('500 Server Error: Internal Server Error for url: /product/L9ECAV7KIM'),251
+POST,/cart/empty,HTTPError('500 Server Error: Internal Server Error for url: /cart/empty'),207
+GET,/product/9SIQT8TOJO,"ConnectionRefusedError(111, 'Connection refused')",3
+GET,/product/2ZYFJ3GM2N,HTTPError('500 Server Error: Internal Server Error for url: /product/2ZYFJ3GM2N'),260
+POST,/cart/checkout,HTTPError('500 Server Error: Internal Server Error for url: /cart/checkout'),105
+GET,/product/6E92ZMYYFZ,"ConnectionRefusedError(111, 'Connection refused')",9
+POST,/cart,RemoteDisconnected('Remote end closed connection without response'),1
+GET,/product/6E92ZMYYFZ,HTTPError('500 Server Error: Internal Server Error for url: /product/6E92ZMYYFZ'),203
+GET,/product/L9ECAV7KIM,"ConnectionRefusedError(111, 'Connection refused')",10
+GET,/product/LS4PSXUNUM,"ConnectionRefusedError(111, 'Connection refused')",6
+GET,/product/LS4PSXUNUM,RemoteDisconnected('Remote end closed connection without response'),1

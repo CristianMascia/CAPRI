@@ -1,0 +1,10 @@
+{
+  "home": "frontend",
+  "viewCart": "cartservice",
+  "addToCart": "cartservice",
+  "checkout": "checkoutservice",
+  "cartEmpty": "cartservice",
+  "logout": "frontend",
+  "viewProduct": "productcatalogservice",
+  "setCurrency": "currencyservice"
+}
