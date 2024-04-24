@@ -24,8 +24,8 @@ def vertical_align_text(fig, ax, x, text, fontsize, y_min, y_max):
 
 
 def nusers_vs_met(df, path_images, services, ths_filtered=False):
-    nusers = list(set(df['NUSER']))
-    nusers.sort()
+    #nusers = list(set(df['NUSER']))
+    #nusers.sort()
     loads = list(set(df['LOAD']))
     loads.sort()
     SRs = list(set(df['SR']))
@@ -51,11 +51,16 @@ def nusers_vs_met(df, path_images, services, ths_filtered=False):
 
             for l, load in enumerate(loads):
                 for s, sr in enumerate(SRs):
-                    y = [df_grouped.loc[(n, load, sr), met + "_" + service] for n in nusers]
-                    axs[l, s].plot(nusers, y, marker='o')
-                    plt.setp(axs[l, s], xticks=nusers)
+
+                    nusers_ = list(set(df[(df['LOAD'] == load) & (df['SR'] == sr)]['NUSER']))
+                    nusers_.sort()
+                    if len(nusers_) == 0:
+                        continue
+                    y = [df_grouped.loc[(n, load, sr), met + "_" + service] for n in nusers_]
+                    axs[l, s].plot(nusers_, y, marker='o')
+                    plt.setp(axs[l, s], xticks=nusers_)
                     axs[l, s].axhline(ths[met], color='red', linestyle='solid', linewidth=th_linewidth)
-                    axs[l, s].text((max(nusers) - min(nusers)) * 0.3, ths[met], "TH={:.2f}".format(ths[met]))
+                    axs[l, s].text((max(nusers_) - min(nusers_)) * 0.3, ths[met], "TH={:.2f}".format(ths[met]))
 
                     # trans = transforms.blended_transform_factory(
                     #    axs[l, s].get_yticklabels()[0].get_transform(), axs[l, s].transData)
