@@ -1,6 +1,7 @@
 import json
 import os.path
 import random
+import shutil
 
 import numpy as np
 import pandas as pd
@@ -25,7 +26,7 @@ CURRENT_PATH = os.path.dirname(__file__)
 class System(Enum):
     MUBENCH = "mubench"
     SOCKSHOP = "sockshop"
-    TRAINTICKET = "trainticket"
+    ONLINEBOUTIQUE = "onlineboutique"
 
 
 def get_system_info(system):
@@ -75,7 +76,7 @@ def system_visualization(system, path_images=None):
         data_visualization.loads_comparison(df_disc, path_images, services)
     else:
         data_visualization.nusers_vs_met(df, path_images, services, True)
-        data_visualization.loads_comparison(df, path_images, services, 1, True)
+        # data_visualization.loads_comparison(df, path_images, services, 1, True)
 
 
 def system_workflow(system, path_work, dataset=None, generation_conf_FAST=False):
@@ -134,11 +135,14 @@ def system_workflow(system, path_work, dataset=None, generation_conf_FAST=False)
                             FAST=generation_conf_FAST, ths_filtered=ths_filtered, nuser_start=nuser_start)
 
 
-def random_predictor(system, path_work):
+def random_predictor(system, path_work, dataset=None):
     gen_path = os.path.join(path_work, "generated_configs")
     os.makedirs(gen_path, exist_ok=True)
 
-    df = create_dataset(system, os.path.join(path_work, "df.csv"))
+    if dataset is None:
+        df = create_dataset(system, os.path.join(path_work, "df.csv"))
+    else:
+        df = dataset
 
     SRs = list(set(df['SR']))
     loads = list(set(df['LOAD']))
@@ -186,7 +190,6 @@ def mlp_predictor(system, path_work, dataset=None):
 
     print("------READING EXPERIMENTS------")
     if dataset is None:
-        # df = create_dataset(system, path_df=path_df, path_exp=os.path.join(str(system.value), "data"))
         df = pd.read_csv(path_read_df)
     else:
         df = dataset
@@ -288,7 +291,7 @@ def system_performance_evaluation(system, from_experiments, path_work=None, sens
             if system == System.SOCKSHOP:
                 path_work = os.path.join(CURRENT_PATH, "sockshop")
             else:
-                path_work = os.path.join(CURRENT_PATH, "trainticket")
+                path_work = os.path.join(CURRENT_PATH, "onlineboutique")
 
     path_df = os.path.join(path_work, "df.csv")
     if sensibility > 0:
@@ -321,6 +324,10 @@ def system_performance_evaluation(system, from_experiments, path_work=None, sens
                 df_config = df_experiments[(df_experiments['NUSER'] == config['nusers'][0]) &
                                            (df_experiments['LOAD'] == config['loads'][0]) &
                                            (df_experiments['SR'] == config['spawn_rates'][0])]
+
+                if len(df_config) == 0:
+                    print("MANCA: ({},{},{})".format(config['nusers'][0], config['loads'][0],
+                                                     config['spawn_rates'][0]))
                 return config, df_config[met + "_" + ser].mean()
         else:
             return None, None
@@ -346,7 +353,7 @@ def system_mean_performance(system, from_experiments, reps, name_sub_dir="work_r
         elif system == System.SOCKSHOP:
             path_works = os.path.join(CURRENT_PATH, "sockshop/works")
         else:
-            path_works = os.path.join(CURRENT_PATH, "trainticket/works")
+            path_works = os.path.join(CURRENT_PATH, "onlineboutique/works")
 
     if sensibility > 0:
         path_mean_metrics = os.path.join(path_works, 'avg_metrics_{}.json'.format(sensibility))
