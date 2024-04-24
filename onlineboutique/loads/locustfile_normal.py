@@ -34,33 +34,33 @@ products = [
 
 
 def index(l):
-    l.client.get("/")
+    l.client.get("/", name="home")
 
 
 def setCurrency(l):
     currencies = ['EUR', 'USD', 'JPY', 'CAD', 'GBP', 'TRY']
     l.client.post("/setCurrency",
-                  {'currency_code': random.choice(currencies)})
+                  {'currency_code': random.choice(currencies)}, name="setCurrency")
 
 
 def browseProduct(l):
-    l.client.get("/product/" + random.choice(products))
+    l.client.get("/product/" + random.choice(products), name="viewProduct")
 
 
 def viewCart(l):
-    l.client.get("/cart")
+    l.client.get("/cart", name="viewCart")
 
 
 def addToCart(l):
     product = random.choice(products)
-    l.client.get("/product/" + product)
+    l.client.get("/product/" + product, name="viewProduct")
     l.client.post("/cart", {
         'product_id': product,
-        'quantity': random.randint(1, 10)})
+        'quantity': random.randint(1, 10)}, name="addToCart")
 
 
 def empty_cart(l):
-    l.client.post('/cart/empty')
+    l.client.post('/cart/empty', name="cartEmpty")
 
 
 def checkout(l):
@@ -77,11 +77,12 @@ def checkout(l):
         'credit_card_expiration_month': random.randint(1, 12),
         'credit_card_expiration_year': random.randint(current_year, current_year + 70),
         'credit_card_cvv': f"{random.randint(100, 999)}",
-    })
+    }, name="checkout")
 
 
 def logout(l):
-    l.client.get('/logout')
+    l.client.get('/logout', name="logout")
+
 
 def perform_operation(self, name):
     all_operations = {"index": index,
