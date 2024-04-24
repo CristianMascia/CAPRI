@@ -1,4 +1,0 @@
- body = {"startingPlace": from_station, "endPlace": to_station, "departureTime": departure_date}  è sbagliato usare "startPlace"
- ho settato catch_response=False perche non venivano gestite le risposte e quindi non considerate nelle stats
- ho sostituito Shang%20Hai/Su%20Zhou con shanghai/suzhou altrimenti get_food_types non funziona
- getVoucher non funziona

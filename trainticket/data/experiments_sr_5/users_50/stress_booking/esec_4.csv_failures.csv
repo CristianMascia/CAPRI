@@ -1,2 +1,0 @@
-Method,Name,Error,Occurrences
-POST,preserve_ticket,HTTPError('504 Server Error: Gateway Time-out for url: preserve_ticket'),11
