@@ -51,11 +51,13 @@ def calc_metrics(df: Union[str, pd.DataFrame], get_config: Callable[[str, str, p
     metrics_dict = {}
 
     def check_anomaly():
-        for nuser in reversed(range(1 + max(df['NUSER']))):
+        users = list(set(df['NUSER']))
+        users.sort(reverse=True)
+        for nuser in users:  # reversed(range(1 + max(df['NUSER']))):
             for l in list(set(df['LOAD'])):
                 for sr in list(set(df['SR'])):
-                    aaa = df[(df['NUSER'] == nuser) & (df['LOAD'] == l) & (df['SR'] == sr)]
-                    if aaa[met + "_" + ser].mean() > ((1 + sensibility) * ths[met]):
+                    val_ = df[(df['NUSER'] == nuser) & (df['LOAD'] == l) & (df['SR'] == sr)][met + "_" + ser].mean()
+                    if val_ > ((1 + sensibility) * ths[met]):
                         return True
         return False
 
@@ -77,14 +79,11 @@ def calc_metrics(df: Union[str, pd.DataFrame], get_config: Callable[[str, str, p
                     false_positive += 1
                     if check_anomaly():
                         mhd_values_false.append(calc_mhd(config, False))
-
-
             else:
                 if check_anomaly():
                     false_negative += 1
                 else:
                     true_negative += 1
-            # print("Service {} Met: {}".format(ser, met))
 
         precision = 0.0
         recall = 0.0
