@@ -1,0 +1,14 @@
+{
+  "nusers": [
+    6
+  ],
+  "loads": [
+    "stress_shop"
+  ],
+  "spawn_rates": [
+    5
+  ],
+  "anomalous_metrics": [
+    "RES_TIME"
+  ]
+}
