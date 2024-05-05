@@ -159,7 +159,7 @@ def random_predictor(system, path_work, dataset=None):
         for met in ['RES_TIME', 'CPU', 'MEM']:
             with open(os.path.join(gen_path, 'configs_{}_{}.json'.format(met, ser)),
                       'w') as f_conf:
-                json.dump({"nusers": [random.randint(nstart, model_limit + 1)], "loads": [random.choice(loads)],
+                json.dump({"nusers": [random.randint(nstart, model_limit)], "loads": [random.choice(loads)],
                            "spawn_rates": [random.choice(SRs)], "anomalous_metrics": [met]}, f_conf)
 
 
