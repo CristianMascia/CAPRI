@@ -426,3 +426,47 @@ def anomalies_filter(df_in, services_in, mets, ths_filtered=False):
         a()
 
     return df_in.drop(index=cancel_index).reset_index(drop=True)
+
+
+create_dataset(System.ONLINEBOUTIQUE,"onlineboutique/compact_configs_run_old/df.csv", "onlineboutique/compact_configs_run_old")
+
+
+quit()
+create_dataset(System.ONLINEBOUTIQUE,"onlineboutique/data/onlineboutique_df.csv", "onlineboutique/data")
+
+count = 0
+count_tot = 0
+count_no = 0
+services, mapping, pods, arch = get_system_info(System.ONLINEBOUTIQUE)
+
+df = pd.read_csv("onlineboutique/data/onlineboutique_df.csv")
+for ser in services:
+    ths = utils.calc_thresholds(df, ser, True)
+    for met in ['RES_TIME', 'MEM', 'CPU']:
+        n_min = 51
+        count_tot += 1
+        for l in list(set(list(df['LOAD']))):
+            for sr in list(set(list(df['SR']))):
+
+                users = list(set(list(df['NUSER'])))
+                users.sort()
+                for n in users:
+                    if df[(df['NUSER'] == n) & (df['LOAD'] == l) & (df['SR'] == sr)][met + "_" + ser].mean() > ths[met]:
+                        n_min = min(n_min, n)
+                        break
+        print("{}_{} -> {}".format(met, ser, n_min))
+        if 4 < n_min < 51:
+            count += 1
+        if n_min == 51:
+            count_no += 1
+
+print("{}+{}/{}".format(count,count_no,count_tot))
+quit()
+
+for rep in range(20):
+    system_workflow(System.ONLINEBOUTIQUE, "onlineboutique/NO_ANOMALY/works_causal/rep" + str(rep),
+                    pd.read_csv("onlineboutique/NO_ANOMALY/df_onlineboutique_filtered.csv"))
+
+for rep in range(20):
+    mlp_predictor(System.ONLINEBOUTIQUE, "onlineboutique/NO_ANOMALY/works_mlp/rep" + str(rep),
+                  pd.read_csv("onlineboutique/NO_ANOMALY/df_onlineboutique_filtered.csv"))

@@ -2,11 +2,13 @@ import json
 import os
 import pandas as pd
 
+
+
 start_num = 0
 
 
 def check(c):
-    ddd = pd.read_csv("sockshop/compact_configs_run/df.csv")
+    ddd = pd.read_csv("onlineboutique/compact_configs_run_old/df.csv")
 
     if len(ddd[(ddd['NUSER'] == c[0]) & (ddd['LOAD'] == c[1]) & (ddd['SR'] == c[2])]) == 3:
         return False
@@ -53,12 +55,16 @@ def check_works_random(c):
 
 configs_compatte = []
 
-paths = ["sockshop/works/work_rep",
-         "sockshop/works_mlp/mlp_predictor_rep",
-         "sockshop/works_random/random_predictor_rep",
-         "sockshop/NO_ANOMALY/works_causal/rep",
-         "sockshop/NO_ANOMALY/works_mlp/rep"]
-path_dir_out = "sockshop/compact_confs_final_20rep"
+#paths = ["sockshop/works/work_rep",
+#         "sockshop/works_mlp/mlp_predictor_rep",
+#         "sockshop/works_random/random_predictor_rep",
+#         "sockshop/NO_ANOMALY/works_causal/rep",
+#         "sockshop/NO_ANOMALY/works_mlp/rep"]
+paths = ["onlineboutique/works/work_rep",
+         "onlineboutique/works_mlp/mlp_predictor_rep",
+         "onlineboutique/works_random/random_predictor_rep"]
+
+path_dir_out = "onlineboutique/compact_confs_final_20rep_new_new"
 
 reps = range(20)
 count = 0
@@ -77,6 +83,9 @@ for path in paths:
                 tripla = (jconf['nusers'][0], jconf['loads'][0], jconf['spawn_rates'][0])
                 count += 1
                 if tripla[0] < 4:
+                    print(path_act + "/" + conf)
+
+                if tripla[0] > 50:
                     print(path_act + "/" + conf)
 
                 if tripla not in configs_compatte:
