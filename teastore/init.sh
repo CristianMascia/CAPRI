@@ -1,6 +1,4 @@
 #!/bin/bash
-host=http://192.168.49.2:30080/tools.descartes.teastore.webui
-return
 
 #check if minikube is running and stop if it is running
 if [ "$(docker container inspect -f '{{.State.Status}}' minikube)" == 'running' ]; then
@@ -31,7 +29,7 @@ done
 ulimit -n 100000 #extend limit of opened files
 
 # Define variables
-host=http://192.168.49.2:30080
+host=http://192.168.49.2:30080/tools.descartes.teastore.webui
 n_nodes=7
 
 #deploy
