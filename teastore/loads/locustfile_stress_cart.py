@@ -26,7 +26,7 @@ def view_product(self):
 
 def add_to_cart(self):
     product_id = randint(7, 506)
-    product_request = self.client.get("/product", params={"id": product_id}, name="product")
+    product_request = self.client.get("/product", params={"id": product_id}, name="view_product")
     if product_request.ok:
         self.client.post("/cartAction", params={"addToCart": "", "productid": product_id}, name="addToCart")
 
