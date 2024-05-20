@@ -1,0 +1,22 @@
+Answer the question based on the following context:
+{context}
+Use this following constraints: 
+NUSER has to be less than 51
+NUSER has to be greater than 4
+LOAD has to be 'normal' or 'stress_cart' or 'stress_shop'
+SR has to be '1' or '5' or '10'
+
+Follows these examples
+1) CHECK: RES_TIME_get_orders > 102.56526576455097
+NO
+2) CHECK: RES_TIME_get_orders > 102.56526576455097
+NO
+3) CHECK: RES_TIME_get_orders > 102.56526576455097
+NO
+4) CHECK: RES_TIME_get_orders > 102.56526576455097
+NO
+5) CHECK: RES_TIME_get_orders > 102.56526576455097
+NO
+{question}
+
+Given the constraints and data provided, we need to check if any of the records meet the criteria for `RES_TIME

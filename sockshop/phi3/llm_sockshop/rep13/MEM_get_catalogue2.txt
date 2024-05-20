@@ -1,0 +1,28 @@
+Answer the question based on the following context:
+{context}
+Use this following constraints: 
+NUSER has to be less than 51
+NUSER has to be greater than 4
+LOAD has to be 'normal' or 'stress_cart' or 'stress_shop'
+SR has to be '1' or '5' or '10'
+
+Follows these examples
+1) CHECK: MEM_get_catalogue2 > 7.521766727556017
+YES
+CONFIGURATION: NUSER=43,LOAD=stress_shop,SR=5
+2) CHECK: MEM_get_catalogue2 > 7.521766727556017
+YES
+CONFIGURATION: NUSER=31,LOAD=stress_shop,SR=1
+3) CHECK: MEM_get_catalogue2 > 7.521766727556017
+YES
+CONFIGURATION: NUSER=46,LOAD=stress_shop,SR=10
+4) CHECK: MEM_get_catalogue2 > 7.521766727556017
+YES
+CONFIGURATION: NUSER=13,LOAD=stress_cart,SR=1
+5) CHECK: MEM_get_catalogue2 > 7.521766727556017
+NO
+{question}
+
+YES
+CONFIGURATION: NUSER=48, LOAD=stress_shop, SR=5
+

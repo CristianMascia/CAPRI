@@ -1,0 +1,24 @@
+Answer the question based on the following context:
+{context}
+Use this following constraints: 
+NUSER has to be less than 31
+NUSER has to be greater than 2
+LOAD has to be 'normal' or 'unbalanced_one' or 'randomly_balanced'
+SR has to be '1' or '5' or '10'
+
+Follows these examples
+1) CHECK: MEM_s9 > 184.06579500841673
+NO
+2) CHECK: MEM_s9 > 184.06579500841673
+NO
+3) CHECK: MEM_s9 > 184.06579500841673
+NO
+4) CHECK: MEM_s9 > 184.06579500841673
+NO
+5) CHECK: MEM_s9 > 184.06579500841673
+NO
+{question}
+
+NO
+
+The given constraint states that NUSER has to be less than 31 and greater than 2, but

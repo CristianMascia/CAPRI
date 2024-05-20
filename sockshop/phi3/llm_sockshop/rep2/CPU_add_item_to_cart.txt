@@ -1,0 +1,23 @@
+Answer the question based on the following context:
+{context}
+Use this following constraints: 
+NUSER has to be less than 51
+NUSER has to be greater than 4
+LOAD has to be 'normal' or 'stress_cart' or 'stress_shop'
+SR has to be '1' or '5' or '10'
+
+Follows these examples
+1) CHECK: CPU_add_item_to_cart > 56.090658527488145
+YES
+CONFIGURATION: NUSER=37,LOAD=stress_shop,SR=10
+2) CHECK: CPU_add_item_to_cart > 56.090658527488145
+NO
+3) CHECK: CPU_add_item_to_cart > 56.090658527488145
+NO
+4) CHECK: CPU_add_item_to_cart > 56.090658527488145
+NO
+5) CHECK: CPU_add_item_to_cart > 56.090658527488145
+NO
+{question}
+
+To determine whether the statement "CHECK: CPU_add_item_to_cart > 56.09
