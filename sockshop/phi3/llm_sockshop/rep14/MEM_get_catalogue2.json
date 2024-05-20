@@ -1,1 +1,1 @@
-{"nusers": [4], "laods": ["stress_cart"], "spawn_rates": [1], "anomalous_metrics": ["MEM"]}
+{"nusers": [4], "spawn_rates": [1], "anomalous_metrics": ["MEM"], "loads": ["stress_cart"]}

@@ -1,1 +1,1 @@
-{"nusers": [4], "laods": ["randomly_balanced"], "spawn_rates": [5], "anomalous_metrics": ["CPU"]}
+{"nusers": [4], "spawn_rates": [5], "anomalous_metrics": ["CPU"], "loads": ["randomly_balanced"]}

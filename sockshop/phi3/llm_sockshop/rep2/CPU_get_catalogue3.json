@@ -1,1 +1,1 @@
-{"nusers": [5], "laods": ["stress_cart"], "spawn_rates": [5], "anomalous_metrics": ["CPU"]}
+{"nusers": [5], "spawn_rates": [5], "anomalous_metrics": ["CPU"], "loads": ["stress_cart"]}

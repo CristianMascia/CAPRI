@@ -3,7 +3,7 @@ Answer the question based on the following context:
 Use this following constraints: 
 NUSER has to be less than 31
 NUSER has to be greater than 2
-LOAD has to be 'normal' or 'unbalanced_one' or 'randomly_balanced'
+LOAD has to be 'uniform' or 'unbalanced_one' or 'randomly_balanced'
 SR has to be '1' or '5' or '10'
 
 Follows these examples
@@ -24,6 +24,6 @@ NO
 {question}
 
 YES
-CONFIGURATION: NUSER=2,LOAD='normal',SR=5
+CONFIGURATION: NUSER=2,LOAD='uniform',SR=5
 
 This configuration satisfies the given
