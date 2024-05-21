@@ -1,0 +1,24 @@
+Answer the question based on the following context:
+{context}
+Use this following constraints: 
+NUSER has to be less than 51
+NUSER has to be greater than 4
+LOAD has to be 'normal' or 'stress_cart' or 'stress_shop'
+SR has to be '1' or '5' or '10'
+
+Follows these examples
+1) CHECK: MEM_viewCart > 47.335271109016844
+NO
+2) CHECK: MEM_viewCart > 47.335271109016844
+NO
+3) CHECK: MEM_viewCart > 47.335271109016844
+NO
+4) CHECK: MEM_viewCart > 47.335271109016844
+NO
+5) CHECK: MEM_viewCart > 47.335271109016844
+NO
+{question}
+
+NO
+
+The given constraint is to check if the value of `MEM_viewCart` exceeds a specific threshold

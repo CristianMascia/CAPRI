@@ -1,0 +1,24 @@
+Answer the question based on the following context:
+{context}
+Use this following constraints: 
+NUSER has to be less than 51
+NUSER has to be greater than 4
+LOAD has to be 'normal' or 'stress_cart' or 'stress_shop'
+SR has to be '1' or '5' or '10'
+
+Follows these examples
+1) CHECK: MEM_setCurrency > 34.54929723978199
+NO
+2) CHECK: MEM_setCurrency > 34.54929723978199
+NO
+3) CHECK: MEM_setCurrency > 34.54929723978199
+NO
+4) CHECK: MEM_setCurrency > 34.54929723978199
+NO
+5) CHECK: MEM_setCurrency > 34.54929723978199
+NO
+{question}
+
+NO
+
+The provided Document does not contain a 'MEM_setCurrency' value that is greater than 3

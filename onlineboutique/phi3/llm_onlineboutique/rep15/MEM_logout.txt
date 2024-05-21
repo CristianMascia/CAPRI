@@ -1,0 +1,24 @@
+Answer the question based on the following context:
+{context}
+Use this following constraints: 
+NUSER has to be less than 51
+NUSER has to be greater than 4
+LOAD has to be 'normal' or 'stress_cart' or 'stress_shop'
+SR has to be '1' or '5' or '10'
+
+Follows these examples
+1) CHECK: MEM_logout > 20.736064201467354
+YES
+CONFIGURATION: NUSER=43,LOAD=stress_shop,SR=10
+2) CHECK: MEM_logout > 20.736064201467354
+NO
+3) CHECK: MEM_logout > 20.736064201467354
+NO
+4) CHECK: MEM_logout > 20.736064201467354
+NO
+5) CHECK: MEM_logout > 20.736064201467354
+NO
+{question}
+
+YES
+CONFIGURATION: NUSER=49,LOAD=normal,SR=5

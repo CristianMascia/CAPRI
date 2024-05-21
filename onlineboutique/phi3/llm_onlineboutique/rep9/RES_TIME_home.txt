@@ -1,0 +1,30 @@
+Answer the question based on the following context:
+{context}
+Use this following constraints: 
+NUSER has to be less than 51
+NUSER has to be greater than 4
+LOAD has to be 'normal' or 'stress_cart' or 'stress_shop'
+SR has to be '1' or '5' or '10'
+
+Follows these examples
+1) CHECK: RES_TIME_home > 22.90645954515076
+YES
+CONFIGURATION: NUSER=7,LOAD=normal,SR=10
+2) CHECK: RES_TIME_home > 22.90645954515076
+YES
+CONFIGURATION: NUSER=31,LOAD=normal,SR=5
+3) CHECK: RES_TIME_home > 22.90645954515076
+YES
+CONFIGURATION: NUSER=50,LOAD=normal,SR=1
+4) CHECK: RES_TIME_home > 22.90645954515076
+YES
+CONFIGURATION: NUSER=22,LOAD=stress_shop,SR=5
+5) CHECK: RES_TIME_home > 22.90645954515076
+YES
+CONFIGURATION: NUSER=13,LOAD=stress_shop,SR=5
+{question}
+
+YES
+CONFIGURATION: NUSER=38, LOAD=normal, SR=5
+
+This configuration satisfies

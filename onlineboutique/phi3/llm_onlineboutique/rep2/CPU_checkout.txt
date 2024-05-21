@@ -1,0 +1,26 @@
+Answer the question based on the following context:
+{context}
+Use this following constraints: 
+NUSER has to be less than 51
+NUSER has to be greater than 4
+LOAD has to be 'normal' or 'stress_cart' or 'stress_shop'
+SR has to be '1' or '5' or '10'
+
+Follows these examples
+1) CHECK: CPU_checkout > 3.220045067264928
+YES
+CONFIGURATION: NUSER=31,LOAD=stress_cart,SR=1
+2) CHECK: CPU_checkout > 3.220045067264928
+YES
+CONFIGURATION: NUSER=13,LOAD=stress_shop,SR=5
+3) CHECK: CPU_checkout > 3.220045067264928
+YES
+CONFIGURATION: NUSER=22,LOAD=stress_shop,SR=1
+4) CHECK: CPU_checkout > 3.220045067264928
+NO
+5) CHECK: CPU_checkout > 3.220045067264928
+NO
+{question}
+
+YES
+CONFIGURATION: NUSER=10, LOAD=stress_shop, SR=10
