@@ -25,6 +25,6 @@ CONFIGURATION: NUSER=16,LOAD=stress_cart,SR=1
 {question}
 
 YES
-CONFIGURATION: NUSER=97, LOAD=normal, SR=5
+CONFIGURATION: NUSER=50, LOAD=normal, SR=5
 
 This configuration satisfies

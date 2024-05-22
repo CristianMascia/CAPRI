@@ -24,6 +24,6 @@ NO
 {question}
 
 YES
-CONFIGURATION: NUSER=51,LOAD=normal,SR=10
+CONFIGURATION: NUSER=50,LOAD=normal,SR=10
 
 However, the

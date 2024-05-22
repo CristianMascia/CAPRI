@@ -24,6 +24,6 @@ NO
 {question}
 
 YES
-CONFIGURATION: NUSER=3, LOAD=normal, SR=5
+CONFIGURATION: NUSER=4, LOAD=normal, SR=5
 
 This configuration satisfies all

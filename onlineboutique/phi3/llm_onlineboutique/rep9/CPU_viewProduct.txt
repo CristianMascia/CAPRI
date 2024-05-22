@@ -25,6 +25,6 @@ CONFIGURATION: NUSER=10,LOAD=stress_shop,SR=5
 {question}
 
 YES
-CONFIGURATION: NUSER=97, LOAD=normal, SR=5
+CONFIGURATION: NUSER=50, LOAD=normal, SR=5
 
 Note that the

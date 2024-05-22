@@ -24,4 +24,4 @@ NO
 {question}
 
 YES
-CONFIGURATION: NUSER=3, LOAD=normal, SR=1, CPU_cartEmpty=
+CONFIGURATION: NUSER=4, LOAD=normal, SR=1, CPU_cartEmpty=

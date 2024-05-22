@@ -24,6 +24,6 @@ NO
 {question}
 
 YES
-CONFIGURATION: NUSER=3,LOAD=stress_cart,SR=1
+CONFIGURATION: NUSER=4,LOAD=stress_cart,SR=1
 
 This configuration
