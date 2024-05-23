@@ -14,7 +14,11 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnableParallel, RunnablePassthrough
 
-fare il check dei parametri
+MODEL_LIMIT = [4, 50]
+LOADS = ['normal', 'stress_cart', 'stress_shop']
+
+path_chroma = "sockshop_train_chroma_db"
+embedding_function = GPT4AllEmbeddings
 K = 5
 MAX_RETRY = 5
 
@@ -70,15 +74,14 @@ def generate_template(df_train, met, ser, ths):
 
     true_examples = get_true_example(df_example_true, N_TRUE_EXAMPLE)
     template = """Answer the question based on the following context:
-{context}
-Use this following constraints: 
-NUSER has to be less than 51
-NUSER has to be greater than 4
-LOAD has to be 'normal' or 'stress_cart' or 'stress_shop'
+{context}""" + """\nUse this following constraints: 
+NUSER has to be less than {}
+NUSER has to be greater than {}
+LOAD has to be '{}' or '{}' or '{}'
 SR has to be '1' or '5' or '10'
 
 Follows these examples
-"""
+""".format(MODEL_LIMIT[1] + 1, MODEL_LIMIT[0] - 1, LOADS[0], LOADS[1], LOADS[2])
 
     for i, example in enumerate(true_examples):
         template += '{}) CHECK: {}_{} > {}\nYES\nCONFIGURATION: NUSER={},LOAD={},SR={}\n'.format(i + 1, met, ser, ths,
@@ -107,15 +110,16 @@ def parse_output(output):
             nuser = int(splitted_config[0][splitted_config[0].find('=') + 1:].replace("'", ''))
             load = splitted_config[1][splitted_config[1].find('=') + 1:].replace("'", '')
             sr = int(splitted_config[2][splitted_config[2].find('=') + 1:].replace("'", ''))
-            return True, (nuser, load, sr)
+            if nuser < MODEL_LIMIT[0] or nuser > MODEL_LIMIT[1] or (load not in LOADS) or (sr not in [1, 5, 10]):
+                return False, None
+            else:
+                return True, (nuser, load, sr)
     else:
         if output_split[0] == 'NO':
             return True, None
     return False, None
 
 
-path_chroma = "sockshop_train_chroma_db"
-embedding_function = GPT4AllEmbeddings
 df_all = pd.read_csv('sockshop_df.csv')
 df_all.to_csv('df_train_sockshop.csv', index=False)
 
