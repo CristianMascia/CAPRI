@@ -1,0 +1,2 @@
+./workload_generator.sh -c new_sockshop/configs/test_5.json -e new_sockshop/configs/test_5 -s sockshop -r 180 -w 120 -n 5
+./workload_generator.sh -c new_sockshop/configs/test_3.json -e new_sockshop/configs/test_5 -s sockshop -r 180 -w 120 -n 3
