@@ -1,0 +1,25 @@
+Answer the question based on the following context:
+{context}
+Use this following constraints: 
+NUSER has to be less than 31
+NUSER has to be greater than 2
+LOAD has to be 'uniform' or 'unbalanced_one' or 'randomly_balanced'
+SR has to be '1' or '5' or '10'
+
+Follows these examples
+1) CHECK: RES_TIME_s1 > 7.753259070732117
+YES
+CONFIGURATION: NUSER=29,LOAD=randomly_balanced,SR=10
+2) CHECK: RES_TIME_s1 > 7.753259070732117
+YES
+CONFIGURATION: NUSER=25,LOAD=unbalanced_one,SR=10
+3) CHECK: RES_TIME_s1 > 7.753259070732117
+NO
+4) CHECK: RES_TIME_s1 > 7.753259070732117
+NO
+5) CHECK: RES_TIME_s1 > 7.753259070732117
+NO
+{question}
+
+YES
+CONFIGURATION: NUSER=28,LOAD='randomly_balanced',SR='10'

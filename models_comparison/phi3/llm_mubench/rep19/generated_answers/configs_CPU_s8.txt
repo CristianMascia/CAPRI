@@ -1,0 +1,28 @@
+Answer the question based on the following context:
+{context}
+Use this following constraints: 
+NUSER has to be less than 31
+NUSER has to be greater than 2
+LOAD has to be 'uniform' or 'unbalanced_one' or 'randomly_balanced'
+SR has to be '1' or '5' or '10'
+
+Follows these examples
+1) CHECK: CPU_s8 > 4.432075799870776
+YES
+CONFIGURATION: NUSER=5,LOAD=randomly_balanced,SR=10
+2) CHECK: CPU_s8 > 4.432075799870776
+YES
+CONFIGURATION: NUSER=30,LOAD=uniform,SR=10
+3) CHECK: CPU_s8 > 4.432075799870776
+YES
+CONFIGURATION: NUSER=3,LOAD=randomly_balanced,SR=1
+4) CHECK: CPU_s8 > 4.432075799870776
+YES
+CONFIGURATION: NUSER=9,LOAD=uniform,SR=10
+5) CHECK: CPU_s8 > 4.432075799870776
+YES
+CONFIGURATION: NUSER=23,LOAD=unbalanced_one,SR=10
+{question}
+
+YES
+CONFIGURATION: NUSER=10, LOAD=randomly_balanced, SR=5
