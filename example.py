@@ -1,23 +1,21 @@
 import json
 import os.path
 import random
-import shutil
+from enum import Enum
 
 import numpy as np
 import pandas as pd
+from keras import Input
+from sklearn.model_selection import KFold
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.models import Sequential
+
 import data_preparation
 import data_visualization
 import utils
 from causal_model_generator import build_model
 from configuration_generator import generate_config
-from enum import Enum
-
 from performance_evaluator import calc_metrics
-
-from keras import Input
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
-from sklearn.model_selection import KFold
 
 CURRENT_PATH = os.path.dirname(__file__)
 
@@ -226,6 +224,8 @@ def mlp_predictor(system, path_work, dataset=None):
 
     print("------TRAIN------")
     kfold = KFold(n_splits=5, shuffle=True)
+
+    os.environ["XLA_FLAGS"] = "--xla_gpu_cuda_data_dir=/usr/lib/cuda/"
 
     for fold, (train_index, val_index) in enumerate(kfold.split(X_train)):
         print(f"Fold {fold + 1}:")
