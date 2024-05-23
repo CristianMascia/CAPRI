@@ -133,7 +133,7 @@ df_train = pd.read_csv('df_train_sockshop.csv')
 retriever = vectorstore.as_retriever()
 
 for rep in range(20):
-    path_outputs_rep = os.path.join(path_outputs, 'rep' + str(rep))
+    path_outputs_rep = os.path.join(path_outputs, 'rep' + str(rep) + "/generated_configs")
     if os.path.exists(path_outputs_rep):
         shutil.rmtree(path_outputs_rep)
     os.makedirs(path_outputs_rep)
@@ -163,7 +163,7 @@ for rep in range(20):
 
                 print('\n-------ANSWER-------\n')
 
-                with open(os.path.join(path_outputs_rep, '{}_{}.txt'.format(met, ser)), "w") as f:
+                with open(os.path.join(path_outputs_rep, "configs_{}_{}.txt".format(met, ser)), "w") as f:
                     f.write(template + '\n\n')
                     output_model = chain.invoke(
                         input='\ncomplete this example\n{}) CHECK: {}_{} > {}\n'.format(K + 1, met, ser, ths))
@@ -176,7 +176,8 @@ for rep in range(20):
                         continue
                     else:
                         if config is not None:
-                            with open(os.path.join(path_outputs_rep, '{}_{}.json'.format(met, ser)), "w") as f_json:
+                            with open(os.path.join(path_outputs_rep, "configs_{}_{}.json".format(met, ser)),
+                                      "w") as f_json:
                                 json.dump({'nusers': [config[0]], 'laods': [config[1]], 'spawn_rates': [config[2]],
                                            "anomalous_metrics": [met]}, f_json)
                         break
