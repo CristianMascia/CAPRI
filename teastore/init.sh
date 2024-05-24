@@ -46,3 +46,5 @@ while kubectl get pods    -n teastore | awk '(NR>1)' | wc -l | grep -q -v $n_nod
 done
 
 echo "Pods and Metrics are available"
+
+sleep 100
