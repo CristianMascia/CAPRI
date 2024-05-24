@@ -25,6 +25,7 @@ class System(Enum):
     MUBENCH = "mubench"
     SOCKSHOP = "sockshop"
     ONLINEBOUTIQUE = "onlineboutique"
+    TEASTORE = "teastore"
 
 
 def get_system_info(system):
@@ -56,12 +57,13 @@ def create_dataset(system, path_df=None, path_exp=None):
     return df
 
 
-def system_visualization(system, path_images=None):
+def system_visualization(system, path_images=None, path_df=None):
     if path_images is None:
         path_images = os.path.join(CURRENT_PATH, str(system.value), "images")
 
     services, _, _, _ = get_system_info(system)
-    path_df = os.path.join(CURRENT_PATH, str(system.value), "data", str(system.value) + "_df.csv")
+    if path_df is None:
+        path_df = os.path.join(CURRENT_PATH, str(system.value), "data", str(system.value) + "_df.csv")
 
     if not os.path.exists(path_df):
         df = create_dataset(system)
