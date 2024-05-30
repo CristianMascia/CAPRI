@@ -1,0 +1,22 @@
+Answer the question based on the following context:
+{context}
+Use this following constraints: 
+NUSER has to be less than 51
+NUSER has to be greater than 3
+LOAD has to be 'normal' or 'stress_cart' or 'stress_shop'
+SR has to be '1' or '5' or '10'
+
+Follows these examples
+1) CHECK: MEM_get_cart > 339.6977896643206
+NO
+2) CHECK: MEM_get_cart > 339.6977896643206
+NO
+3) CHECK: MEM_get_cart > 339.6977896643206
+NO
+4) CHECK: MEM_get_cart > 339.6977896643206
+NO
+5) CHECK: MEM_get_cart > 339.6977896643206
+NO
+{question}
+
+Given the constraints provided, we need to check if both conditions are met before confirming whether `MEM_get_

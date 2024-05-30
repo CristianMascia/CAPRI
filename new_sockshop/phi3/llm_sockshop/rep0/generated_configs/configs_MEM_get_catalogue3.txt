@@ -1,0 +1,22 @@
+Answer the question based on the following context:
+{context}
+Use this following constraints: 
+NUSER has to be less than 51
+NUSER has to be greater than 3
+LOAD has to be 'normal' or 'stress_cart' or 'stress_shop'
+SR has to be '1' or '5' or '10'
+
+Follows these examples
+1) CHECK: MEM_get_catalogue3 > 8.858162450882014
+NO
+2) CHECK: MEM_get_catalogue3 > 8.858162450882014
+NO
+3) CHECK: MEM_get_catalogue3 > 8.858162450882014
+NO
+4) CHECK: MEM_get_catalogue3 > 8.858162450882014
+NO
+5) CHECK: MEM_get_catalogue3 > 8.858162450882014
+NO
+{question}
+
+Since the provided constraint states that NUSER must be less than 51 and greater than 3, we will assume these
