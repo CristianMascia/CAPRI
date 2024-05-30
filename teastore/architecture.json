@@ -1,25 +1,23 @@
 {
-  "frontend": [
-    "adservice",
-    "recommendationservice",
-    "productcatalogservice",
-    "cartservice",
-    "shippingservice",
-    "currencyservice",
-    "currencyservice"
+  "teastore-webui": [
+    "teastore-auth",
+    "teastore-image",
+    "teastore-persistence",
+    "teastore-recommender",
+    "teastore-registry"
   ],
-  "recommendationservice": [
-    "productcatalogservice"
+  "teastore-image": [
+    "teastore-registry"
   ],
-  "cartservice": [
-    "redis-cart"
+  "teastore-auth": [
+    "teastore-registry"
   ],
-  "checkoutservice": [
-    "emailservice",
-    "paymentservice",
-    "currencyservice",
-    "shippingservice",
-    "cartservice",
-    "productcatalogservice"
-    ]
+  "teastore-persistence": [
+    "teastore-registry",
+    "teastore-db"
+  ],
+  "teastore-recommender": [
+    "teastore-registry"
+  ]
 }
+
