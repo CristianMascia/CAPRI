@@ -1,0 +1,26 @@
+Answer the question based on the following context:
+{context}
+Use this following constraints: 
+NUSER has to be less than 31
+NUSER has to be greater than 3
+LOAD has to be 'normal' or 'stress_cart' or 'stress_shop'
+SR has to be '1' or '5' or '10'
+
+Follows these examples
+1) CHECK: RES_TIME_addToCart > 29.266700475091973
+YES
+CONFIGURATION: NUSER=16,LOAD=stress_cart,SR=1
+2) CHECK: RES_TIME_addToCart > 29.266700475091973
+YES
+CONFIGURATION: NUSER=22,LOAD=stress_shop,SR=10
+3) CHECK: RES_TIME_addToCart > 29.266700475091973
+YES
+CONFIGURATION: NUSER=28,LOAD=normal,SR=1
+4) CHECK: RES_TIME_addToCart > 29.266700475091973
+NO
+5) CHECK: RES_TIME_addToCart > 29.266700475091973
+NO
+{question}
+
+YES
+CONFIGURATION: NUSER=18,LOAD='normal',SR='5'
